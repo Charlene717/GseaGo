@@ -251,9 +251,10 @@
                         "NAKAMURA_METASTASIS_MODEL_UP",
                         "REACTOME_G0_AND_EARLY_G1",
                         "REACTOME_INITIATION_OF_NUCLEAR_ENVELOPE_NE_REFORMATION",
-                        "REACTOME_NUCLEAR_PORE_COMPLEX_NPC_DISASSEMBLY",
-#                        "REACTOME_SEMA4D_MEDIATED_INHIBITION_OF_CELL_ATTACHMENT_AND_MIGRATION",
-                        "REACTOME_ACTIVATION_OF_ATR_IN_RESPONSE_TO_REPLICATION_STRESS")
+                        # "REACTOME_ACTIVATION_OF_ATR_IN_RESPONSE_TO_REPLICATION_STRESS",
+                        # "REACTOME_SEMA4D_MEDIATED_INHIBITION_OF_CELL_ATTACHMENT_AND_MIGRATION",
+                        "REACTOME_NUCLEAR_PORE_COMPLEX_NPC_DISASSEMBLY"
+                        )
       gseaplot2(y2, geneSetID = Int_Path.set)
       gseaplot2(y2, geneSetID = Int_Path.set, pvalue_table=T)
 
