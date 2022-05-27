@@ -59,7 +59,7 @@
 
   setwd("GSEA_Analysis")
 
-##### GSEA analysis #####
+##### GSEA analysis (fgsea) #####
 
 
   #### Create ranks ####
@@ -103,12 +103,102 @@
                   gseaParam = 0.5)
     dev.off()
 
-
+##### GSEA analysis #####
     #### Conduct analysis2 ####
     library(DOSE)
-    data(geneList)
-    x <- gseDO(geneList)
-    gseaplot(x, geneSetID=1)
+    # data(geneList)
+    # x <- gseDO(geneList)
+    # gseaplot(x, geneSetID=1)
+
+    # geneList <- sort(ranks, decreasing = T)
+    # #geneList2 <- names(ranks) %>% as.numeric()
+    # x <- gseDO(geneList)
+    # gseaplot(x, geneSetID=1)
+
+    geneList <- sort(ranks, decreasing = T)
+    ## MSigDB_C2
+    library(msigdbr)
+    msigdbr_species()
+    m_c2 <- msigdbr(species = "Mus musculus", category = "C2") %>%
+      dplyr::select(gs_name, entrez_gene)
+    msC2_2 <- GSEA(geneList, TERM2GENE = m_c2)
+
+    #### Visualization ####
+
+    ## 2.1 Barplot
+    library(clusterProfiler.dplyr) # devtools::install_github("YuLab-SMU/clusterProfiler.dplyr")
+    y <- mutate(msC2_2, ordering = abs(NES)) %>%
+      arrange(desc(ordering))
+
+    library(ggstance)
+    library(enrichplot)
+    library(forcats)
+    library(ggplot2)
+
+    n <- 10
+    y_bar <- group_by(y, sign(NES)) %>%
+      slice(1:n)
+
+    ggplot(y_bar, aes(NES, fct_reorder(Description, NES), fill = qvalues), showCategory=(n*2)) +
+      geom_barh(stat='identity') +
+      scale_fill_continuous(low='red', high='blue', guide=guide_colorbar(reverse=TRUE)) +
+      theme_minimal() + ylab(NULL)
+
+    ## 2.2 Dotplot
+    dotplot(msC2_2, showCategory = 10, font.size = 8,
+            x = "GeneRatio",   # option -> c("GeneRatio", "Count")
+            color = "p.adjust")   # option -> c("pvalue", "p.adjust", "qvalue")
+
+    ## 2.3 Gene-Concept Network
+    n <- 3
+    p1 <- cnetplot(msC2_2, showCategory = (n*2), colorEdge = TRUE, node_label = "category")
+    cowplot::plot_grid(p1, ncol=1, labels=LETTERS[1], rel_widths=c(1))
+
+    ## 2.4 Heatmap-like functional classification
+
+    ## 2.5 Enrichment Map
+    p2 <- emapplot(pairwise_termsim(y), showCategory = 10)
+    cowplot::plot_grid(p2, ncol = 1, lables = LETTERS[1])
+
+
+    ## 2.6 UpSet Plot
+    library(ggupset)
+    upsetplot(msC2_2)
+
+    ## 2.7 ridgeline plot for expressiong distribution
+    ridgeplot(msC2_2)
+
+    ## 2.8 gseaplot
+    y2 <- arrange(msC2_2, desc(NES))
+
+    p1 <- gseaplot(y2, geneSetID = 1, title = y2$Description[1])   # max NES
+    n <- nrow(y2)
+    p2 <- gseaplot(y2, geneSetID = n, title = y2$Description[n])   # min NES
+    cowplot::plot_grid(p1, p2, ncol = 1, labels = LETTERS[1:2])
+
+      ## 2.8.1 gseaplot2
+      p3 <- gseaplot2(y2, geneSetID = 1, title = y2$Description[1])
+      p4 <- gseaplot2(y2, geneSetID = n, title = y2$Description[n])   # min NES
+      cowplot::plot_grid(p3, p4, ncol = 1, labels = LETTERS[1:2])
+
+      ## Use keyword (Overlay graphics)
+      keyword <- "breast"
+      ind <- grep(keyword, msC2_2$Description, ignore.case = TRUE)
+      gseaplot2(msC2_2, geneSetID = ind, title = msC2_2$Description[ind])
+
+      ## Overlay graphics by ID
+      gseaplot2(y2, geneSetID = 1:10)
+
+      ## 2.8.2 gsearank
+      gsearank(y2, geneSetID = 1, title = y2$Description[1])
+
+
+    ## 2.9 PubMed trend of enriched terms
+    terms <- msC2_2$Description[1:3]
+    pmcplot(terms, 2010:2017, proportion=FALSE)
+
+
+
 
 ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
   library(clusterProfiler)
