@@ -172,9 +172,9 @@
     ## MSigDB_C2
     library(msigdbr)
     msigdbr_species()
-    m_c2 <- msigdbr(species = "Homo sapiens", category = "C2") %>%
+    m_c2 <- msigdbr(species = "Homo sapiens") %>% # category = "C2"
             dplyr::select(gs_name, gene_symbol)
-    msC2_2 <- GSEA(geneList, TERM2GENE = m_c2)
+    msC2_2 <- GSEA(geneList, TERM2GENE = m_c2,pvalueCutoff =1)
 
     #### Visualization ####
 
@@ -244,14 +244,19 @@
       gseaplot2(y2, geneSetID = 1:10)
       gseaplot2(y2, geneSetID = 1:10, pvalue_table=T)
 
-      Int_Path.set <- c("REACTOME_ACTIVATION_OF_ATR_IN_RESPONSE_TO_REPLICATION_STRESS",
-                        "REACTOME_CHROMOSOME_MAINTENANCE",
+      Int_Path.set <- c("GRUETZMANN_PANCREATIC_CANCER_UP",
+                        "HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION",
+                        "HP_ABNORMALITY_OF_CHROMOSOME_STABILITY",
+                        "GOBP_POSITIVE_REGULATION_OF_EPITHELIAL_CELL_MIGRATION",
+                        "NAKAMURA_METASTASIS_MODEL_UP",
                         "REACTOME_G0_AND_EARLY_G1",
                         "REACTOME_INITIATION_OF_NUCLEAR_ENVELOPE_NE_REFORMATION",
                         "REACTOME_NUCLEAR_PORE_COMPLEX_NPC_DISASSEMBLY",
-                        "REACTOME_SEMA4D_MEDIATED_INHIBITION_OF_CELL_ATTACHMENT_AND_MIGRATION")
+#                        "REACTOME_SEMA4D_MEDIATED_INHIBITION_OF_CELL_ATTACHMENT_AND_MIGRATION",
+                        "REACTOME_ACTIVATION_OF_ATR_IN_RESPONSE_TO_REPLICATION_STRESS")
       gseaplot2(y2, geneSetID = Int_Path.set)
-      Int_Path.set
+      gseaplot2(y2, geneSetID = Int_Path.set, pvalue_table=T)
+
 
       ## 2.8.2 gsearank
       gsearank(y2, geneSetID = 1, title = y2$Description[1])
