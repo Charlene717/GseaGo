@@ -182,6 +182,7 @@
       p3 <- gseaplot2(y2, geneSetID = 1, title = y2$Description[1])
       p4 <- gseaplot2(y2, geneSetID = n, title = y2$Description[n])   # min NES
       cowplot::plot_grid(p3, p4, ncol = 1, labels = LETTERS[1:2])
+      gseaplot2(y2, geneSetID = 10, title = y2$ID[10],color="red",pvalue_table=T)
 
       ## Use keyword (Overlay graphics)
       keyword <- "breast"
@@ -190,6 +191,7 @@
 
       ## Overlay graphics by ID
       gseaplot2(y2, geneSetID = 1:10)
+      gseaplot2(y2, geneSetID = 1:10, pvalue_table=T)
 
       ## 2.8.2 gsearank
       gsearank(y2, geneSetID = 1, title = y2$Description[1])
