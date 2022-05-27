@@ -14,6 +14,18 @@
   rm(list = ls()) # Clean variable
   memory.limit(150000)
 
+##### Current path and new folder setting* #####
+  ProjectName = "TOP2A"
+  Sampletype = "PDAC"
+  #ProjSamp.Path = paste0(Sampletype,"_",ProjectName)
+
+  Version = paste0(Sys.Date(),"_",ProjectName,"_",Sampletype)
+  Save.Path = paste0(getwd(),"/",Version)
+  ## Create new folder
+  if (!dir.exists(Save.Path)){
+    dir.create(Save.Path)
+  }
+
 ##### Parameter setting* #####
   # Set the desired organism
   organism = "org.Dm.eg.db"
@@ -256,9 +268,16 @@
                         "REACTOME_NUCLEAR_PORE_COMPLEX_NPC_DISASSEMBLY"
                         )
       gseaplot2(y2, geneSetID = Int_Path.set)
-      gseaplot2(y2, geneSetID = Int_Path.set, pvalue_table=T)
+      P2 <- gseaplot2(y2, geneSetID = Int_Path.set, pvalue_table=T) #+ theme_classic()  # White background
+      P2
 
+      pdf(
+        file = paste0(getwd(), "/",Version,"/", Sys.Date(), "_Gseaplot_Int.pdf"),
+        width = 17, height = 12
+      )
 
+      P2
+      graphics.off()
       ## 2.8.2 gsearank
       gsearank(y2, geneSetID = 1, title = y2$Description[1])
 
