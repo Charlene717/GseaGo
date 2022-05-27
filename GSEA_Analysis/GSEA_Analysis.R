@@ -1,11 +1,14 @@
-## Gene Set Enrichment Analysis with ClusterProfiler
-## Ref: https://learn.gencore.bio.nyu.edu/rna-seq-analysis/gene-set-enrichment-analysis/
-
 ## RNA-seq analysis in R
 ## Ref: https://bioinformatics-core-shared-training.github.io/cruk-summer-school-2018/RNASeq2018/html/06_Gene_set_testing.nb.html
 
+## Gene Set Enrichment Analysis with ClusterProfiler
+## Ref: https://learn.gencore.bio.nyu.edu/rna-seq-analysis/gene-set-enrichment-analysis/
+
 ## Visualzation of GSEA results
 ## Ref: https://rpubs.com/shbrief/gsea_263
+
+## GSEA Chard Liu
+## Ref: http://rstudio-pubs-static.s3.amazonaws.com/514990_9690f31b5ef7488bb4f0bb6c10ac4da8.html
 
 ##### Presetting ######
   rm(list = ls()) # Clean variable
@@ -14,8 +17,6 @@
 ##### Parameter setting* #####
   # Set the desired organism
   organism = "org.Dm.eg.db"
-
-
 
 ##### Load Packages  #####
   #### Basic installation ####
@@ -47,13 +48,6 @@
 
   options(stringsAsFactors = FALSE)
 
-#
-#   # SET THE DESIRED ORGANISM HERE
-#   organism = "org.Dm.eg.db"
-#
-#   BiocManager::install(organism, character.only = TRUE)
-#   library(organism, character.only = TRUE)
-
 
 ##### Load Files #####
   ## Load data
@@ -63,65 +57,60 @@
   load("Demo_data/Robjects/mouse_H_v5.RData")
   pathwaysH <- Mm.H
 
-##### Create ranks #####
-  gseaDat <- filter(shrinkLvV, !is.na(Entrez))
-  ranks <- gseaDat$logFC
-  names(ranks) <- gseaDat$Entrez
-  head(ranks)
+  setwd("GSEA_Analysis")
 
-  # Plot the ranked fold changes.
-  barplot(sort(ranks, decreasing = T))
+##### GSEA analysis #####
 
 
+  #### Create ranks ####
+    gseaDat <- filter(shrinkLvV, !is.na(Entrez))
+    ranks <- gseaDat$logFC
+    names(ranks) <- gseaDat$Entrez
+    head(ranks)
 
-##### Conduct analysis #####
-  fgseaRes <- fgsea(pathwaysH, ranks, minSize=15, maxSize = 500, nperm=1000)
-  # Warning messages:
-  # 1: In fgsea(pathwaysH, ranks, minSize = 15, maxSize = 500, nperm = 1000) :
-  #   You are trying to run fgseaSimple. It is recommended to use fgseaMultilevel. To run fgseaMultilevel, you need to remove the nperm argument in the fgsea function call.
-  # 2: In preparePathwaysAndStats(pathways, stats, minSize, maxSize, gseaParam,  :
-  #                                 There are ties in the preranked stats (0.05% of the list).
-  #                               The order of those tied genes will be arbitrary, which may produce unexpected results.
-  # 3: In serialize(data, node$con) : 'package:stats' may not be available when loading
-
-  ## fgsea: What does fgseaMultilevel argument sampleSize mean/when to change it?
-  ## https://www.biostars.org/p/479821/
+    # Plot the ranked fold changes.
+    barplot(sort(ranks, decreasing = T))
 
 
-  fgseaRes <- fgseaMultilevel(pathwaysH, ranks, minSize=15, maxSize = 500)
-  # There were 15 warnings (use warnings() to see them)
-  # In serialize(data, node$con) :
-  #   'package:stats' may not be available when loading
+  #### Conduct analysis ####
+    fgseaRes <- fgsea(pathwaysH, ranks, minSize=15, maxSize = 500, nperm=1000)
+    ## fgsea: What does fgseaMultilevel argument sampleSize mean/when to change it?
+    ## https://www.biostars.org/p/479821/
 
-  ## Error when running parallelized process: Warning in serialize... package:stats may not be available when loading
-  ## https://community.rstudio.com/t/error-when-running-parallelized-process-warning-in-serialize-package-stats-may-not-be-available-when-loading/110573
-  ## https://stackoverflow.com/questions/27623901/r-warning-packagestats-may-not-be-available-when-loading
+    fgseaRes <- fgseaMultilevel(pathwaysH, ranks, minSize=15, maxSize = 500)
+    ## Error when running parallelized process: Warning in serialize... package:stats may not be available when loading
+    ## https://community.rstudio.com/t/error-when-running-parallelized-process-warning-in-serialize-package-stats-may-not-be-available-when-loading/110573
+    ## https://stackoverflow.com/questions/27623901/r-warning-packagestats-may-not-be-available-when-loading
 
-  head(fgseaRes[order(padj, -abs(NES)), ], n=10)
+    head(fgseaRes[order(padj, -abs(NES)), ], n=10)
 
-##### Enrichment score plot #####
-  plotEnrichment(pathwaysH[["HALLMARK_ESTROGEN_RESPONSE_EARLY"]], ranks)
-  dev.off()
+  #### Enrichment score plot ####
+    plotEnrichment(pathwaysH[["HALLMARK_ESTROGEN_RESPONSE_EARLY"]], ranks)
+    dev.off()
 
-##### GSEA table plot #####
-  topUp <- fgseaRes %>%
-    filter(ES > 0) %>%
-    top_n(10, wt=-padj)
-  topDown <- fgseaRes %>%
-    filter(ES < 0) %>%
-    top_n(10, wt=-padj)
-  topPathways <- bind_rows(topUp, topDown) %>%
-    arrange(-ES)
-  plotGseaTable(pathwaysH[topPathways$pathway],
-                ranks,
-                fgseaRes,
-                gseaParam = 0.5)
-  dev.off()
+  #### GSEA table plot ####
+    topUp <- fgseaRes %>%
+      filter(ES > 0) %>%
+      top_n(10, wt=-padj)
+    topDown <- fgseaRes %>%
+      filter(ES < 0) %>%
+      top_n(10, wt=-padj)
+    topPathways <- bind_rows(topUp, topDown) %>%
+      arrange(-ES)
+    plotGseaTable(pathwaysH[topPathways$pathway],
+                  ranks,
+                  fgseaRes,
+                  gseaParam = 0.5)
+    dev.off()
+
+
+    #### Conduct analysis2 ####
+    library(DOSE)
+    data(geneList)
+    x <- gseDO(geneList)
+    gseaplot(x, geneSetID=1)
 
 ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-  # BiocManager::install("clusterProfiler")
-  # BiocManager::install("pathview")
-  # BiocManager::install("enrichplot")
   library(clusterProfiler)
   library(enrichplot)
   # we use ggplot2 to add x axis labels (ex: ridgeplot)
@@ -145,22 +134,22 @@
     gene_list = sort(gene_list, decreasing = TRUE)
 
   ##### Gene Set Enrichment #####
-  gse <- gseGO(geneList=gene_list,
-               ont ="ALL",
-               keyType = "ENSEMBL",
-               nPerm = 10000,
-               minGSSize = 3,
-               maxGSSize = 800,
-               pvalueCutoff = 0.05,
-               verbose = TRUE,
-               OrgDb = organism,
-               #OrgDb = org.Dm.eg.db, # https://github.com/YuLab-SMU/clusterProfiler/issues/279
-               pAdjustMethod = "none")
-    # Error # Error in (function (classes, fdef, mtable)  :
-    #             unable to find an inherited method for function ‘species’ for signature ‘"character"’
-    #           In addition: There were 14 warnings (use warnings() to see them)
-    ## https://stackoverflow.com/questions/62147679/unable-to-find-an-inherited-method-for-function-species-for-signature-charac
-    # https://github.com/YuLab-SMU/clusterProfiler/issues/279
+    gse <- gseGO(geneList=gene_list,
+                 ont ="ALL",
+                 keyType = "ENSEMBL",
+                 nPerm = 10000,
+                 minGSSize = 3,
+                 maxGSSize = 800,
+                 pvalueCutoff = 0.05,
+                 verbose = TRUE,
+                 OrgDb = organism,
+                 #OrgDb = org.Dm.eg.db, # https://github.com/YuLab-SMU/clusterProfiler/issues/279
+                 pAdjustMethod = "none")
+      # Error # Error in (function (classes, fdef, mtable)  :
+      #             unable to find an inherited method for function ‘species’ for signature ‘"character"’
+      #           In addition: There were 14 warnings (use warnings() to see them)
+      ## https://stackoverflow.com/questions/62147679/unable-to-find-an-inherited-method-for-function-species-for-signature-charac
+      # https://github.com/YuLab-SMU/clusterProfiler/issues/279
 
   ##### Dotplot #####
     require(DOSE)
