@@ -17,7 +17,7 @@
 ##### Current path and new folder setting* #####
   ProjectName = "TOP2A"
   Sampletype = "PDAC"
-  #ProjSamp.Path = paste0(Sampletype,"_",ProjectName)
+  # ProjSamp.Path = paste0(Sampletype,"_",ProjectName)
 
   Version = paste0(Sys.Date(),"_",ProjectName,"_",Sampletype)
   Save.Path = paste0(getwd(),"/",Version)
@@ -75,6 +75,12 @@
   ## Load data
   load("PRJCA001063_PDAC_Raw.RData")
 
+  ## Load pathways
+  setwd("../")
+  load("Demo_data/Robjects/mouse_H_v5.RData")
+  pathwaysH <- Mm.H
+  setwd("GSEA_Analysis")
+
 ##### Data preprocessing #####
 # https://combine-australia.github.io/RNAseq-R/06-rnaseq-day1.html
   ## Check whether the installation of those packages is required from BiocManager
@@ -100,7 +106,7 @@
   ## Ref: https://web.stanford.edu/class/bios221/labs/rnaseq/lab_4_rnaseq.html
 
   library(edgeR)
-  Anno_Ints.df <- Anno.df[Anno.df$ReCluster %in% c("CoreCD00","CDOri"),]
+  Anno_Ints.df <- Anno.df[Anno.df$ReCluster %in% c("AD","AC"),]  # c("CoreCD00","CDOri")
   matrix_Ints.df <- matrix.df[,colnames(matrix.df) %in% Anno_Ints.df$CELL]
   row.names(matrix_Ints.df) <- matrix.df[,1]
 
@@ -268,6 +274,10 @@
                         "REACTOME_NUCLEAR_PORE_COMPLEX_NPC_DISASSEMBLY"
                         )
       gseaplot2(y2, geneSetID = Int_Path.set)
+
+      ## Modify the function
+      ## https://www.biostars.org/p/9470087/
+
       P2 <- gseaplot2(y2, geneSetID = Int_Path.set, pvalue_table=T) #+ theme_classic()  # White background
       P2
 
