@@ -193,6 +193,12 @@
       gseaplot2(y2, geneSetID = 1:10)
       gseaplot2(y2, geneSetID = 1:10, pvalue_table=T)
 
+      ## Modify the function
+      ## https://www.biostars.org/p/9470087/
+      ## trace("gseaplot2", edit = TRUE)
+      ##> pd <- x[geneSetID, c("Description", "pvalue", "p.adjust")] -> pd <- x[geneSetID, c("Description","NES, "pvalue", "p.adjust")]
+      gseaplot2(y2, geneSetID = 1:10, pvalue_table=T)
+
       ## 2.8.2 gsearank
       gsearank(y2, geneSetID = 1, title = y2$Description[1])
 

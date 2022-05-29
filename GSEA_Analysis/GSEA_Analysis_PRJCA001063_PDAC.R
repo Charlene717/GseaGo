@@ -277,6 +277,8 @@
 
       ## Modify the function
       ## https://www.biostars.org/p/9470087/
+      ## trace("gseaplot2", edit = TRUE)
+      ##> pd <- x[geneSetID, c("Description", "pvalue", "p.adjust")] -> pd <- x[geneSetID, c("Description","NES, "pvalue", "p.adjust")]
 
       P2 <- gseaplot2(y2, geneSetID = Int_Path.set, pvalue_table=T) #+ theme_classic()  # White background
       P2
