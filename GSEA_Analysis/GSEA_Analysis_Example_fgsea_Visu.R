@@ -54,7 +54,8 @@
   ## Check whether the installation of those packages is required from BiocManager
   if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-  Package.set <- c(organism,"fgsea","clusterProfiler","enrichplot","pathview","enrichplot")
+  Package.set <- c(organism, "org.Hs.eg.db", "org.Mm.eg.db", "org.Dm.eg.db",
+                   "fgsea","clusterProfiler","enrichplot","pathview","enrichplot")
   for (i in 1:length(Package.set)) {
     if (!requireNamespace(Package.set[i], quietly = TRUE)){
       BiocManager::install(Package.set[i])
@@ -191,6 +192,9 @@
     P2_3.GeneNet
 
     ## 2.4 Heatmap-like functional classification
+    ## Ref:https://bioc.ism.ac.jp/packages/3.7/bioc/vignettes/enrichplot/inst/doc/enrichplot.html#:~:text=upsetplot(ego)-,Heatmap%2Dlike%20functional%20classification,easy%20to%20identify%20expression%20patterns.
+    msC2_3 <- msC2_2[msC2_2@geneList %in% msC2_2@geneList[1:50],]
+    heatplot(msC2_3, showCategory = 30, foldChange=geneList)
 
     ## 2.5 Enrichment Map
     p2 <- emapplot(pairwise_termsim(y), showCategory = 20)
