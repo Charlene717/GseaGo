@@ -176,13 +176,18 @@
     ggplot(y_bar, aes(NES, fct_reorder(Description, NES), fill = qvalues), showCategory=(n*2)) +
            geom_barh(stat='identity') +
            scale_fill_continuous(low='red', high='blue', guide=guide_colorbar(reverse=TRUE)) +
-           theme_minimal() + ylab(NULL) -> P2_1.Barplot
+           theme_minimal() + ylab(NULL)+ theme_classic() %>%
+           BeautifyggPlot(XtextSize=25,  YtextSize=12,AxisTitleSize=2) -> P2_1.Barplot
     P2_1.Barplot
+
+    P2_1.Barplot %>% BeautifyggPlot(XtextSize=25,AxisTitleSize=2,LegPos = c(0.75, 0.25)) +
+                     theme(axis.ticks.y = element_blank(), axis.text.y = element_blank())
 
     ## 2.2 Dotplot
     P2_2.Dotplot <- dotplot(msC2_2, showCategory = 10, font.size = 8,
                             x = "GeneRatio",   # option -> c("GeneRatio", "Count")
-                            color = "p.adjust")   # option -> c("pvalue", "p.adjust", "qvalue")
+                            color = "p.adjust") +  # option -> c("pvalue", "p.adjust", "qvalue")
+                            theme_classic() %>% BeautifyggPlot(XtextSize=25,  YtextSize=12, AxisTitleSize=2, LegPos = c(0.75, 0.25))
     P2_2.Dotplot
 
     ## 2.3 Gene-Concept Network
@@ -193,7 +198,18 @@
 
     ## 2.4 Heatmap-like functional classification
     ## Ref:https://bioc.ism.ac.jp/packages/3.7/bioc/vignettes/enrichplot/inst/doc/enrichplot.html#:~:text=upsetplot(ego)-,Heatmap%2Dlike%20functional%20classification,easy%20to%20identify%20expression%20patterns.
+    ## Ref:https://yulab-smu.top/biomedical-knowledge-mining-book/enrichplot.html
+    ## Ref:https://cbiagii.github.io/CeTF/reference/heatPlot.html
+
+
     msC2_3 <- msC2_2[msC2_2@geneList %in% msC2_2@geneList[1:50],]
+    msC2_3 <- leading_edge(msC2_2, direction)
+
+    P2_5.HeatPlot <- heatplot(msC2_2, showCategory = 30, foldChange=geneList)
+    P2_5.HeatPlot
+    P2_5.HeatPlot2 <- heatplot(msC2_3, showCategory = 30, foldChange=geneList)
+    P2_5.HeatPlot2
+
     heatplot(msC2_3, showCategory = 30, foldChange=geneList)
 
     ## 2.5 Enrichment Map
