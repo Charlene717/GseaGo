@@ -16,7 +16,7 @@
   ## Call function
   source("FUN_Beautify_ggplot.R")
   source("FUN_Find_Markers.R")
-
+  source("FUN_VolcanoPlot.R")
 
 ##### Current path and new folder setting* #####
   ProjectName = "ifnb"
@@ -93,8 +93,11 @@
 
   immune.combined <- RenameIdents(immune.combined, `0` = "CD14 Mono", `1` = "CD4 Naive T", `2` = "CD4 Memory T",
                                   `3` = "CD16 Mono", `4` = "B", `5` = "CD8 T", `6` = "NK", `7` = "T activated", `8` = "DC", `9` = "B Activated",
-                                  `10` = "Mk", `11` = "pDC", `12` = "Eryth", `13` = "Mono/Mk Doublets", `14` = "HSPC")
+                                  `10` = "Mk", `11` = "pDC", `12` = "Eryth", `13` = "Mono Mk Doublets", `14` = "HSPC")
+  immune.combined$celltype <- Idents(immune.combined)
+
   DimPlot(immune.combined, label = TRUE) %>% BeautifyggPlot(.,LegPos = c(1, 0.5))
+
 
   Idents(immune.combined) <- factor(Idents(immune.combined), levels = c("HSPC", "Mono/Mk Doublets",
                                                                         "pDC", "Eryth", "Mk", "DC", "CD14 Mono", "CD16 Mono", "B Activated", "B", "CD8 T", "NK", "T activated",
@@ -104,4 +107,73 @@
                        "GPR183", "PPBP", "GNG11", "HBA2", "HBB", "TSPAN13", "IL3RA", "IGJ", "PRSS57")
   DotPlot(immune.combined, features = markers.to.plot, cols = c("blue", "red"), dot.scale = 8, split.by = "stim") +
     RotatedAxis()
+
+##### Find Marker in different Cell type and VolcanoPlot (SPA) ########
+  ### Define group by different phenotype ###
+  source("FUN_Find_Markers.R")
+  immune.combined$celltype.Stim <- paste(Idents(immune.combined), immune.combined$stim, sep = "_")
+  Idents(immune.combined) <- "celltype.Stim"
+
+  DefaultAssay(immune.combined) <- "RNA"
+
+
+  Idents(immune.combined) <- "celltype.Stim"
+  #CellType.list <- as.character(unique(immune.combined@meta.data[["celltype"]]))
+  dir.create(paste0(Save.Path,"/PBMC_SPA_FindMarkers"))
+
+  CellType.list <- as.character(unique(immune.combined@meta.data[["celltype"]]))
+  CCMarker_SPA.lt <- list()
+  for(i in c(1:length(CellType.list))){
+    try({
+      CCMarker_SPA.lt[[i]] <- Find_Markers(immune.combined,
+                                           paste0(CellType.list[i],"_STIM"),
+                                           paste0(CellType.list[i],"_CTRL"),
+                                           CellType.list[i],
+                                           Path = Save.Path,
+                                           ResultFolder = "PBMC_SPA_FindMarkers")
+
+      # names(CCMarker_SPA.lt)[[i]] <- paste0("CCMarker_SPA.lt.",CellType.list[i])
+      names(CCMarker_SPA.lt)[[i]] <- paste0(CellType.list[i])
+    })
+  }
+  rm(i)
+
+  CCMarker_SPA.lt <- CCMarker_SPA.lt[!unlist(lapply(CCMarker_SPA.lt,is.null))]
+
+
+  ## Generate pdf and tif file for VolcanoPlot
+  dir.create(paste0(Save.Path,"/PBMC_SPA_VolcanoPlot/"))
+
+  pdf(file = paste0(Save.Path,"/PBMC_SPA_VolcanoPlot/PBMC_SPA_VolcanoPlot.pdf"),width = 7, height = 7 )
+  for (i in 1:length(CellType.list)) {
+    try({
+      print(VolcanoPlot(CCMarker_SPA.lt[[i]][["CCMarker.S"]],
+                        CCMarker_SPA.lt[[i]][["CCMarker.S_Pos_List"]],
+                        CCMarker_SPA.lt[[i]][["CCMarker.S_Neg_List"]], ShowGeneNum = 6)+
+              ggtitle(paste0("PBMC_",CellType.list[i]))
+      )
+    })
+  }
+  # graphics.off()
+  dev.off()
+  rm(i)
+
+  for (i in 1:length(CellType.list)) {
+    try({
+      tiff(file = paste0(Save.Path,"/PBMC_SPA_VolcanoPlot/PBMC_SPA_VolcanoPlot",CellType.list[i],".tif"), width = 17, height = 17, units = "cm", res = 200)
+      print(VolcanoPlot(CCMarker_SPA.lt[[i]][["CCMarker.S"]],
+                        CCMarker_SPA.lt[[i]][["CCMarker.S_Pos_List"]],
+                        CCMarker_SPA.lt[[i]][["CCMarker.S_Neg_List"]])+ ggtitle(paste0("PBMC_",CellType.list[i]))
+      )
+
+      graphics.off()
+    })
+  }
+  rm(i)
+
+  #### Save RData ####
+  save.image(paste0(Save.Path,"/GseaGo.RData"))
+
+
+
 
