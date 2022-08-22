@@ -3,14 +3,17 @@
   memory.limit(150000)
 
 ##### Load Packages #####
-  if(!require("Seurat")) install.packages("Seurat")
   if(!require("tidyverse")) install.packages("tidyverse")
-  if(!require("Seurat")) install.packages("SeuratData")
-  if(!require("tidyverse")) install.packages("patchwork")
+  if(!require("Seurat")) install.packages("Seurat")
+  if(!require("SeuratData")) install.packages("SeuratData")
+  if(!require("patchwork")) install.packages("patchwork")
+  if(!require("eoffice")) install.packages("eoffice")
+
   library(tidyverse)
   library(Seurat)
   library(SeuratData)
   library(patchwork)
+  library(eoffice)
 
 ##### Function setting #####
   ## Call function
