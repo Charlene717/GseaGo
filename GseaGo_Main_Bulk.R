@@ -24,6 +24,7 @@
   source("FUN_VolcanoPlot.R")
   source("FUN_GSEA_LargeGeneSet.R")
   source("FUN_GSEA_ggplot.R")
+  source("FUN_ggPlot_vline.R")
 
 ##### Import setting and Import* #####
   ## File setting*
@@ -82,9 +83,13 @@
 
 #************************************************************************************************************************#
 ##### Grouping #####
-
+  source("FUN_Group_GE.R")
   ##### Group by gene expression 1: CutOff by total  #####
-
+  GeneExp_group.set <- FUN_Group_GE(GeneExp.df,
+                                    TarGeneName = TarGene_name, GroupMode = Mode_Group,
+                                    Save.Path = Save.Path, SampleName = SampleName)
+  GeneExp_high.set <- GeneExp_group.set[["GeneExp_high.set"]]
+  GeneExp_low.set <- GeneExp_group.set[["GeneExp_low.set"]]
 
   ##### Group by gene expression 2: CutOff by Comparison #####
 
