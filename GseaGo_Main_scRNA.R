@@ -17,6 +17,8 @@
   source("FUN_Beautify_ggplot.R")
   source("FUN_Find_Markers.R")
   source("FUN_VolcanoPlot.R")
+  source("FUN_GSEA_LargeGeneSet.R")
+  source("FUN_GSEA_ggplot.R")
 
 ##### Current path and new folder setting* #####
   ProjectName = "ifnb"
@@ -176,20 +178,34 @@
 
 
 
-  ##### 09_1 GSEA Analysis (SPA) #####
+##### 09_1 GSEA Analysis (SPA) #####
+
+  ## Load the GSEA Dataset
+  load("GSEA_Analysis_Geneset.RData")
+  InputGSEA = "GSEA_Geneset_Pathway_3Database_WithoutFilter.txt"
+
+
+  ## Geneset from GSEA
+  # Pathway.all <- read.delim(paste0(getwd(),"/Pathway.all.v7.4.symbols.gmt"),header = F)
+  Pathway.all <- read.delim2(paste0(getwd(),"/",InputGSEA),
+                             col.names = 1:max(count.fields(paste0(getwd(),"/",InputGSEA))),
+                             header = F,sep = "\t")
+
+
+  ## Run GSEA
   GSEA_Large <- list()
   GSEA_Large.df <- as.data.frame(matrix(nrow=0,ncol=10))
   colnames(GSEA_Large.df) <- c("GeneType","PhenoType","pathway","pval","padj","log2err","ES", "NES" ,"size","leadingEdge")
   GSEA_Large.df.TOP <- GSEA_Large.df
 
-  dir.create(paste0(Save.Path,"/SC_GSEA"))
+  dir.create(paste0(Save.Path,"/PBMC_GSEA"))
 
 
-  pdf(file = paste0(Save.Path, "/SC_GSEA/SC_GSEA_SPA.pdf"),width = 15, height = 7 )
+  pdf(file = paste0(Save.Path, "/PBMC_GSEA/PBMC_GSEA_SPA.pdf"),width = 15, height = 7 )
 
   for(i in 1:length(CellType.list)){
 
-    gseaDat <- CCMarker_SPA.lt[[paste0(CellType.list[i])]][["CCMarker.All"]]
+    gseaDat <- CCMarker_SPA.lt[[paste0(CellType.list[i])]][["TarMarker.All"]]
     gseaDat <- data.frame(row.names(gseaDat),gseaDat)
     colnames(gseaDat)[[1]] <- c("Gene")
     ranks <- gseaDat$avg_log2FC
@@ -197,7 +213,7 @@
     # head(ranks)
     # barplot(sort(ranks, decreasing = T))
 
-    GSEA_Large.Output <- FUN_GSEA_LargeGeneSet(ranks,Pathway.all.MM,10)
+    GSEA_Large.Output <- FUN_GSEA_LargeGeneSet(ranks,Pathway.all,10)
 
     fgseaRes <- GSEA_Large.Output[["fgseaRes"]]
     # head(fgseaRes[order(padj, -abs(NES)), ], n=10)
@@ -243,7 +259,7 @@
   ## GSEA_Large.Sum.TOP ##
   GSEA_Large.Sum.TOP <- rbind(GSEA_Large.df.TOP)
   GSEA_Large.Sum.TOP <- GSEA_Large.Sum.TOP[,!colnames(GSEA_Large.Sum.TOP) %in% c("leadingEdge")]
-  write.table(GSEA_Large.Sum.TOP, file=paste0(Save.Path,"/SC_GSEA/SC_GSEA_Pathway_LargeTOP_SPA.txt"),sep="\t",
+  write.table(GSEA_Large.Sum.TOP, file=paste0(Save.Path,"/PBMC_GSEA/PBMC_GSEA_Pathway_LargeTOP_SPA.txt"),sep="\t",
               row.names=F, quote = FALSE)
 
   ##### Bubble plot #####
@@ -261,7 +277,7 @@
   # GSEA_Large.Sum.TOP.S <- GSEA_Large.Sum.TOP[abs(GSEA_Large.Sum.TOP$padj) < 0.25,]
   # GSEA_Large.Sum.TOP.S <- GSEA_Large.Sum.TOP.S[abs(GSEA_Large.Sum.TOP.S$pval) < 0.05,]
 
-  pdf(file = paste0(Save.Path,"/SC_GSEA/SC_GSEA_Bubble_SPA.pdf"),width = 17, height = 12 )
+  pdf(file = paste0(Save.Path,"/PBMC_GSEA/PBMC_GSEA_Bubble_SPA.pdf"),width = 17, height = 12 )
   GSEA_ggplot_SPA.lt[["BBPlot_Ori"]]
   GSEA_ggplot_SPA.lt[["BBPlot"]]
   GSEA_ggplot_SPA.lt[["BBPlot2"]]
@@ -271,38 +287,6 @@
 
 
   ##### Extract SubType #####
-  ## Duc Cell
-  # GSEA_Duc.df <- GSEA_Large.Sum.TOP.S[grep("T",GSEA_Large.Sum.TOP.S$PhenoType),]
-  # GSEA_Duc.df <- GSEA_Large.Sum.TOP.S[GSEA_Large.Sum.TOP.S$PhenoType %in% c("CD4+T","CD8+T","T"),]
-  GSEA_Duc.df <- GSEA_Large.Sum.TOP.S[grep("Duc",GSEA_Large.Sum.TOP.S$PhenoType),]
-
-  BBPlot_T <- ggplot(GSEA_Duc.df,aes(x=PhenoType, y = pathway, color = NES, size = -log10(padj))) +
-    geom_point() +
-    scale_size_area(max_size = 7)+
-    scale_colour_gradient2(low = GSEA_Color.lt[["low"]], mid = GSEA_Color.lt[["mid"]], high = GSEA_Color.lt[["high"]],
-                           guide = "colourbar",midpoint = 0)+ theme(legend.position = "bottom")+ theme_bw()+
-    theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank())
-
-  BBPlot_T
-
-  BBPlot_TB <- BBPlot_T %>% BeautifyggPlot(LegPos  = "bottom",LegBox = "horizontal",LegDir="horizontal", xangle =90,OL_Thick = 1.5,
-                                           XtextSize=15 ,  YtextSize=10,AxisTitleSize=1, AspRat=4, XaThick=0.8, YaThick=0.8)
-  # BBPlot_TB <- BBPlot_TB +theme(axis.title.y=element_blank(),
-  #                  axis.text.y=element_blank(),
-  #                  axis.ticks.y=element_blank())
-  BBPlot_TB
-
-  BBPlot_TB1 <- BBPlot_TB %>%
-    insert_left(GSEA_ggplot_SPA.lt[["Y_Order"]],width = 0.2)
-  BBPlot_TB1
-
-
-  pdf(file = paste0(Save.Path,"/SC_GSEA/SC_GSEA_Bubble_SPA_SubType_Duc.pdf"),width = 17, height = 7 )
-  BBPlot_TB
-  BBPlot_TB1
-  dev.off()
-
-
   ## Mac
   GSEA_Mac.df <- GSEA_Large.Sum.TOP.S[grep("Mac",GSEA_Large.Sum.TOP.S$PhenoType),]
 
@@ -322,34 +306,11 @@
     insert_left(GSEA_ggplot_SPA.lt[["Y_Order"]],width = 0.2)
   BBPlot_MacB1
 
-  pdf(file = paste0(Save.Path,"/SC_GSEA/SC_GSEA_Bubble_SPA_SubType_Mac.pdf"),width = 17, height = 20 )
+  pdf(file = paste0(Save.Path,"/PBMC_GSEA/PBMC_GSEA_Bubble_SPA_SubType_Mac.pdf"),width = 17, height = 20 )
   BBPlot_MacB
   BBPlot_MacB1
   dev.off()
 
-  ## Fib
-  GSEA_Fib.df <- GSEA_Large.Sum.TOP.S[grep("Fib",GSEA_Large.Sum.TOP.S$PhenoType),]
-
-  BBPlot_Fib <- ggplot(GSEA_Fib.df,aes(x=PhenoType, y = pathway, color = NES, size = -log10(padj))) +
-    geom_point() +
-    scale_size_area(max_size = 5)+
-    scale_colour_gradient2(low = GSEA_Color.lt[["low"]], mid = GSEA_Color.lt[["mid"]], high = GSEA_Color.lt[["high"]],
-                           guide = "colourbar",midpoint = 0)+ theme(legend.position = "bottom")+ theme_bw()+
-    theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank())
-
-  BBPlot_Fib
-
-  BBPlot_FibB <- BBPlot_Fib %>% BeautifyggPlot(LegPos  = "bottom",LegBox = "horizontal",LegDir="horizontal", xangle =90,OL_Thick = 1.5,
-                                               XtextSize=15,  YtextSize=10, AxisTitleSize=1, AspRat=4, XaThick=0.8, YaThick=0.8)
-
-  BBPlot_FibB1 <- BBPlot_FibB %>%
-    insert_left(GSEA_ggplot_SPA.lt[["Y_Order"]],width = 0.2)
-  BBPlot_FibB1
-
-  pdf(file = paste0(Save.Path,"/SC_GSEA/SC_GSEA_Bubble_SPA_SubType_Fib.pdf"),width = 17, height = 20 )
-  BBPlot_FibB
-  BBPlot_FibB1
-  dev.off()
 
   rm(p2,p3,BBPlotB1,BBPlotB2,BBPlotB,BBPlot_Cluster,df1.1.clust.Pheno,df1.1.clust.Pathway,
      df1.1,df1,BBPlot,BBPlot_Fib,BBPlot_FibB,BBPlot_T,BBPlot_TB)
