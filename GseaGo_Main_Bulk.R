@@ -68,6 +68,9 @@
   # # sum(c("a","c")==c("a","b"))
   # sum(A==B)
   # summary(A==B)
+  #
+  ## Error: Timeout was reached: [rest.genenames.org] Operation timed out after 10005 milliseconds with 0 bytes received
+
 
   ## Update the genename
   UpdateGene <- "No"  # UpdateGene <- c("Yes","No")
