@@ -23,42 +23,35 @@
   source("FUN_GSEA_LargeGeneSet.R")
   source("FUN_GSEA_ggplot.R")
 
-##### Current path and new folder setting* #####
-  ProjectName = "ifnb"
-  Sampletype = "PBMC"
-  #ProjSamp.Path = paste0(Sampletype,"_",ProjectName)
 
-  Version = paste0(Sys.Date(),"_",ProjectName,"_",Sampletype)
+##### Import setting and Import* #####
+  ## File setting*
+  Input_Folder_Name <- "Input_TCGA"
+  SampleName <- "Xena_TCGA_LGG_GE"
+
+  ## Import genetic data file
+  GeneExp.df <- read.table(paste0(Input_Folder_Name,"/",SampleName), header=T, row.names = 1, sep="\t")
+
+  ## Import GSEA gene sets
+  InputGSEA = "GSEA_Geneset_Pathway_3Database_WithoutFilter.txt"
+
+##### Conditions setting* #####
+  ## Group by gene expression
+  Target_gene_name <- "TP53"
+  Mode_Group <- list(Mode="Mean",SD=1) # Mode_Group <- list(Mode="Quartile",Q2="Only")
+
+##### Current path and new folder setting* #####
+  ProjectName = "TCGA"
+  Sampletype = "LGG"
+
+  Version = paste0(Sys.Date(),"_",ProjectName,"_",Sampletype,"_",Target_gene_name)
   Save.Path = paste0(getwd(),"/",Version)
   ## Create new folder
   if (!dir.exists(Save.Path)){
     dir.create(Save.Path)
   }
 
-  ## Import information
-  InputFolder = "Input_files_10x"
-  InputAnno = "PBMC_Ano.csv"
-
-  InputGSEA = "GSEA_Geneset_Pathway_3Database_WithoutFilter.txt"
-
-  ##### Files setting and import * #####
-  ## File setting*
-  FileName <- "Xena_TCGA_LGG_GE"
-
-  ## Import genetic data file
-  GeneExp.df <- read.table(FileName, header=T, row.names = 1, sep="\t")
-
-  ##### Conditions setting* #####
-  Target_gene_name <- "TP53"
-  Mode_Group <- list(Mode="Mean",SD=1) # Mode_Group <- list(Mode="Quartile",Q2="Only")
-
-  ##### Current path and new folder setting #####
-  Result_Folder_Name <- paste0(Target_gene_name,"_",Sys.Date()) ## Generate output folder automatically
-  dir.create(Result_Folder_Name)
-
-
-
-  ##### Extract Target gene and Statistics ####
+##### Extract Target gene and Statistics ####
   # Extract data with Target_gene_name
   Target_gene_Mean <- GeneExp.df[Target_gene_name,] %>%
     as.numeric() %>%
@@ -75,7 +68,7 @@
     quantile()
 
 
-  ##### Group the expression matrix according to the expression level of Target gene ####
+##### Group the expression matrix according to the expression level of Target gene ####
   if(Mode_Group$Mode=="Mean"){
     if(Mode_Group$SD==0){
       GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[Target_gene_name,] >= Target_gene_Mean+Target_gene_SD*(Mode_Group$SD)]
@@ -98,7 +91,7 @@
 
   }
 
-  ##### Build Expression matrix for GSEA #####
+##### Build Expression matrix for GSEA #####
   GeneExp_GSEA.df <- cbind(
     NAME=row.names(GeneExp.df),
     Description = rep("na", nrow(GeneExp.df)),
@@ -117,25 +110,25 @@
     rbind.fill(GeneExp_GSEA.df)
   rm(GSEA_SampleCol.df)
 
-  ##### Build Group Files #####
+##### Build Group Files #####
   ## Set the group array
   Pheno_sum.df <- c(ncol(GeneExp_GSEA.df)-2,2,1) %>% t() %>% data.frame() %>%
     rbind.fill(c(paste0("#",Target_gene_name,"_high"),paste0(Target_gene_name,"_Low")) %>% t() %>% data.frame(stringsAsFactors=FALSE)) %>%
     rbind.fill(c(rep(0,length(GeneExp_high.set)),rep(1,length(GeneExp_low.set))) %>% t() %>% data.frame())
 
 
-  ##### Export Result #####
+##### Export Result #####
   if(Mode_Group$Mode=="Mean"){
     write.table(
       GeneExp_GSEA.df,
-      file=paste0(Result_Folder_Name,"/",FileName,"_",
+      file=paste0(Save.Path,"/",SampleName,"_",
                   Mode_Group$Mode,Mode_Group$SD,"SD_",
                   Target_gene_name,"_collapsed.gct"),
       quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
     )
     write.table(
       Pheno_sum.df,
-      file=paste0(Result_Folder_Name,"/",FileName,"_",
+      file=paste0(Save.Path,"/",SampleName,"_",
                   Mode_Group$Mode,Mode_Group$SD,"SD_",
                   Target_gene_name,".cls"),
       quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
@@ -143,14 +136,14 @@
   }else{
     write.table(
       GeneExp_GSEA.df,
-      file=paste0(Result_Folder_Name,"/",FileName,"_",
+      file=paste0(Save.Path,"/",SampleName,"_",
                   Mode_Group$Mode,"Q2",Mode_Group$Q2,"_",
                   Target_gene_name,"_collapsed.gct"),
       quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
     )
     write.table(
       Pheno_sum.df,
-      file=paste0(Result_Folder_Name,"/",FileName,"_",
+      file=paste0(Save.Path,"/",SampleName,"_",
                   Mode_Group$Mode,"Q2",Mode_Group$Q2,"_",
                   Target_gene_name,".cls"),
       quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
@@ -158,7 +151,9 @@
 
   }
 
-  ##### Visualization #####
+
+
+##### Visualization #####
   ## https://www.jianshu.com/p/9e5b7ffcf80f
 
   data <- reshape2::melt(GeneExp.df[Target_gene_name,]%>%
@@ -178,7 +173,7 @@
   TGeneDen_SD.p  %>% BeautifyggPlot(LegPos = c(0.9, 0.8),AxisTitleSize=1.7) +
     labs(title= Target_gene_name, x ="Expression level", y = "Density") -> TGeneDen_SD.p
 
-  ## Plot Quartiles
+## Plot Quartiles
   TGeneDen_Q.p <- ggPlot_vline(TGeneDen.p,data,
                                Line.clr = Mean_Q.clr,
                                Line1 = Target_gene_Q[2],
@@ -191,7 +186,7 @@
   TGeneDen_Q.p  %>% BeautifyggPlot(LegPos = c(0.9, 0.8),AxisTitleSize=1.7) +
     labs(title= Target_gene_name, x ="Expression level", y = "Density") -> TGeneDen_Q.p
 
-  ## Plot Quartiles & Mean and SD
+## Plot Quartiles & Mean and SD
   TGeneDen_SD_Q.p <- ggPlot_vline(TGeneDen_SD.p,data,
                                   Line.clr = Mean_Q.clr,
                                   Line1 = Target_gene_Q[2],
@@ -209,7 +204,7 @@
 
 
   pdf(
-    file = paste0(Result_Folder_Name,"/",FileName,"_",Target_gene_name,"_DensityPlot.pdf"),
+    file = paste0(Save.Path,"/",SampleName,"_",Target_gene_name,"_DensityPlot.pdf"),
     width = 10,  height = 8
   )
   print(TGeneDen_SD.p)
@@ -224,12 +219,12 @@
     labs(title= Target_gene_name,
          x ="Expression level", y = "Density") -> TGeneDen_SD_Q2.p
 
-  topptx(TGeneDen_SD_Q2.p,paste0(Result_Folder_Name,"/",FileName,"_",Target_gene_name,"_DensityPlot.pptx"))
+  topptx(TGeneDen_SD_Q2.p,paste0(Save.Path,"/",SampleName,"_",Target_gene_name,"_DensityPlot.pptx"))
 
   rm(TGeneDen_SD_Q2.p)
 
 
-  ##### Note #####
+##### Note #####
   ## Finding Peak Values For a Density Distribution
   # http://ianmadd.github.io/pages/PeakDensityDistribution.html
   which.max(density(data$value)$y)
