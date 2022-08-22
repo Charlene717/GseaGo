@@ -73,7 +73,10 @@ FUN_Group_GE = function(GeneExp.df,
 
   ## Plot Mean and SD
   TGeneDen.p
-  TGeneDen_SD.p <- ggPlot_vline(TGeneDen.p,data)
+  TGeneDen_SD.p <- ggPlot_vline(TGeneDen.p,data,
+                                Line1 = TarGene_Mean+TarGene_SD,
+                                Line2 = TarGene_Mean,
+                                Line3 = TarGene_Mean-TarGene_SD,)
   TGeneDen_SD.p  %>% BeautifyggPlot(LegPos = c(0.9, 0.8),AxisTitleSize=1.7) +
     labs(title= TarGeneName, x ="Expression level", y = "Density") -> TGeneDen_SD.p
 
@@ -135,6 +138,12 @@ FUN_Group_GE = function(GeneExp.df,
   max(density(data$value)$y)
 
   ## Plot multiple gene
+
+  ## Set Output
+  Output <- list()
+  Output[["GeneExp_high.set"]] <- GeneExp_high.set
+  Output[["GeneExp_low.set"]] <- GeneExp_low.set
+
 
   return(Output)
 
