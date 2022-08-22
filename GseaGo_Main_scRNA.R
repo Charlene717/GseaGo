@@ -319,7 +319,7 @@
      df1.1,df1,BBPlot,BBPlot_Fib,BBPlot_FibB,BBPlot_T,BBPlot_TB)
 
   #### Save RData ####
-  save.image(paste0(Save.Path,"/GseaGo.RData"))
+  save.image(paste0(Save.Path,"/GseaGo_",ProjectName,"_",Sampletype,".RData"))
 
 
 
