@@ -60,13 +60,29 @@
     dir.create(Save.Path)
   }
 
+##### Update the genename ####
+  ## Test
+  UpdateSymbolList("SEPT1")
+  A <- UpdateSymbolList(row.names(GeneExp.df))
+  B <- row.names(GeneExp.df)
+  # sum(c("a","c")==c("a","b"))
+  sum(A==B)
+  summary(A==B)
+
+  ## Update the genename
+  UpdateGene <- "Yes"  # UpdateGene <- c("Yes","No")
+  if(UpdateGene == "Yes"){
+    row.names(GeneExp.df) <- UpdateSymbolList(row.names(GeneExp.df))
+  }
+
+
 ##### Extract Target gene and Statistics ####
   # Extract data with TarGene_name
   TarGene_Mean <- GeneExp.df[TarGene_name,] %>%
                   as.numeric() %>%
                   mean()
 
-  #rowMeans(data.matrix(TarGene))
+  # rowMeans(data.matrix(TarGene))
   TarGene_SD <- GeneExp.df[TarGene_name,] %>%
                 as.numeric() %>%
                 sd()
