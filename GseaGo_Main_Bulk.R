@@ -192,8 +192,8 @@
 
 
 
-# #### Save RData ####
-#   save.image(paste0(Save.Path,"/GseaGo.RData"))
+#### Save RData ####
+  save.image(paste0(Save.Path,"/GseaGo_",SampleName,".RData"))
 
 
 
