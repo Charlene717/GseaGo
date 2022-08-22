@@ -40,14 +40,18 @@
 
 ##### Conditions setting* #####
   ## Group by gene expression
-  Target_gene_name <- "TP53"
-  Mode_Group <- list(Mode="Mean",SD=1) # Mode_Group <- list(Mode="Quartile",Q2="Only")
+  TarGene_name <- "TP53"
+  Mode_Group <- list(Mode="Mean",SD=1)
+  # Mode_Group <- list(Mode=c("Mean","Quartile","Tumor2Normal"),Q2="Only")
+
+  ## Group by phenotype
+
 
 ##### Current path and new folder setting* #####
   ProjectName = "TCGA"
   Sampletype = "LGG"
 
-  Version = paste0(Sys.Date(),"_",ProjectName,"_",Sampletype,"_",Target_gene_name)
+  Version = paste0(Sys.Date(),"_",ProjectName,"_",Sampletype,"_",TarGene_name)
   Save.Path = paste0(getwd(),"/",Version)
   ## Create new folder
   if (!dir.exists(Save.Path)){
@@ -55,42 +59,42 @@
   }
 
 ##### Extract Target gene and Statistics ####
-  # Extract data with Target_gene_name
-  Target_gene_Mean <- GeneExp.df[Target_gene_name,] %>%
-    as.numeric() %>%
-    mean()
+  # Extract data with TarGene_name
+  TarGene_Mean <- GeneExp.df[TarGene_name,] %>%
+                  as.numeric() %>%
+                  mean()
 
-  #rowMeans(data.matrix(Target_gene))
-  Target_gene_SD <- GeneExp.df[Target_gene_name,] %>%
-    as.numeric() %>%
-    sd()
+  #rowMeans(data.matrix(TarGene))
+  TarGene_SD <- GeneExp.df[TarGene_name,] %>%
+                as.numeric() %>%
+                sd()
 
   # Quartile
-  Target_gene_Q <- GeneExp.df[Target_gene_name,] %>%
-    as.numeric() %>%
-    quantile()
+  TarGene_Q <- GeneExp.df[TarGene_name,] %>%
+               as.numeric() %>%
+               quantile()
 
 
 ##### Group the expression matrix according to the expression level of Target gene ####
   if(Mode_Group$Mode=="Mean"){
     if(Mode_Group$SD==0){
-      GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[Target_gene_name,] >= Target_gene_Mean+Target_gene_SD*(Mode_Group$SD)]
-      GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[Target_gene_name,] < Target_gene_Mean-Target_gene_SD*(Mode_Group$SD)]
+      GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGene_name,] >= TarGene_Mean+TarGene_SD*(Mode_Group$SD)]
+      GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGene_name,] < TarGene_Mean-TarGene_SD*(Mode_Group$SD)]
     }else{
-      GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[Target_gene_name,] >= Target_gene_Mean+Target_gene_SD*(Mode_Group$SD)]
-      GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[Target_gene_name,] <= Target_gene_Mean-Target_gene_SD*(Mode_Group$SD)]
+      GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGene_name,] >= TarGene_Mean+TarGene_SD*(Mode_Group$SD)]
+      GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGene_name,] <= TarGene_Mean-TarGene_SD*(Mode_Group$SD)]
     }
-    #rm(Target_gene_Mean, Target_gene_SD)
+    #rm(TarGene_Mean, TarGene_SD)
 
   }else{
     if(Mode_Group$Q2=="Only"){ # Mode="Quartile"
-      GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[Target_gene_name,] >= Target_gene_Q[3]]
-      GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[Target_gene_name,] < Target_gene_Q[3]]
+      GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGene_name,] >= TarGene_Q[3]]
+      GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGene_name,] < TarGene_Q[3]]
     }else{
-      GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[Target_gene_name,] >= Target_gene_Q[4]]
-      GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[Target_gene_name,] <= Target_gene_Q[2]]
+      GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGene_name,] >= TarGene_Q[4]]
+      GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGene_name,] <= TarGene_Q[2]]
     }
-    #rm(Target_gene_Q)
+    #rm(TarGene_Q)
 
   }
 
@@ -116,7 +120,7 @@
 ##### Build Group Files #####
   ## Set the group array
   Pheno_sum.df <- c(ncol(GeneExp_GSEA.df)-2,2,1) %>% t() %>% data.frame() %>%
-    rbind.fill(c(paste0("#",Target_gene_name,"_high"),paste0(Target_gene_name,"_Low")) %>% t() %>% data.frame(stringsAsFactors=FALSE)) %>%
+    rbind.fill(c(paste0("#",TarGene_name,"_high"),paste0(TarGene_name,"_Low")) %>% t() %>% data.frame(stringsAsFactors=FALSE)) %>%
     rbind.fill(c(rep(0,length(GeneExp_high.set)),rep(1,length(GeneExp_low.set))) %>% t() %>% data.frame())
 
 
@@ -126,14 +130,14 @@
       GeneExp_GSEA.df,
       file=paste0(Save.Path,"/",SampleName,"_",
                   Mode_Group$Mode,Mode_Group$SD,"SD_",
-                  Target_gene_name,"_collapsed.gct"),
+                  TarGene_name,"_collapsed.gct"),
       quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
     )
     write.table(
       Pheno_sum.df,
       file=paste0(Save.Path,"/",SampleName,"_",
                   Mode_Group$Mode,Mode_Group$SD,"SD_",
-                  Target_gene_name,".cls"),
+                  TarGene_name,".cls"),
       quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
     )
   }else{
@@ -141,14 +145,14 @@
       GeneExp_GSEA.df,
       file=paste0(Save.Path,"/",SampleName,"_",
                   Mode_Group$Mode,"Q2",Mode_Group$Q2,"_",
-                  Target_gene_name,"_collapsed.gct"),
+                  TarGene_name,"_collapsed.gct"),
       quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
     )
     write.table(
       Pheno_sum.df,
       file=paste0(Save.Path,"/",SampleName,"_",
                   Mode_Group$Mode,"Q2",Mode_Group$Q2,"_",
-                  Target_gene_name,".cls"),
+                  TarGene_name,".cls"),
       quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
     )
 
@@ -159,7 +163,7 @@
 ##### Visualization #####
   ## https://www.jianshu.com/p/9e5b7ffcf80f
 
-  data <- reshape2::melt(GeneExp.df[Target_gene_name,]%>%
+  data <- reshape2::melt(GeneExp.df[TarGene_name,]%>%
                            as.numeric())
   TGeneDen.p <- ggplot(data,aes(value,fill=value, color=value)) +
     xlab("Expression level") +
@@ -174,40 +178,40 @@
   TGeneDen.p
   TGeneDen_SD.p <- ggPlot_vline(TGeneDen.p,data)
   TGeneDen_SD.p  %>% BeautifyggPlot(LegPos = c(0.9, 0.8),AxisTitleSize=1.7) +
-    labs(title= Target_gene_name, x ="Expression level", y = "Density") -> TGeneDen_SD.p
+    labs(title= TarGene_name, x ="Expression level", y = "Density") -> TGeneDen_SD.p
 
 ## Plot Quartiles
   TGeneDen_Q.p <- ggPlot_vline(TGeneDen.p,data,
                                Line.clr = Mean_Q.clr,
-                               Line1 = Target_gene_Q[2],
-                               Line2 = Target_gene_Q[3],
-                               Line3 = Target_gene_Q[4],
+                               Line1 = TarGene_Q[2],
+                               Line2 = TarGene_Q[3],
+                               Line3 = TarGene_Q[4],
                                Text.set = c("Q1","Q2","Q3"),
                                rectP = list(xWidth=0.015, yminP=0.45, ymaxP=0.55,alpha=0.8)
   )
 
   TGeneDen_Q.p  %>% BeautifyggPlot(LegPos = c(0.9, 0.8),AxisTitleSize=1.7) +
-    labs(title= Target_gene_name, x ="Expression level", y = "Density") -> TGeneDen_Q.p
+    labs(title= TarGene_name, x ="Expression level", y = "Density") -> TGeneDen_Q.p
 
 ## Plot Quartiles & Mean and SD
   TGeneDen_SD_Q.p <- ggPlot_vline(TGeneDen_SD.p,data,
                                   Line.clr = Mean_Q.clr,
-                                  Line1 = Target_gene_Q[2],
-                                  Line2 = Target_gene_Q[3],
-                                  Line3 = Target_gene_Q[4],
+                                  Line1 = TarGene_Q[2],
+                                  Line2 = TarGene_Q[3],
+                                  Line3 = TarGene_Q[4],
                                   Text.set = c("Q1","Q2","Q3"),
                                   Text.yPos = 0.35,
                                   rectP = list(xWidth=0.015, yminP=0.3, ymaxP=0.4,alpha=0.8)
   )
 
   TGeneDen_SD_Q.p  %>% BeautifyggPlot(LegPos = c(0.9, 0.8),AxisTitleSize=1.7) +
-    labs(title= Target_gene_name, x ="Expression level", y = "Density") -> TGeneDen_SD_Q.p
+    labs(title= TarGene_name, x ="Expression level", y = "Density") -> TGeneDen_SD_Q.p
 
 
 
 
   pdf(
-    file = paste0(Save.Path,"/",SampleName,"_",Target_gene_name,"_DensityPlot.pdf"),
+    file = paste0(Save.Path,"/",SampleName,"_",TarGene_name,"_DensityPlot.pdf"),
     width = 10,  height = 8
   )
   print(TGeneDen_SD.p)
@@ -219,10 +223,10 @@
   # Export PPT
   TGeneDen_SD_Q.p  %>% BeautifyggPlot(LegPos = c(0.9, 0.8),AxisTitleSize=1.7,
                                       OL_Thick = 1.5) +
-    labs(title= Target_gene_name,
+    labs(title= TarGene_name,
          x ="Expression level", y = "Density") -> TGeneDen_SD_Q2.p
 
-  topptx(TGeneDen_SD_Q2.p,paste0(Save.Path,"/",SampleName,"_",Target_gene_name,"_DensityPlot.pptx"))
+  topptx(TGeneDen_SD_Q2.p,paste0(Save.Path,"/",SampleName,"_",TarGene_name,"_DensityPlot.pptx"))
 
   rm(TGeneDen_SD_Q2.p)
 
