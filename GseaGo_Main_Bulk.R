@@ -61,13 +61,13 @@
   }
 
 ##### Update the genename ####
-  ## Test
-  UpdateSymbolList("SEPT1")
-  A <- UpdateSymbolList(row.names(GeneExp.df))
-  B <- row.names(GeneExp.df)
-  # sum(c("a","c")==c("a","b"))
-  sum(A==B)
-  summary(A==B)
+  # ## Test
+  # UpdateSymbolList("SEPT1")
+  # A <- UpdateSymbolList(row.names(GeneExp.df))
+  # B <- row.names(GeneExp.df)
+  # # sum(c("a","c")==c("a","b"))
+  # sum(A==B)
+  # summary(A==B)
 
   ## Update the genename
   UpdateGene <- "No"  # UpdateGene <- c("Yes","No")
