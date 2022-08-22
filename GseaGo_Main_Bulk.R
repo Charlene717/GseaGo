@@ -7,12 +7,14 @@
   if(!require("Seurat")) install.packages("Seurat")
   if(!require("SeuratData")) install.packages("SeuratData")
   if(!require("patchwork")) install.packages("patchwork")
+  if(!require("plyr")) install.packages("plyr")
   if(!require("eoffice")) install.packages("eoffice")
 
   library(tidyverse)
   library(Seurat)
   library(SeuratData)
   library(patchwork)
+  library(plyr)
   library(eoffice)
 
 ##### Function setting #####
@@ -98,67 +100,6 @@
 
   }
 
-##### Build Expression matrix for GSEA #####
-  GeneExp_GSEA.df <- cbind(
-    NAME=row.names(GeneExp.df),
-    Description = rep("na", nrow(GeneExp.df)),
-    GeneExp.df[,c(GeneExp_high.set, GeneExp_low.set)]
-  )
-
-  GSEA_SampleCol.df <- data.frame(t(colnames(GeneExp_GSEA.df)), stringsAsFactors=FALSE)
-  colnames(GSEA_SampleCol.df) <- GSEA_SampleCol.df
-
-  GeneExp_GSEA.df <- rbind(GSEA_SampleCol.df,GeneExp_GSEA.df)
-
-  GeneExp_GSEA.df <- data.frame(
-    "NAME" = c("#1.2",nrow(GeneExp.df)),
-    "Description" = c('',length(c(GeneExp_high.set, GeneExp_low.set)))
-  ) %>%
-    rbind.fill(GeneExp_GSEA.df)
-  rm(GSEA_SampleCol.df)
-
-##### Build Group Files #####
-  ## Set the group array
-  Pheno_sum.df <- c(ncol(GeneExp_GSEA.df)-2,2,1) %>% t() %>% data.frame() %>%
-    rbind.fill(c(paste0("#",TarGene_name,"_high"),paste0(TarGene_name,"_Low")) %>% t() %>% data.frame(stringsAsFactors=FALSE)) %>%
-    rbind.fill(c(rep(0,length(GeneExp_high.set)),rep(1,length(GeneExp_low.set))) %>% t() %>% data.frame())
-
-
-##### Export Result #####
-  if(Mode_Group$Mode=="Mean"){
-    write.table(
-      GeneExp_GSEA.df,
-      file=paste0(Save.Path,"/",SampleName,"_",
-                  Mode_Group$Mode,Mode_Group$SD,"SD_",
-                  TarGene_name,"_collapsed.gct"),
-      quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
-    )
-    write.table(
-      Pheno_sum.df,
-      file=paste0(Save.Path,"/",SampleName,"_",
-                  Mode_Group$Mode,Mode_Group$SD,"SD_",
-                  TarGene_name,".cls"),
-      quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
-    )
-  }else{
-    write.table(
-      GeneExp_GSEA.df,
-      file=paste0(Save.Path,"/",SampleName,"_",
-                  Mode_Group$Mode,"Q2",Mode_Group$Q2,"_",
-                  TarGene_name,"_collapsed.gct"),
-      quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
-    )
-    write.table(
-      Pheno_sum.df,
-      file=paste0(Save.Path,"/",SampleName,"_",
-                  Mode_Group$Mode,"Q2",Mode_Group$Q2,"_",
-                  TarGene_name,".cls"),
-      quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
-    )
-
-  }
-
-
 
 ##### Visualization #####
   ## https://www.jianshu.com/p/9e5b7ffcf80f
@@ -239,8 +180,20 @@
 
   ## Plot multiple gene
 
-  #### Save RData ####
-  save.image(paste0(Save.Path,"/GseaGo.RData"))
+
+
+
+##### Build files for GSEA official input #####
+  source("FUN_GSEA_ForOFFL.R")
+
+  FUN_GSEA_ForOFFL(GeneExp.df, Group1 = GeneExp_high.set, Group2 = GeneExp_low.set,
+                   TarGeneName = TarGene_name, GroupMode = Mode_Group,
+                   Save.Path = Save.Path, SampleName = SampleName)
+
+
+
+# #### Save RData ####
+#   save.image(paste0(Save.Path,"/GseaGo.RData"))
 
 
 
