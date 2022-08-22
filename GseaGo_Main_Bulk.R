@@ -25,16 +25,16 @@
 
 ##### Import setting and Import* #####
   ## File setting*
-  Input_FolderName_GE <- "Input_TCGA"
+  InFOLName_GE <- "Input_TCGA"  # Input Folder Name
   SampleName <- "Xena_TCGA_LGG_GE"
 
   ## Import genetic data file
-  GeneExp.df <- read.table(paste0(Input_FolderName_GE,"/",SampleName), header=T, row.names = 1, sep="\t")
+  GeneExp.df <- read.table(paste0(InFOLName_GE,"/",SampleName), header=T, row.names = 1, sep="\t")
 
   ## Import GSEA gene sets
   InputGSEA <- "GSEA_Geneset_Pathway_3Database_WithoutFilter.txt"
-  Input_FolderName_GSEA <- "Input_Genesets"
-  Pathway.all <- read.delim2(paste0(getwd(),"/",Input_FolderName_GSEA,"/",InputGSEA),
+  InFOLName_GSEA <- "Input_Genesets"
+  Pathway.all <- read.delim2(paste0(getwd(),"/",InFOLName_GSEA,"/",InputGSEA),
                              col.names = 1:max(count.fields(paste0(getwd(),"/",InputGSEA))),
                              header = F,sep = "\t")
 
