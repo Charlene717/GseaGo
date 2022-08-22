@@ -70,7 +70,7 @@
   summary(A==B)
 
   ## Update the genename
-  UpdateGene <- "Yes"  # UpdateGene <- c("Yes","No")
+  UpdateGene <- "No"  # UpdateGene <- c("Yes","No")
   if(UpdateGene == "Yes"){
     row.names(GeneExp.df) <- UpdateSymbolList(row.names(GeneExp.df))
   }
