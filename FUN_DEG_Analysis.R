@@ -5,7 +5,7 @@
 FUN_DEG_Analysis = function(GeneExp.df, Anno.df,
                             GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
                             TarGeneName = TarGene_name, GroupMode = Mode_Group, SampleID = "X_INTEGRATION",
-                            Save.Path = Save.Path, SampleName = SampleName
+                            Save.Path = Save.Path, SampleName = SampleName, AnnoName = "AvB"
 ){
   ##### Parameter setting* #####
   # Set the desired organism
@@ -47,7 +47,8 @@ FUN_DEG_Analysis = function(GeneExp.df, Anno.df,
                            data.frame(Gene=row.names(.),.)
 
   #### Export file ####
-
+  write.table(DE_Extract.df, file = paste0(Save.Path,"/",SampleName,"_DEGAnalysis_",AnnoName,".tsv"),
+              sep="\t", row.names= F, quote = FALSE)
 
   #### Output ####
   Output <- DE_Extract.df
