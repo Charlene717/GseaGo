@@ -33,28 +33,28 @@ FUN_Group_GE = function(GeneExp.df,
     quantile()
 
 
-  ##### Group the expression matrix according to the expression level of Target gene ####
-  if(GroupMode$Mode=="Mean"){
-    if(GroupMode$SD==0){
-      GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Mean+TarGene_SD*(GroupMode$SD)]
-      GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] < TarGene_Mean-TarGene_SD*(GroupMode$SD)]
-    }else{
-      GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Mean+TarGene_SD*(GroupMode$SD)]
-      GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] <= TarGene_Mean-TarGene_SD*(GroupMode$SD)]
-    }
-    #rm(TarGene_Mean, TarGene_SD)
-
-  }else{
-    if(GroupMode$Q2=="Only"){ # Mode="Quartile"
-      GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Q[3]]
-      GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] < TarGene_Q[3]]
-    }else{
-      GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Q[4]]
-      GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] <= TarGene_Q[2]]
-    }
-    #rm(TarGene_Q)
-
-  }
+  # ##### Group the expression matrix according to the expression level of Target gene ####
+  # if(GroupMode$Mode=="Mean"){
+  #   if(GroupMode$SD==0){
+  #     GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Mean+TarGene_SD*(GroupMode$SD)]
+  #     GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] < TarGene_Mean-TarGene_SD*(GroupMode$SD)]
+  #   }else{
+  #     GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Mean+TarGene_SD*(GroupMode$SD)]
+  #     GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] <= TarGene_Mean-TarGene_SD*(GroupMode$SD)]
+  #   }
+  #   #rm(TarGene_Mean, TarGene_SD)
+  #
+  # }else{
+  #   if(GroupMode$Q2=="Only"){ # Mode="Quartile"
+  #     GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Q[3]]
+  #     GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] < TarGene_Q[3]]
+  #   }else{
+  #     GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Q[4]]
+  #     GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] <= TarGene_Q[2]]
+  #   }
+  #   #rm(TarGene_Q)
+  #
+  # }
 
 
   ##### Visualization #####
@@ -141,9 +141,9 @@ FUN_Group_GE = function(GeneExp.df,
 
   ## Set Output
   Output <- list()
-  Output[["GeneExp_high.set"]] <- GeneExp_high.set
-  Output[["GeneExp_low.set"]] <- GeneExp_low.set
-
+  Output[["TGeneDen_SD.p"]] <- TGeneDen_SD.p
+  Output[["TGeneDen_Q.p"]] <- TGeneDen_Q.p
+  Output[["TGeneDen_SD_Q.p"]] <- TGeneDen_SD_Q.p
 
   return(Output)
 
