@@ -1,6 +1,6 @@
 ## Build files for GSEA official input
 
-FUN_Group_GE = function(GeneExp.df,
+FUN_DistrPlot = function(GeneExp.df,
                         TarGeneName = TarGene_name, GroupMode = Mode_Group,
                         Save.Path = Save.Path, SampleName = SampleName
 ){
