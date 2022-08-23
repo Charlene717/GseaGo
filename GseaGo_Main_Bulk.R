@@ -78,13 +78,14 @@
   if(UpdateGene == "Yes"){
     row.names(GeneExp.df) <- UpdateSymbolList(row.names(GeneExp.df))
   }
+
 #************************************************************************************************************************#
 ##### Visualization #####
   source("FUN_DistrPlot.R")
   ##### Group by gene expression 1: CutOff by total  #####
   Plot.DistrPlot <- FUN_DistrPlot(GeneExp.df,
-                                    TarGeneName = TarGene_name, GroupMode = Mode_Group,
-                                    Save.Path = Save.Path, SampleName = SampleName)
+                                  TarGeneName = TarGene_name, GroupMode = Mode_Group,
+                                  Save.Path = Save.Path, SampleName = SampleName)
   Plot.DistrPlot_SD_Q <- Plot.DistrPlot[["TGeneDen_SD_Q.p"]]
   Plot.DistrPlot_SD_Q
 
@@ -100,15 +101,20 @@
   GeneExp_low.set <- GeneExp_group.set[["GeneExp_low.set"]]
 
   ##### Group by gene expression 2: CutOff by Comparison #####
-
+  ## FUN Comparison (Visualization and value)
 
   ##### Group by phenotype #####
 
 
 #************************************************************************************************************************#
 ##### Run Enrichment analysis in R #####
+  #### Run GSEA ####
+  ## FUN GSEA
 
+  #### Run ORA ####
+  ## FUN DEG
 
+  ## FUN ORA
 
 #************************************************************************************************************************#
 ##### Build files for GSEA official input #####
