@@ -86,7 +86,7 @@
                                     TarGeneName = TarGene_name, GroupMode = Mode_Group,
                                     Save.Path = Save.Path, SampleName = SampleName)
   Plot.DistrPlot_SD_Q <- Plot.DistrPlot[["TGeneDen_SD_Q.p"]]
-
+  Plot.DistrPlot_SD_Q
 
 
 #************************************************************************************************************************#
