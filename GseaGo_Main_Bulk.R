@@ -73,11 +73,19 @@
   ## Error: Timeout was reached: [rest.genenames.org] Operation timed out after 10005 milliseconds with 0 bytes received
 
 
-  ## Update the genename
+  ## Update the genename ##* Take very long time
   UpdateGene <- "No"  # UpdateGene <- c("Yes","No")
   if(UpdateGene == "Yes"){
     row.names(GeneExp.df) <- UpdateSymbolList(row.names(GeneExp.df))
   }
+#************************************************************************************************************************#
+##### Visualization #####
+  source("FUN_DistrPlot.R")
+  ##### Group by gene expression 1: CutOff by total  #####
+  Plot.DistrPlot <- FUN_DistrPlot(GeneExp.df,
+                                    TarGeneName = TarGene_name, GroupMode = Mode_Group,
+                                    Save.Path = Save.Path, SampleName = SampleName)
+  Plot.DistrPlot_SD_Q <- Plot.DistrPlot[["TGeneDen_SD_Q.p"]]
 
 
 
