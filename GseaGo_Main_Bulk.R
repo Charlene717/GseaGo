@@ -30,9 +30,11 @@
   ## File setting*
   InFOLName_GE <- "Input_TCGA"  # Input Folder Name
   SampleName <- "Xena_TCGA_LGG_GE"
+  SamplePhenoName <- "TCGA.LGG.sampleMap_LGG_clinicalMatrix"
 
   ## Import genetic data file
   GeneExp.df <- read.table(paste0(InFOLName_GE,"/",SampleName), header=T, row.names = 1, sep="\t")
+  Anno.df <- read.table(paste0(InFOLName_GE,"/",SamplePhenoName), header=T, row.names = 1, sep="\t")
 
   ## Import GSEA gene sets
   InputGSEA <- "GSEA_Geneset_Pathway_3Database_WithoutFilter.txt"
@@ -80,6 +82,15 @@
   }
 
 #************************************************************************************************************************#
+##### Data preprocessing #####
+  Anno_Ori.df <- Anno.df
+  colnames(Anno.df)
+  Anno.df <- Anno.df[,c("X_INTEGRATION","X_PATIENT","histological_type","sample_type","gender")]
+  head(Anno.df)
+
+  AnnoSet.lt <- list(GroupType = "sample_type", GroupCompare = c("Primary Tumor","Recurrent Tumor") )
+
+#************************************************************************************************************************#
 ##### Visualization #####
   source("FUN_DistrPlot.R")
   ##### Group by gene expression 1: CutOff by total  #####
@@ -108,8 +119,19 @@
 
 #************************************************************************************************************************#
 ##### Run Enrichment analysis in R #####
+  #### Run DEG ####
+  source("FUN_DEG_Analysis.R")
+  DEG_ANAL.df <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
+                                  GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
+                                  TarGeneName = TarGene_name, GroupMode = Mode_Group, SampleID = "X_INTEGRATION",
+                                  Save.Path = Save.Path, SampleName = SampleName, AnnoName = "AvB")
+
+
+
+
   #### Run GSEA ####
-  ## FUN GSEA
+  source("FUN_GSEA_Analysis.R")
+
 
   #### Run ORA ####
   ## FUN DEG
