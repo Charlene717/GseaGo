@@ -132,9 +132,9 @@
 
 
   #### Run GSEA ####
-  source("FUN_GSEA_Analysis.R")
+  source("FUN_GSEA_ANAL.R")
 
-  GSEA_Result.lt <- FUN_GSEA_Analysis(DE_Extract.df, pathwayGeneSet = Pathway.all,
+  GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, pathwayGeneSet = Pathway.all,
                                       TarGeneName = TarGene_name, GroupMode = Mode_Group,
                                       Species = "Homo sapiens", # Speices type can check by msigdbr_species()
                                       Save.Path = Save.Path, SampleName = SampleName, AnnoName = "C2")
