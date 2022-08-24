@@ -8,6 +8,7 @@ FUN_DEG_Analysis = function(GeneExp.df, Anno.df,
                             TarGeneName = TarGene_name, GroupMode = Mode_Group, SampleID = "X_INTEGRATION",
                             Save.Path = Save.Path, SampleName = SampleName, AnnoName = "AvB"
 ){
+
   ##### Parameter setting* #####
   # Set the desired organism
   organism = "org.Dm.eg.db"
@@ -63,10 +64,11 @@ FUN_DEG_Analysis = function(GeneExp.df, Anno.df,
   DE_Extract_FltH.set <- rownames(DE_Extract_FltH.df)
   DE_Extract_FltL.set <- rownames(DE_Extract_FltL.df)
 
+
   #### Export file ####
-  write.table(DE_Extract.df, file = paste0(Save.Path,"/",SampleName,"_DEGAnalysis_",AnnoName,".tsv"),
+  write.table(DE_Extract.df, file = paste0(Save.Path,"/DEGAnalysis_",SampleName,"_",AnnoName,".tsv"),
               sep="\t", row.names= F, quote = FALSE)
-  write.table(DE_Extract_Flt.df, file = paste0(Save.Path,"/",SampleName,"_DEGAnalysis_Flt_",AnnoName,".tsv"),
+  write.table(DE_Extract_Flt.df, file = paste0(Save.Path,"/DEGAnalysis_Flt_",SampleName,"_",AnnoName,".tsv"),
               sep="\t", row.names= F, quote = FALSE)
 
 
