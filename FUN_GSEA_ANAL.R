@@ -231,7 +231,8 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
       p6 <- upsetplot(GSEA_Result)
 
       ## 2.7 ridgeline plot for expressiong distribution
-      p7 <- ridgeplot(GSEA_Result)
+      p7 <- ridgeplot(GSEA_Result) +
+            theme(axis.text.y = element_text(size = 10))
 
       ## 2.8 gseaplot
       y2 <- arrange(GSEA_Result, desc(NES))
@@ -268,8 +269,8 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
 
     ##### Export Result #####
       pdf(
-        file = paste0(Save.Path,"/",AnnoName,"_",SampleName,"_",TarGeneName,"_GSEAResult.pdf"),
-        width = 10,  height = 8
+        file = paste0(Save.Path,"/GSEAResult_",AnnoName,"_",SampleName,"_",TarGeneName,".pdf"),
+        width = 10,  height = 10
       )
 
         print(p1)
