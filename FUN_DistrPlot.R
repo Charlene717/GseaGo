@@ -111,7 +111,7 @@ FUN_DistrPlot = function(GeneExp.df,
 
 
   pdf(
-    file = paste0(Save.Path,"/",SampleName,"_",TarGeneName,"_DensityPlot.pdf"),
+    file = paste0(Save.Path,"/DensityPlot_",SampleName,"_",TarGeneName,".pdf"),
     width = 10,  height = 8
   )
   print(TGeneDen_SD.p)
@@ -126,7 +126,7 @@ FUN_DistrPlot = function(GeneExp.df,
     labs(title= TarGeneName,
          x ="Expression level", y = "Density") -> TGeneDen_SD_Q2.p
 
-  topptx(TGeneDen_SD_Q2.p,paste0(Save.Path,"/",SampleName,"_",TarGeneName,"_DensityPlot.pptx"))
+  topptx(TGeneDen_SD_Q2.p,paste0(Save.Path,"/DensityPlot_",SampleName,"_",TarGeneName,".pptx"))
 
   rm(TGeneDen_SD_Q2.p)
 
