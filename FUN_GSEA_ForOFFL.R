@@ -35,14 +35,14 @@ FUN_GSEA_ForOFFL = function(GeneExp.df, Group1 = GeneExp_high.set, Group2 = Gene
   if(GroupMode$Mode == "Mean"){
     write.table(
       GeneExp_GSEA.df,
-      file=paste0(Save.Path,"/",SampleName,"_",
+      file=paste0(Save.Path,"/OFFL_",SampleName,"_",
                   GroupMode$Mode,GroupMode$SD,"SD_",
                   TarGeneName,"_collapsed.gct"),
       quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
     )
     write.table(
       Pheno_sum.df,
-      file=paste0(Save.Path,"/",SampleName,"_",
+      file=paste0(Save.Path,"/OFFL_",SampleName,"_",
                   GroupMode$Mode,GroupMode$SD,"SD_",
                   TarGeneName,".cls"),
       quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
@@ -50,14 +50,14 @@ FUN_GSEA_ForOFFL = function(GeneExp.df, Group1 = GeneExp_high.set, Group2 = Gene
   }else{
     write.table(
       GeneExp_GSEA.df,
-      file=paste0(Save.Path,"/",SampleName,"_",
+      file=paste0(Save.Path,"/OFFL_",SampleName,"_",
                   GroupMode$Mode,"Q2",GroupMode$Q2,"_",
                   TarGeneName,"_collapsed.gct"),
       quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
     )
     write.table(
       Pheno_sum.df,
-      file=paste0(Save.Path,"/",SampleName,"_",
+      file=paste0(Save.Path,"/OFFL_",SampleName,"_",
                   GroupMode$Mode,"Q2",GroupMode$Q2,"_",
                   TarGeneName,".cls"),
       quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
