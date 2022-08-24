@@ -1,3 +1,6 @@
+## Run GSEA analysis in R
+
+
 ## RNA-seq analysis in R
 ## Ref: https://bioinformatics-core-shared-training.github.io/cruk-summer-school-2018/RNASeq2018/html/06_Gene_set_testing.nb.html
 
@@ -10,341 +13,369 @@
 ## GSEA Chard Liu
 ## Ref: http://rstudio-pubs-static.s3.amazonaws.com/514990_9690f31b5ef7488bb4f0bb6c10ac4da8.html
 
-##### Presetting ######
-  rm(list = ls()) # Clean variable
-  memory.limit(150000)
+FUN_GSEA_Analysis = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
+                             TarGeneName = TarGene_name, GroupMode = Mode_Group,
+                             ThrSet = Thr.lt,Species = "Homo sapiens",
+                             Save.Path = Save.Path, SampleName = SampleName
+){
 
-##### Parameter setting* #####
-  # Set the desired organism
-  organism = "org.Dm.eg.db"
+  ##### Parameter setting* #####
+    ## Set the desired organism
+    organism = "org.Hs.eg.db" ## c("org.Hs.eg.db","org.Mm.eg.db")   ##  c("org.Dm.eg.db")
 
-##### Load Packages  #####
-  #### Basic installation ####
-  ## Check whether the installation of those packages is required from basic
-  Package.set <- c("tidyverse","ggplot2")
-  for (i in 1:length(Package.set)) {
-    if (!requireNamespace(Package.set[i], quietly = TRUE)){
-      install.packages(Package.set[i])
+  ##### Load Packages  #####
+    #### Basic installation ####
+    ## Check whether the installation of those packages is required from basic
+    Package.set <- c("tidyverse","ggplot2")
+    for (i in 1:length(Package.set)) {
+      if (!requireNamespace(Package.set[i], quietly = TRUE)){
+        install.packages(Package.set[i])
+      }
     }
-  }
-  ## Load Packages
-  lapply(Package.set, library, character.only = TRUE)
-  rm(Package.set,i)
+    ## Load Packages
+    lapply(Package.set, library, character.only = TRUE)
+    rm(Package.set,i)
 
 
-  #### BiocManager installation ####
-  ## Check whether the installation of those packages is required from BiocManager
-  if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-  Package.set <- c(organism,"fgsea","clusterProfiler","enrichplot","pathview")
-  for (i in 1:length(Package.set)) {
-    if (!requireNamespace(Package.set[i], quietly = TRUE)){
-      BiocManager::install(Package.set[i])
+    #### BiocManager installation ####
+    ## Check whether the installation of those packages is required from BiocManager
+    if (!require("BiocManager", quietly = TRUE))
+      install.packages("BiocManager")
+    Package.set <- c(organism,"fgsea","clusterProfiler","enrichplot","pathview")
+    for (i in 1:length(Package.set)) {
+      if (!requireNamespace(Package.set[i], quietly = TRUE)){
+        BiocManager::install(Package.set[i])
+      }
     }
-  }
-  ## Load Packages
-  lapply(Package.set, library, character.only = TRUE)
-  rm(Package.set,i)
-
-  options(stringsAsFactors = FALSE)
-
-
-##### Load Files #####
-  ## Load data
-  setwd("../")
-  load("Demo_data/Robjects/Annotated_Results_LvV.RData")
-  ## Load pathways
-  load("Demo_data/Robjects/mouse_H_v5.RData")
-  pathwaysH <- Mm.H
-
-  setwd("GSEA_Analysis")
-
-##### GSEA analysis (fgsea) #####
-
-
-  #### Create ranks ####
-    gseaDat <- filter(shrinkLvV, !is.na(Entrez))
-    ranks <- gseaDat$logFC
-    names(ranks) <- gseaDat$Entrez
-    head(ranks)
-
-    # Plot the ranked fold changes.
-    barplot(sort(ranks, decreasing = T))
-
-
-  #### Conduct analysis ####
-    fgseaRes <- fgsea(pathwaysH, ranks, minSize=15, maxSize = 500, nperm=1000)
-    ## fgsea: What does fgseaMultilevel argument sampleSize mean/when to change it?
-    ## https://www.biostars.org/p/479821/
-
-    fgseaRes <- fgseaMultilevel(pathwaysH, ranks, minSize=15, maxSize = 500)
-    ## Error when running parallelized process: Warning in serialize... package:stats may not be available when loading
-    ## https://community.rstudio.com/t/error-when-running-parallelized-process-warning-in-serialize-package-stats-may-not-be-available-when-loading/110573
-    ## https://stackoverflow.com/questions/27623901/r-warning-packagestats-may-not-be-available-when-loading
-
-    head(fgseaRes[order(padj, -abs(NES)), ], n=10)
-
-  #### Enrichment score plot ####
-    plotEnrichment(pathwaysH[["HALLMARK_ESTROGEN_RESPONSE_EARLY"]], ranks)
-    dev.off()
-
-  #### GSEA table plot ####
-    topUp <- fgseaRes %>%
-      filter(ES > 0) %>%
-      top_n(10, wt=-padj)
-    topDown <- fgseaRes %>%
-      filter(ES < 0) %>%
-      top_n(10, wt=-padj)
-    topPathways <- bind_rows(topUp, topDown) %>%
-      arrange(-ES)
-    plotGseaTable(pathwaysH[topPathways$pathway],
-                  ranks,
-                  fgseaRes,
-                  gseaParam = 0.5)
-    dev.off()
-
-##### GSEA analysis #####
-    #### Conduct analysis2 ####
-    library(DOSE)
-    # data(geneList)
-    # x <- gseDO(geneList)
-    # gseaplot(x, geneSetID=1)
-
-    # geneList <- sort(ranks, decreasing = T)
-    # #geneList2 <- names(ranks) %>% as.numeric()
-    # x <- gseDO(geneList)
-    # gseaplot(x, geneSetID=1)
-
-    geneList <- sort(ranks, decreasing = T)
-    ## MSigDB_C2
-    library(msigdbr)
-    msigdbr_species()
-    m_c2 <- msigdbr(species = "Mus musculus", category = "C2") %>%
-      dplyr::select(gs_name, entrez_gene)
-    msC2_2 <- GSEA(geneList, TERM2GENE = m_c2)
-
-    #### Visualization ####
-
-    ## 2.1 Barplot
-    library(clusterProfiler.dplyr) # devtools::install_github("YuLab-SMU/clusterProfiler.dplyr")
-    y <- mutate(msC2_2, ordering = abs(NES)) %>%
-      arrange(desc(ordering))
-
-    library(ggstance)
-    library(enrichplot)
-    library(forcats)
-    library(ggplot2)
-
-    n <- 10
-    y_bar <- group_by(y, sign(NES)) %>%
-      slice(1:n)
-
-    ggplot(y_bar, aes(NES, fct_reorder(Description, NES), fill = qvalues), showCategory=(n*2)) +
-      geom_barh(stat='identity') +
-      scale_fill_continuous(low='red', high='blue', guide=guide_colorbar(reverse=TRUE)) +
-      theme_minimal() + ylab(NULL)
-
-    ## 2.2 Dotplot
-    dotplot(msC2_2, showCategory = 10, font.size = 8,
-            x = "GeneRatio",   # option -> c("GeneRatio", "Count")
-            color = "p.adjust")   # option -> c("pvalue", "p.adjust", "qvalue")
-
-    ## 2.3 Gene-Concept Network
-    n <- 3
-    p1 <- cnetplot(msC2_2, showCategory = (n*2), colorEdge = TRUE, node_label = "category")
-    cowplot::plot_grid(p1, ncol=1, labels=LETTERS[1], rel_widths=c(1))
-
-    ## 2.4 Heatmap-like functional classification
-
-    ## 2.5 Enrichment Map
-    p2 <- emapplot(pairwise_termsim(y), showCategory = 10)
-    cowplot::plot_grid(p2, ncol = 1, lables = LETTERS[1])
-
-
-    ## 2.6 UpSet Plot
-    library(ggupset)
-    upsetplot(msC2_2)
-
-    ## 2.7 ridgeline plot for expressiong distribution
-    ridgeplot(msC2_2)
-
-    ## 2.8 gseaplot
-    y2 <- arrange(msC2_2, desc(NES))
-
-    p1 <- gseaplot(y2, geneSetID = 1, title = y2$Description[1])   # max NES
-    n <- nrow(y2)
-    p2 <- gseaplot(y2, geneSetID = n, title = y2$Description[n])   # min NES
-    cowplot::plot_grid(p1, p2, ncol = 1, labels = LETTERS[1:2])
-
-      ## 2.8.1 gseaplot2
-      p3 <- gseaplot2(y2, geneSetID = 1, title = y2$Description[1])
-      p4 <- gseaplot2(y2, geneSetID = n, title = y2$Description[n])   # min NES
-      cowplot::plot_grid(p3, p4, ncol = 1, labels = LETTERS[1:2])
-
-      ## Use keyword (Overlay graphics)
-      keyword <- "breast"
-      ind <- grep(keyword, msC2_2$Description, ignore.case = TRUE)
-      gseaplot2(msC2_2, geneSetID = ind, title = msC2_2$Description[ind])
-
-      ## Overlay graphics by ID
-      gseaplot2(y2, geneSetID = 1:10)
-
-      ## 2.8.2 gsearank
-      gsearank(y2, geneSetID = 1, title = y2$Description[1])
-
-
-    ## 2.9 PubMed trend of enriched terms
-    terms <- msC2_2$Description[1:3]
-    pmcplot(terms, 2010:2017, proportion=FALSE)
-
-
-
-
-##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-  library(clusterProfiler)
-  library(enrichplot)
-  # we use ggplot2 to add x axis labels (ex: ridgeplot)
-  library(ggplot2)
-
-
-  ##### Prepare Input #####
-    # reading in data from deseq2
-    df = read.csv("drosphila_example_de.txt", header=TRUE)
-
-    # we want the log2 fold change
-    original_gene_list <- df$log2FoldChange
-
-    # name the vector
-    names(original_gene_list) <- df$X
-
-    # omit any NA values
-    gene_list<-na.omit(original_gene_list)
-
-    # sort the list in decreasing order (required for clusterProfiler)
-    gene_list = sort(gene_list, decreasing = TRUE)
-
-  ##### Gene Set Enrichment #####
-    gse <- gseGO(geneList=gene_list,
-                 ont ="ALL",
-                 keyType = "ENSEMBL",
-                 nPerm = 10000,
-                 minGSSize = 3,
-                 maxGSSize = 800,
-                 pvalueCutoff = 0.05,
-                 verbose = TRUE,
-                 OrgDb = organism,
-                 #OrgDb = org.Dm.eg.db, # https://github.com/YuLab-SMU/clusterProfiler/issues/279
-                 pAdjustMethod = "none")
-      # Error # Error in (function (classes, fdef, mtable)  :
-      #             unable to find an inherited method for function ‘species’ for signature ‘"character"’
-      #           In addition: There were 14 warnings (use warnings() to see them)
-      ## https://stackoverflow.com/questions/62147679/unable-to-find-an-inherited-method-for-function-species-for-signature-charac
-      # https://github.com/YuLab-SMU/clusterProfiler/issues/279
-
-  ##### Dotplot #####
-    require(DOSE)
-    dotplot(gse, showCategory=10, split=".sign") + facet_grid(.~.sign)
-
-
-  ##### Encrichment Map #####
-    emapplot(gse, showCategory = 10)
-    # Error # Term similarity matrix not available. Please use pairwise_termsim function to deal with the results of enrichment analysis.
-    # Solved: https://github.com/YuLab-SMU/enrichplot/issues/79
-    d <- GOSemSim::godata("org.Hs.eg.db", ont = "BP")
-    compare_cluster_GO_emap <- enrichplot::pairwise_termsim(gse, semData = d,  method="Wang")
-    emapplot(compare_cluster_GO_emap)
-    # Error # Error in loadNamespace(x) : 不存在叫 ‘ggnewscale’ 這個名稱的套件
-    ## install.packages("ggnewscale")
-
-
-  ##### Category Netplot #####
-    # categorySize can be either 'pvalue' or 'geneNum'
-    cnetplot(gse, categorySize="pvalue", foldChange=gene_list, showCategory = 5)
-
-  ##### Ridgeplot #####
-    ridgeplot(gse) + labs(x = "enrichment distribution")
-
-  ##### GSEA Plot #####
-    # Use the `Gene Set` param for the index in the title, and as the value for geneSetId
-    gseaplot(gse, by = "all", title = gse$Description[1], geneSetID = 1)
-
-  ##### PubMed trend of enriched terms #####
-    terms <- gse$Description[1:3]
-    pmcplot(terms, 2010:2018, proportion=FALSE)
-    # Error # Error in loadNamespace(x) : 不存在叫 ‘europepmc’ 這個名稱的套件
-    ## install.packages("europepmc")
-
-# ##### KEGG Gene Set Enrichment Analysis #####
-  ## Prepare Input
-    # Convert gene IDs for gseKEGG function
-    # We will lose some genes here because not all IDs will be converted
-    ids<-bitr(names(original_gene_list), fromType = "ENSEMBL", toType = "ENTREZID", OrgDb=organism)
-    # remove duplicate IDS (here I use "ENSEMBL", but it should be whatever was selected as keyType)
-    dedup_ids = ids[!duplicated(ids[c("ENSEMBL")]),]
-
-    # Create a new dataframe df2 which has only the genes which were successfully mapped using the bitr function above
-    df2 = df[df$X %in% dedup_ids$ENSEMBL,]
-
-    # Create a new column in df2 with the corresponding ENTREZ IDs
-    df2$Y = dedup_ids$ENTREZID
-
-    # Create a vector of the gene unuiverse
-    kegg_gene_list <- df2$log2FoldChange
-
-    # Name vector with ENTREZ ids
-    names(kegg_gene_list) <- df2$Y
-
-    # omit any NA values
-    kegg_gene_list<-na.omit(kegg_gene_list)
-
-    # sort the list in decreasing order (required for clusterProfiler)
-    kegg_gene_list = sort(kegg_gene_list, decreasing = TRUE)
-
-  ## Create gseKEGG object
-    kegg_organism = "dme"
-    kk2 <- gseKEGG(geneList     = kegg_gene_list,
-                   organism     = kegg_organism,
-                   nPerm        = 10000,
-                   minGSSize    = 3,
-                   maxGSSize    = 800,
-                   pvalueCutoff = 0.05,
-                   pAdjustMethod = "none",
-                   keyType       = "ncbi-geneid")
-  ## Dotplot
-    dotplot(kk2, showCategory = 10, title = "Enriched Pathways" , split=".sign") + facet_grid(.~.sign)
-
-  ## Encrichment map:
-    emapplot(kk2)
-    # Error # # Error in has_pairsim(x) :
-    # Term similarity matrix not available. Please use pairwise_termsim function to deal with the results of enrichment analysis.
-    # Solved: https://github.com/YuLab-SMU/enrichplot/issues/79
-    d <- GOSemSim::godata("org.Hs.eg.db", ont = "BP")
-    compare_cluster_GO_emap_kk2 <- enrichplot::pairwise_termsim(kk2, semData = d)
-    emapplot(compare_cluster_GO_emap_kk2)
-
-  ## Category Netplot:
-    ## categorySize can be either 'pvalue' or 'geneNum'
-    cnetplot(kk2, categorySize="pvalue", foldChange=gene_list)
-    ## Ridgeplot
-    ridgeplot(kk2) + labs(x = "enrichment distribution")
-
-  ## GSEA Plot
-    # Use the `Gene Set` param for the index in the title, and as the value for geneSetId
-    gseaplot(kk2, by = "all", title = kk2$Description[1], geneSetID = 1)
-
-    ## Ref: https://rpubs.com/shbrief/gsea_263
-    gseaplot2(kk2, geneSetID = 1:10)
-    p3 <- gseaplot2(kk2, geneSetID = 1, title = kk2$Description[1])
-    p4 <- gseaplot2(kk2, geneSetID = 2, title = kk2$Description[2])   # min NES
-    cowplot::plot_grid(p3, p4, ncol = 1, labels = LETTERS[1:2])
-
-  ## Pathview
-    library(pathview)
-
-    # Produce the native KEGG plot (PNG)
-    dme <- pathview(gene.data=kegg_gene_list, pathway.id="dme04130", species = kegg_organism)
-
-    # Produce a different plot (PDF) (not displayed here)
-    dme <- pathview(gene.data=kegg_gene_list, pathway.id="dme04130", species = kegg_organism, kegg.native = F)
-    knitr::include_graphics("dme04130.pathview.png")
-
+    ## Load Packages
+    lapply(Package.set, library, character.only = TRUE)
+    rm(Package.set,i)
+
+    options(stringsAsFactors = FALSE)
+
+
+  ##### Load Files #####
+    # ## Load data
+    # load("D:/Dropbox/##_GitHub/##_CAESAR/GseaGo/Demo_data/Robjects/Annotated_Results_LvV.RData")
+    #
+    # ## Load pathways
+    # load("D:/Dropbox/##_GitHub/##_CAESAR/GseaGo/Demo_data/Robjects/mouse_H_v5.RData")
+    # pathwayGeneSet <- Mm.H
+
+  ##### GSEA analysis (fgsea) #####
+
+
+    #### Create ranks ####
+      # gseaDat2 <- filter(shrinkLvV, !is.na(shrinkLvV[,"Entrez"]))
+      # gseaDat <- filter(shrinkLvV, !is.na(Entrez))
+      # ranks <- gseaDat$logFC
+      # names(ranks) <- gseaDat$Entrez
+      # head(ranks)
+      #
+      # # Plot the ranked fold changes.
+      # barplot(sort(ranks, decreasing = T))
+
+      ranks <- DE_Extract.df[,ThrSet[["LogFC"]][1]]
+      names(ranks) <- row.names(DE_Extract.df)
+      head(ranks)
+
+      # Plot the ranked fold changes.
+      barplot(sort(ranks, decreasing = T))
+
+    #### Conduct analysis ####
+      fgseaRes <- fgsea(pathwayGeneSet, ranks, minSize=15, maxSize = 500, nperm=1000)
+
+      ## fgsea: What does fgseaMultilevel argument sampleSize mean/when to change it?
+      ## https://www.biostars.org/p/479821/
+
+      fgseaRes <- fgseaMultilevel(pathwayGeneSet, ranks, minSize=15, maxSize = 500)
+      ## Error when running parallelized process: Warning in serialize... package:stats may not be available when loading
+      ## https://community.rstudio.com/t/error-when-running-parallelized-process-warning-in-serialize-package-stats-may-not-be-available-when-loading/110573
+      ## https://stackoverflow.com/questions/27623901/r-warning-packagestats-may-not-be-available-when-loading
+
+      head(fgseaRes[order(padj, -abs(NES)), ], n=10)
+
+    #### Enrichment score plot ####
+      # plotEnrichment(pathwayGeneSet[["HALLMARK_ESTROGEN_RESPONSE_EARLY"]], ranks)
+
+      plotEnrichment(pathwayGeneSet[pathwayGeneSet[,1]=="HALLMARK_ESTROGEN_RESPONSE_EARLY",], ranks)
+      dev.off()
+
+    #### GSEA table plot ####
+      # topUp <- fgseaRes %>%
+      #   filter(ES > 0) %>%
+      #   top_n(10, wt=-padj)
+      # topDown <- fgseaRes %>%
+      #   filter(ES < 0) %>%
+      #   top_n(10, wt=-padj)
+      # topPathways <- bind_rows(topUp, topDown) %>%
+      #   arrange(-ES)
+      # plotGseaTable(pathwayGeneSet[topPathways$pathway],
+      #               ranks,
+      #               fgseaRes,
+      #               gseaParam = 0.5)
+      # dev.off()
+
+      topUp <- fgseaRes %>%
+        filter(NES > 0) %>%
+        top_n(10, wt=NES)
+      topDown <- fgseaRes %>%
+        filter(NES < 0) %>%
+        top_n(10, wt=-NES)
+      topPathways <- bind_rows(topUp, topDown) %>%
+        arrange(-NES)
+      plotGseaTable(pathwayGeneSet[topPathways$pathway],
+                    ranks,
+                    fgseaRes,
+                    gseaParam = 0.5)
+      dev.off()
+
+
+  ##### GSEA analysis #####
+      #### Conduct analysis2 ####
+      library(DOSE)
+      # data(geneList)
+      # x <- gseDO(geneList)
+      # gseaplot(x, geneSetID=1)
+
+      # geneList <- sort(ranks, decreasing = T)
+      # #geneList2 <- names(ranks) %>% as.numeric()
+      # x <- gseDO(geneList)
+      # gseaplot(x, geneSetID=1)
+
+      geneList <- sort(ranks, decreasing = T)
+      ## MSigDB_C2
+      library(msigdbr)
+      msigdbr_species()
+      m_c2 <- msigdbr(species = Species, category = "C2") %>%
+              dplyr::select(gs_name, gene_symbol, entrez_gene)
+      msC2_2 <- GSEA(geneList, TERM2GENE = m_c2) #       msC2_2 <- GSEA(geneList, TERM2GENE = m_c2)
+
+      #### Visualization ####
+
+      ## 2.1 Barplot
+      library(clusterProfiler.dplyr) # devtools::install_github("YuLab-SMU/clusterProfiler.dplyr")
+      y <- mutate(msC2_2, ordering = abs(NES)) %>%
+        arrange(desc(ordering))
+
+      library(ggstance)
+      library(enrichplot)
+      library(forcats)
+      library(ggplot2)
+
+      n <- 10
+      y_bar <- group_by(y, sign(NES)) %>%
+        slice(1:n)
+
+      ggplot(y_bar, aes(NES, fct_reorder(Description, NES), fill = qvalues), showCategory=(n*2)) +
+        geom_barh(stat='identity') +
+        scale_fill_continuous(low='red', high='blue', guide=guide_colorbar(reverse=TRUE)) +
+        theme_minimal() + ylab(NULL)
+
+      ## 2.2 Dotplot
+      dotplot(msC2_2, showCategory = 10, font.size = 8,
+              x = "GeneRatio",   # option -> c("GeneRatio", "Count")
+              color = "p.adjust")   # option -> c("pvalue", "p.adjust", "qvalue")
+
+      ## 2.3 Gene-Concept Network
+      n <- 3
+      p1 <- cnetplot(msC2_2, showCategory = (n*2), colorEdge = TRUE, node_label = "category")
+      cowplot::plot_grid(p1, ncol=1, labels=LETTERS[1], rel_widths=c(1))
+
+      ## 2.4 Heatmap-like functional classification
+
+      ## 2.5 Enrichment Map
+      p2 <- emapplot(pairwise_termsim(y), showCategory = 10)
+      cowplot::plot_grid(p2, ncol = 1, lables = LETTERS[1])
+
+
+      ## 2.6 UpSet Plot
+      library(ggupset)
+      upsetplot(msC2_2)
+
+      ## 2.7 ridgeline plot for expressiong distribution
+      ridgeplot(msC2_2)
+
+      ## 2.8 gseaplot
+      y2 <- arrange(msC2_2, desc(NES))
+
+      p1 <- gseaplot(y2, geneSetID = 1, title = y2$Description[1])   # max NES
+      n <- nrow(y2)
+      p2 <- gseaplot(y2, geneSetID = n, title = y2$Description[n])   # min NES
+      cowplot::plot_grid(p1, p2, ncol = 1, labels = LETTERS[1:2])
+
+        ## 2.8.1 gseaplot2
+        p3 <- gseaplot2(y2, geneSetID = 1, title = y2$Description[1])   # max NES
+        p4 <- gseaplot2(y2, geneSetID = n, title = y2$Description[n])   # min NES
+        cowplot::plot_grid(p3, p4, ncol = 1, labels = LETTERS[1:2])
+
+        ## Use keyword (Overlay graphics)
+        keyword <- "breast"
+        ind <- grep(keyword, msC2_2$Description, ignore.case = TRUE)
+        gseaplot2(msC2_2, geneSetID = ind, title = msC2_2$Description[ind])
+
+        ## Overlay graphics by ID
+        gseaplot2(y2, geneSetID = 1:10)
+
+        ## 2.8.2 gsearank
+        gsearank(y2, geneSetID = 1, title = y2$Description[1])
+
+
+      ## 2.9 PubMed trend of enriched terms
+      terms <- msC2_2$Description[1:3]
+      pmcplot(terms, 2010:2017, proportion=FALSE)
+
+
+
+
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+  #   library(clusterProfiler)
+  #   library(enrichplot)
+  #   # we use ggplot2 to add x axis labels (ex: ridgeplot)
+  #   library(ggplot2)
+  #
+  #
+  #   ##### Prepare Input #####
+  #     # reading in data from deseq2
+  #     df = read.csv("drosphila_example_de.txt", header=TRUE)
+  #
+  #     # we want the log2 fold change
+  #     original_gene_list <- df$log2FoldChange
+  #
+  #     # name the vector
+  #     names(original_gene_list) <- df$X
+  #
+  #     # omit any NA values
+  #     gene_list<-na.omit(original_gene_list)
+  #
+  #     # sort the list in decreasing order (required for clusterProfiler)
+  #     gene_list = sort(gene_list, decreasing = TRUE)
+  #
+  #   ##### Gene Set Enrichment #####
+  #     gse <- gseGO(geneList=gene_list,
+  #                  ont ="ALL",
+  #                  keyType = "ENSEMBL",
+  #                  nPerm = 10000,
+  #                  minGSSize = 3,
+  #                  maxGSSize = 800,
+  #                  pvalueCutoff = 0.05,
+  #                  verbose = TRUE,
+  #                  OrgDb = organism,
+  #                  #OrgDb = org.Dm.eg.db, # https://github.com/YuLab-SMU/clusterProfiler/issues/279
+  #                  pAdjustMethod = "none")
+  #       # Error # Error in (function (classes, fdef, mtable)  :
+  #       #             unable to find an inherited method for function ‘species’ for signature ‘"character"’
+  #       #           In addition: There were 14 warnings (use warnings() to see them)
+  #       ## https://stackoverflow.com/questions/62147679/unable-to-find-an-inherited-method-for-function-species-for-signature-charac
+  #       # https://github.com/YuLab-SMU/clusterProfiler/issues/279
+  #
+  #   ##### Dotplot #####
+  #     require(DOSE)
+  #     dotplot(gse, showCategory=10, split=".sign") + facet_grid(.~.sign)
+  #
+  #
+  #   ##### Encrichment Map #####
+  #     emapplot(gse, showCategory = 10)
+  #     # Error # Term similarity matrix not available. Please use pairwise_termsim function to deal with the results of enrichment analysis.
+  #     # Solved: https://github.com/YuLab-SMU/enrichplot/issues/79
+  #     d <- GOSemSim::godata("org.Hs.eg.db", ont = "BP")
+  #     compare_cluster_GO_emap <- enrichplot::pairwise_termsim(gse, semData = d,  method="Wang")
+  #     emapplot(compare_cluster_GO_emap)
+  #     # Error # Error in loadNamespace(x) : 不存在叫 ‘ggnewscale’ 這個名稱的套件
+  #     ## install.packages("ggnewscale")
+  #
+  #
+  #   ##### Category Netplot #####
+  #     # categorySize can be either 'pvalue' or 'geneNum'
+  #     cnetplot(gse, categorySize="pvalue", foldChange=gene_list, showCategory = 5)
+  #
+  #   ##### Ridgeplot #####
+  #     ridgeplot(gse) + labs(x = "enrichment distribution")
+  #
+  #   ##### GSEA Plot #####
+  #     # Use the `Gene Set` param for the index in the title, and as the value for geneSetId
+  #     gseaplot(gse, by = "all", title = gse$Description[1], geneSetID = 1)
+  #
+  #   ##### PubMed trend of enriched terms #####
+  #     terms <- gse$Description[1:3]
+  #     pmcplot(terms, 2010:2018, proportion=FALSE)
+  #     # Error # Error in loadNamespace(x) : 不存在叫 ‘europepmc’ 這個名稱的套件
+  #     ## install.packages("europepmc")
+  #
+  # # ##### KEGG Gene Set Enrichment Analysis #####
+  #   ## Prepare Input
+  #     # Convert gene IDs for gseKEGG function
+  #     # We will lose some genes here because not all IDs will be converted
+  #     ids<-bitr(names(original_gene_list), fromType = "ENSEMBL", toType = "ENTREZID", OrgDb=organism)
+  #     # remove duplicate IDS (here I use "ENSEMBL", but it should be whatever was selected as keyType)
+  #     dedup_ids = ids[!duplicated(ids[c("ENSEMBL")]),]
+  #
+  #     # Create a new dataframe df2 which has only the genes which were successfully mapped using the bitr function above
+  #     df2 = df[df$X %in% dedup_ids$ENSEMBL,]
+  #
+  #     # Create a new column in df2 with the corresponding ENTREZ IDs
+  #     df2$Y = dedup_ids$ENTREZID
+  #
+  #     # Create a vector of the gene unuiverse
+  #     kegg_gene_list <- df2$log2FoldChange
+  #
+  #     # Name vector with ENTREZ ids
+  #     names(kegg_gene_list) <- df2$Y
+  #
+  #     # omit any NA values
+  #     kegg_gene_list<-na.omit(kegg_gene_list)
+  #
+  #     # sort the list in decreasing order (required for clusterProfiler)
+  #     kegg_gene_list = sort(kegg_gene_list, decreasing = TRUE)
+  #
+  #   ## Create gseKEGG object
+  #     kegg_organism = "dme"
+  #     kk2 <- gseKEGG(geneList     = kegg_gene_list,
+  #                    organism     = kegg_organism,
+  #                    nPerm        = 10000,
+  #                    minGSSize    = 3,
+  #                    maxGSSize    = 800,
+  #                    pvalueCutoff = 0.05,
+  #                    pAdjustMethod = "none",
+  #                    keyType       = "ncbi-geneid")
+  #   ## Dotplot
+  #     dotplot(kk2, showCategory = 10, title = "Enriched Pathways" , split=".sign") + facet_grid(.~.sign)
+  #
+  #   ## Encrichment map:
+  #     emapplot(kk2)
+  #     # Error # # Error in has_pairsim(x) :
+  #     # Term similarity matrix not available. Please use pairwise_termsim function to deal with the results of enrichment analysis.
+  #     # Solved: https://github.com/YuLab-SMU/enrichplot/issues/79
+  #     d <- GOSemSim::godata("org.Hs.eg.db", ont = "BP")
+  #     compare_cluster_GO_emap_kk2 <- enrichplot::pairwise_termsim(kk2, semData = d)
+  #     emapplot(compare_cluster_GO_emap_kk2)
+  #
+  #   ## Category Netplot:
+  #     ## categorySize can be either 'pvalue' or 'geneNum'
+  #     cnetplot(kk2, categorySize="pvalue", foldChange=gene_list)
+  #     ## Ridgeplot
+  #     ridgeplot(kk2) + labs(x = "enrichment distribution")
+  #
+  #   ## GSEA Plot
+  #     # Use the `Gene Set` param for the index in the title, and as the value for geneSetId
+  #     gseaplot(kk2, by = "all", title = kk2$Description[1], geneSetID = 1)
+  #
+  #     ## Ref: https://rpubs.com/shbrief/gsea_263
+  #     gseaplot2(kk2, geneSetID = 1:10)
+  #     p3 <- gseaplot2(kk2, geneSetID = 1, title = kk2$Description[1])
+  #     p4 <- gseaplot2(kk2, geneSetID = 2, title = kk2$Description[2])   # min NES
+  #     cowplot::plot_grid(p3, p4, ncol = 1, labels = LETTERS[1:2])
+  #
+  #   ## Pathview
+  #     library(pathview)
+  #
+  #     # Produce the native KEGG plot (PNG)
+  #     dme <- pathview(gene.data=kegg_gene_list, pathway.id="dme04130", species = kegg_organism)
+  #
+  #     # Produce a different plot (PDF) (not displayed here)
+  #     dme <- pathview(gene.data=kegg_gene_list, pathway.id="dme04130", species = kegg_organism, kegg.native = F)
+  #     knitr::include_graphics("dme04130.pathview.png")
+
+return(Output)
+
+}
