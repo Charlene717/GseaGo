@@ -198,79 +198,87 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
       n <- 10
       y_bar <- group_by(y, sign(NES)) %>% slice(1:n)
 
-      ggplot(y_bar, aes(NES, fct_reorder(Description, NES), fill = qvalues), showCategory=(n*2)) +
-            geom_barh(stat='identity') +
-            scale_fill_continuous(low='red', high='blue', guide=guide_colorbar(reverse=TRUE)) +
-            theme_minimal() + ylab(NULL)
+      p1 <- ggplot(y_bar, aes(NES, fct_reorder(Description, NES), fill = qvalues), showCategory=(n*2)) +
+                   geom_barh(stat='identity') +
+                   scale_fill_continuous(low='red', high='blue', guide=guide_colorbar(reverse=TRUE)) +
+                   theme_minimal() + ylab(NULL)
 
       ## 2.2 Dotplot
-      dotplot(GSEA_Result, showCategory = 10, font.size = 8,
-              x = "GeneRatio",   # option -> c("GeneRatio", "Count")
-              color = "p.adjust")   # option -> c("pvalue", "p.adjust", "qvalue")
+      p2 <- dotplot(GSEA_Result, showCategory = 10, font.size = 8,
+                    x = "GeneRatio",   # option -> c("GeneRatio", "Count")
+                    color = "p.adjust")   # option -> c("pvalue", "p.adjust", "qvalue")
 
       ## 2.3 Gene-Concept Network
       n <- 3
-      p1 <- cnetplot(GSEA_Result, showCategory = (n*2), colorEdge = TRUE, node_label = "category")
-      cowplot::plot_grid(p1, ncol=1, labels=LETTERS[1], rel_widths=c(1))
+      p3 <- cnetplot(GSEA_Result, showCategory = (n*2), colorEdge = TRUE, node_label = "category")
+      cowplot::plot_grid(p3, ncol=1, labels=LETTERS[1], rel_widths=c(1))
 
       ## 2.4 Heatmap-like functional classification
 
 
 
       ## 2.5 Enrichment Map
-      p2 <- emapplot(pairwise_termsim(y), showCategory = 10)
-      cowplot::plot_grid(p2, ncol = 1, lables = LETTERS[1])
+      p5 <- emapplot(pairwise_termsim(y), showCategory = 10)
+      cowplot::plot_grid(p5, ncol = 1, lables = LETTERS[1])
 
 
       ## 2.6 UpSet Plot
       library(ggupset)
-      upsetplot(GSEA_Result)
+      p6 <- upsetplot(GSEA_Result)
 
       ## 2.7 ridgeline plot for expressiong distribution
-      ridgeplot(GSEA_Result)
+      p7 <- ridgeplot(GSEA_Result)
 
       ## 2.8 gseaplot
       y2 <- arrange(GSEA_Result, desc(NES))
 
-      p1 <- gseaplot(y2, geneSetID = 1, title = y2$Description[1])   # max NES
-      n <- nrow(y2)
-      p2 <- gseaplot(y2, geneSetID = n, title = y2$Description[n])   # min NES
-      cowplot::plot_grid(p1, p2, ncol = 1, labels = LETTERS[1:2])
+      # p1 <- gseaplot(y2, geneSetID = 1, title = y2$Description[1])   # max NES
+      # n <- nrow(y2)
+      # p2 <- gseaplot(y2, geneSetID = n, title = y2$Description[n])   # min NES
+      # cowplot::plot_grid(p1, p2, ncol = 1, labels = LETTERS[1:2])
 
       ## 2.8.1 gseaplot2
-      p3 <- gseaplot2(y2, geneSetID = 1, title = y2$Description[1])   # max NES
-      p4 <- gseaplot2(y2, geneSetID = n, title = y2$Description[n])   # min NES
-      cowplot::plot_grid(p3, p4, ncol = 1, labels = LETTERS[1:2])
+      p8_1 <- gseaplot2(y2, geneSetID = 1, title = y2$Description[1])   # max NES
+      p8_2 <- gseaplot2(y2, geneSetID = n, title = y2$Description[n])   # min NES
+      p8A <- cowplot::plot_grid(p8_1, p8_2, ncol = 1, labels = LETTERS[1:2])
 
-      ## Use keyword (Overlay graphics)
-      try({
-        keyword <- "breast"
-        ind <- grep(keyword, GSEA_Result$Description, ignore.case = TRUE)
-        gseaplot2(GSEA_Result, geneSetID = ind, title = GSEA_Result$Description[ind])
-      })
+      # ## Use keyword (Overlay graphics)
+      # try({
+      #   keyword <- "breast"
+      #   ind <- grep(keyword, GSEA_Result$Description, ignore.case = TRUE)
+      #   gseaplot2(GSEA_Result, geneSetID = ind, title = GSEA_Result$Description[ind])
+      # })
 
       ## Overlay graphics by ID
-      gseaplot2(y2, geneSetID = 1:10)
+      p8B <- gseaplot2(y2, geneSetID = 1:10)
 
-      ## 2.8.2 gsearank
-      gsearank(y2, geneSetID = 1, title = y2$Description[1])
+      # ## 2.8.2 gsearank
+      # gsearank(y2, geneSetID = 1, title = y2$Description[1])
 
 
       ## 2.9 PubMed trend of enriched terms
       terms <- GSEA_Result$Description[1:3]
-      pmcplot(terms, 2010:2017, proportion=FALSE)
+      p9 <- pmcplot(terms, 2010:2017, proportion=FALSE)
       # dev.off()
 
-    # ##### Export Result #####
-    #   pdf(
-    #     file = paste0(Save.Path,"/",SampleName,"_",TarGeneName,"_DensityPlot.pdf"),
-    #     width = 10,  height = 8
-    #   )
-    #   print(TGeneDen_SD.p)
-    #   print(TGeneDen_Q.p)
-    #   print(TGeneDen_SD_Q.p)
-    #
-    #   dev.off()
+    ##### Export Result #####
+      pdf(
+        file = paste0(Save.Path,"/",AnnoName,"_",SampleName,"_",TarGeneName,"_GSEAResult.pdf"),
+        width = 10,  height = 8
+      )
+
+        print(p1)
+        print(p2)
+        print(p3)
+        # print(p4)
+        print(p5)
+        print(p6)
+        print(p7)
+        print(p8A)
+        print(p8B)
+        print(p9)
+
+      dev.off()
 
     #### Output ####
       Output <- list()
