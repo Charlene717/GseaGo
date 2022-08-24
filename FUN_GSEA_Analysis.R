@@ -82,7 +82,7 @@ FUN_GSEA_Analysis = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
       # Plot the ranked fold changes.
       barplot(sort(ranks, decreasing = T))
 
-    #### Transform pathwayGeneSet to list) ####
+    #### Transform pathwayGeneSet to list ####
       # pathwayGeneSet.lt <- as.list(pathwayGeneSet[,c(-1,-2)])
 
       # pathwayGeneSet.lt <- split(pathwayGeneSet[,c(-1,-2)], 1:nrow(pathwayGeneSet))
@@ -155,6 +155,10 @@ FUN_GSEA_Analysis = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
              theme_minimal() + ylab(NULL)
 
 
+
+
+
+
   ##### GSEA analysis #####
       #### Conduct analysis2 ####
       library(DOSE)
@@ -168,11 +172,24 @@ FUN_GSEA_Analysis = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
       # gseaplot(x, geneSetID=1)
 
       geneList <- sort(ranks, decreasing = T)
+
+      #### Use online pathwayGeneSet ####
       ## MSigDB_C2
       library(msigdbr)
       msigdbr_species()
       m_c2 <- msigdbr(species = Species, category = "C2") %>%
               dplyr::select(gs_name, gene_symbol, entrez_gene)
+
+      #### Transform Customized pathwayGeneSet ####
+      Temp <- pathwayGeneSet[,-2]
+      m_c2 <- Temp %>% pivot_longer(cols=2:ncol(.),names_to = "Temp", values_to = "Gene") %>%
+                       select(cols=c(1,3))
+
+      m_c2 <- m_c2[!m_c2$cols2 == "",]
+
+      rm(Temp)
+
+      #### RUN GSEA ####
       msC2_2 <- GSEA(geneList, TERM2GENE = m_c2) #       msC2_2 <- GSEA(geneList, TERM2GENE = m_c2)
 
       #### Visualization ####
@@ -206,6 +223,8 @@ FUN_GSEA_Analysis = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
       cowplot::plot_grid(p1, ncol=1, labels=LETTERS[1], rel_widths=c(1))
 
       ## 2.4 Heatmap-like functional classification
+
+
 
       ## 2.5 Enrichment Map
       p2 <- emapplot(pairwise_termsim(y), showCategory = 10)
