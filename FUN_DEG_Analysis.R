@@ -66,6 +66,9 @@ FUN_DEG_Analysis = function(GeneExp.df, Anno.df,
   #### Export file ####
   write.table(DE_Extract.df, file = paste0(Save.Path,"/",SampleName,"_DEGAnalysis_",AnnoName,".tsv"),
               sep="\t", row.names= F, quote = FALSE)
+  write.table(DE_Extract_Flt.df, file = paste0(Save.Path,"/",SampleName,"_DEGAnalysis_Flt_",AnnoName,".tsv"),
+              sep="\t", row.names= F, quote = FALSE)
+
 
   #### Output ####
   Output <- list()
