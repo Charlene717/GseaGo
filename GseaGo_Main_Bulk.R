@@ -135,8 +135,7 @@
   source("FUN_GSEA_ANAL.R")
 
   GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, pathwayGeneSet = Pathway.all,
-                                  TarGeneName = TarGene_name, GroupMode = Mode_Group,
-                                  Species = "Homo sapiens", # Speices type can check by msigdbr_species()
+                                  ThrSet = Thr.lt, Species = "Homo sapiens", # Speices type can check by msigdbr_species()
                                   Save.Path = Save.Path, SampleName = SampleName, AnnoName = "Path")
 
   #### Run ORA ####
