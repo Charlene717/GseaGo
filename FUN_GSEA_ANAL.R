@@ -14,6 +14,7 @@
 ## Ref: http://rstudio-pubs-static.s3.amazonaws.com/514990_9690f31b5ef7488bb4f0bb6c10ac4da8.html
 
 FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
+                         TarGeneName = TarGene_name, GroupMode = Mode_Group,
                          ThrSet = Thr.lt, Species = "Homo sapiens", # Speices type can check by msigdbr_species()
                          Save.Path = Save.Path, SampleName = SampleName, AnnoName = "C2"
 ){
