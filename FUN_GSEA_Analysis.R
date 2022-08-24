@@ -15,7 +15,7 @@
 
 FUN_GSEA_Analysis = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
                              TarGeneName = TarGene_name, GroupMode = Mode_Group,
-                             ThrSet = Thr.lt,Species = "Homo sapiens",
+                             ThrSet = Thr.lt, Species = "Homo sapiens",
                              Save.Path = Save.Path, SampleName = SampleName
 ){
 
@@ -130,6 +130,12 @@ FUN_GSEA_Analysis = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
                     gseaParam = 0.5)
       dev.off()
 
+      ## 2.1 Barplot
+      ggplot(topPathways, aes(NES, fct_reorder(pathway, NES), fill = pval), showCategory=(n*2)) +
+             geom_barh(stat='identity') +
+             scale_fill_continuous(low='red', high='blue', guide=guide_colorbar(reverse=TRUE)) +
+             theme_minimal() + ylab(NULL)
+
 
   ##### GSEA analysis #####
       #### Conduct analysis2 ####
@@ -164,13 +170,12 @@ FUN_GSEA_Analysis = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
       library(ggplot2)
 
       n <- 10
-      y_bar <- group_by(y, sign(NES)) %>%
-        slice(1:n)
+      y_bar <- group_by(y, sign(NES)) %>% slice(1:n)
 
       ggplot(y_bar, aes(NES, fct_reorder(Description, NES), fill = qvalues), showCategory=(n*2)) +
-        geom_barh(stat='identity') +
-        scale_fill_continuous(low='red', high='blue', guide=guide_colorbar(reverse=TRUE)) +
-        theme_minimal() + ylab(NULL)
+            geom_barh(stat='identity') +
+            scale_fill_continuous(low='red', high='blue', guide=guide_colorbar(reverse=TRUE)) +
+            theme_minimal() + ylab(NULL)
 
       ## 2.2 Dotplot
       dotplot(msC2_2, showCategory = 10, font.size = 8,
@@ -224,7 +229,7 @@ FUN_GSEA_Analysis = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
       ## 2.9 PubMed trend of enriched terms
       terms <- msC2_2$Description[1:3]
       pmcplot(terms, 2010:2017, proportion=FALSE)
-
+      dev.off()
 
 return(Output)
 
