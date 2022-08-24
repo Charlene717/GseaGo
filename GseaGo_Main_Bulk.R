@@ -122,18 +122,22 @@
 ##### Run Enrichment analysis in R #####
   #### Run DEG ####
   source("FUN_DEG_Analysis.R")
-  DEG_ANAL.df <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
+  DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
                                   GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
                                   ThrSet = Thr.lt,
                                   TarGeneName = TarGene_name, GroupMode = Mode_Group, SampleID = "X_INTEGRATION",
                                   Save.Path = Save.Path, SampleName = SampleName, AnnoName = "AvB")
-
+  DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
 
 
 
   #### Run GSEA ####
   source("FUN_GSEA_Analysis.R")
 
+  GSEA_Result.lt <- FUN_GSEA_Analysis(DE_Extract.df, pathwayGeneSet = Pathway.all,
+                                      TarGeneName = TarGene_name, GroupMode = Mode_Group,
+                                      Species = "Homo sapiens", # Speices type can check by msigdbr_species()
+                                      Save.Path = Save.Path, SampleName = SampleName, AnnoName = "C2")
 
   #### Run ORA ####
   ## FUN ORA
