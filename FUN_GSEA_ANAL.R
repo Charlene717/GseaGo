@@ -14,8 +14,7 @@
 ## Ref: http://rstudio-pubs-static.s3.amazonaws.com/514990_9690f31b5ef7488bb4f0bb6c10ac4da8.html
 
 FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
-                         TarGeneName = TarGene_name, GroupMode = Mode_Group,
-                         Species = "Homo sapiens", # Speices type can check by msigdbr_species()
+                         ThrSet = Thr.lt, Species = "Homo sapiens", # Speices type can check by msigdbr_species()
                          Save.Path = Save.Path, SampleName = SampleName, AnnoName = "C2"
 ){
 
@@ -35,6 +34,9 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
 
 
     #### BiocManager installation ####
+    ## Set the desired organism
+    organism = "org.Hs.eg.db" ## c("org.Hs.eg.db","org.Mm.eg.db")   ##  c("org.Dm.eg.db")
+
     ## Check whether the installation of those packages is required from BiocManager
     if (!require("BiocManager", quietly = TRUE))
       install.packages("BiocManager")
@@ -52,9 +54,6 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
 
 
 # #************************************************************************************************************************#
-#     ##### Parameter setting* #####
-#     ## Set the desired organism
-#     organism = "org.Hs.eg.db" ## c("org.Hs.eg.db","org.Mm.eg.db")   ##  c("org.Dm.eg.db")
 #
 #   ##### GSEA analysis (fgsea) #####
 #
@@ -161,6 +160,10 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
       # #geneList2 <- names(ranks) %>% as.numeric()
       # x <- gseDO(geneList)
       # gseaplot(x, geneSetID=1)
+
+      ranks <- DE_Extract.df[,ThrSet[["LogFC"]][1]]
+      names(ranks) <- row.names(DE_Extract.df)
+      head(ranks)
 
       geneList <- sort(ranks, decreasing = T)
 
