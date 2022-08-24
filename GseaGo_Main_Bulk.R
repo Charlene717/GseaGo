@@ -82,13 +82,14 @@
   }
 
 #************************************************************************************************************************#
-##### Data preprocessing #####
+##### Data preprocess setting #####
   Anno_Ori.df <- Anno.df
   colnames(Anno.df)
   Anno.df <- Anno.df[,c("X_INTEGRATION","X_PATIENT","histological_type","sample_type","gender")]
   head(Anno.df)
 
   AnnoSet.lt <- list(GroupType = "sample_type", GroupCompare = c("Primary Tumor","Recurrent Tumor") )
+  Thr.lt <- list(LogFC = c("logFC",1), pVal = c("PValue",0.05) )
 
 #************************************************************************************************************************#
 ##### Visualization #####
@@ -123,6 +124,7 @@
   source("FUN_DEG_Analysis.R")
   DEG_ANAL.df <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
                                   GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
+                                  ThrSet = Thr.lt,
                                   TarGeneName = TarGene_name, GroupMode = Mode_Group, SampleID = "X_INTEGRATION",
                                   Save.Path = Save.Path, SampleName = SampleName, AnnoName = "AvB")
 
@@ -134,8 +136,6 @@
 
 
   #### Run ORA ####
-  ## FUN DEG
-
   ## FUN ORA
 
 #************************************************************************************************************************#
