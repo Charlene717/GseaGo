@@ -15,8 +15,8 @@
 
 FUN_GSEA_Analysis = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
                              TarGeneName = TarGene_name, GroupMode = Mode_Group,
-                             ThrSet = Thr.lt, Species = "Homo sapiens",
-                             Save.Path = Save.Path, SampleName = SampleName
+                             ThrSet = Thr.lt, Species = "Homo sapiens", # Speices type can check by msigdbr_species()
+                             Save.Path = Save.Path, SampleName = SampleName, AnnoName = "C2"
 ){
 
   ##### Parameter setting* #####
@@ -82,13 +82,30 @@ FUN_GSEA_Analysis = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
       # Plot the ranked fold changes.
       barplot(sort(ranks, decreasing = T))
 
+    #### Transform pathwayGeneSet to list) ####
+      # pathwayGeneSet.lt <- as.list(pathwayGeneSet[,c(-1,-2)])
+
+      # pathwayGeneSet.lt <- split(pathwayGeneSet[,c(-1,-2)], 1:nrow(pathwayGeneSet))
+      # names(pathwayGeneSet.lt) <- pathwayGeneSet[,1]
+
+      ## No use
+      # pathwayGeneSet.lt2 <- pathwayGeneSet.lt[!is.na(pathwayGeneSet.lt)]
+      # pathwayGeneSet.lt2 <- lapply(pathwayGeneSet.lt, function(x) unique(x))
+
+      ## EXist ""
+      # pathwayGeneSet.lt <- apply(pathwayGeneSet[,c(-1,-2)], 1, function(a)unique(a))
+      # names(pathwayGeneSet.lt) <- pathwayGeneSet[,1]
+
+      pathwayGeneSet.lt <- apply(pathwayGeneSet[,c(-1,-2)], 1, function(a)unique(a[a != ""]))
+      names(pathwayGeneSet.lt) <- pathwayGeneSet[,1]
+
     #### Conduct analysis ####
-      fgseaRes <- fgsea(pathwayGeneSet, ranks, minSize=15, maxSize = 500, nperm=1000)
+      fgseaRes <- fgsea(pathwayGeneSet.lt, ranks, minSize=15, maxSize = 500, nperm=1000)
 
       ## fgsea: What does fgseaMultilevel argument sampleSize mean/when to change it?
       ## https://www.biostars.org/p/479821/
 
-      fgseaRes <- fgseaMultilevel(pathwayGeneSet, ranks, minSize=15, maxSize = 500)
+      fgseaRes <- fgseaMultilevel(pathwayGeneSet.lt, ranks, minSize=15, maxSize = 500)
       ## Error when running parallelized process: Warning in serialize... package:stats may not be available when loading
       ## https://community.rstudio.com/t/error-when-running-parallelized-process-warning-in-serialize-package-stats-may-not-be-available-when-loading/110573
       ## https://stackoverflow.com/questions/27623901/r-warning-packagestats-may-not-be-available-when-loading
@@ -117,20 +134,21 @@ FUN_GSEA_Analysis = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
       # dev.off()
 
       topUp <- fgseaRes %>%
-        filter(NES > 0) %>%
-        top_n(10, wt=NES)
+               filter(NES > 0) %>%
+               top_n(10, wt=NES)
       topDown <- fgseaRes %>%
-        filter(NES < 0) %>%
-        top_n(10, wt=-NES)
+                 filter(NES < 0) %>%
+                 top_n(10, wt=-NES)
       topPathways <- bind_rows(topUp, topDown) %>%
-        arrange(-NES)
-      plotGseaTable(pathwayGeneSet[topPathways$pathway],
+                     arrange(-NES)
+      plotGseaTable(pathwayGeneSet.lt[topPathways$pathway],
                     ranks,
                     fgseaRes,
                     gseaParam = 0.5)
       dev.off()
 
       ## 2.1 Barplot
+      library(ggstance)
       ggplot(topPathways, aes(NES, fct_reorder(pathway, NES), fill = pval), showCategory=(n*2)) +
              geom_barh(stat='identity') +
              scale_fill_continuous(low='red', high='blue', guide=guide_colorbar(reverse=TRUE)) +
@@ -162,7 +180,7 @@ FUN_GSEA_Analysis = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
       ## 2.1 Barplot
       library(clusterProfiler.dplyr) # devtools::install_github("YuLab-SMU/clusterProfiler.dplyr")
       y <- mutate(msC2_2, ordering = abs(NES)) %>%
-        arrange(desc(ordering))
+           arrange(desc(ordering))
 
       library(ggstance)
       library(enrichplot)
@@ -209,21 +227,21 @@ FUN_GSEA_Analysis = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
       p2 <- gseaplot(y2, geneSetID = n, title = y2$Description[n])   # min NES
       cowplot::plot_grid(p1, p2, ncol = 1, labels = LETTERS[1:2])
 
-        ## 2.8.1 gseaplot2
-        p3 <- gseaplot2(y2, geneSetID = 1, title = y2$Description[1])   # max NES
-        p4 <- gseaplot2(y2, geneSetID = n, title = y2$Description[n])   # min NES
-        cowplot::plot_grid(p3, p4, ncol = 1, labels = LETTERS[1:2])
+      ## 2.8.1 gseaplot2
+      p3 <- gseaplot2(y2, geneSetID = 1, title = y2$Description[1])   # max NES
+      p4 <- gseaplot2(y2, geneSetID = n, title = y2$Description[n])   # min NES
+      cowplot::plot_grid(p3, p4, ncol = 1, labels = LETTERS[1:2])
 
-        ## Use keyword (Overlay graphics)
-        keyword <- "breast"
-        ind <- grep(keyword, msC2_2$Description, ignore.case = TRUE)
-        gseaplot2(msC2_2, geneSetID = ind, title = msC2_2$Description[ind])
+      ## Use keyword (Overlay graphics)
+      keyword <- "breast"
+      ind <- grep(keyword, msC2_2$Description, ignore.case = TRUE)
+      gseaplot2(msC2_2, geneSetID = ind, title = msC2_2$Description[ind])
 
-        ## Overlay graphics by ID
-        gseaplot2(y2, geneSetID = 1:10)
+      ## Overlay graphics by ID
+      gseaplot2(y2, geneSetID = 1:10)
 
-        ## 2.8.2 gsearank
-        gsearank(y2, geneSetID = 1, title = y2$Description[1])
+      ## 2.8.2 gsearank
+      gsearank(y2, geneSetID = 1, title = y2$Description[1])
 
 
       ## 2.9 PubMed trend of enriched terms
