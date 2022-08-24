@@ -4,6 +4,7 @@
 
 FUN_DEG_Analysis = function(GeneExp.df, Anno.df,
                             GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
+                            ThrSet = Thr.lt,
                             TarGeneName = TarGene_name, GroupMode = Mode_Group, SampleID = "X_INTEGRATION",
                             Save.Path = Save.Path, SampleName = SampleName, AnnoName = "AvB"
 ){
@@ -46,12 +47,33 @@ FUN_DEG_Analysis = function(GeneExp.df, Anno.df,
                            as.data.frame() %>%
                            data.frame(Gene=row.names(.),.)
 
+  #### Add gene sets by threshold filtering ####
+  ThrSet = Thr.lt
+  length(ThrSet)
+  DE_Extract_Flt.df <- DE_Extract.df
+
+  DE_Extract_FltH.df <- filter(DE_Extract.df, DE_Extract.df[,ThrSet[["LogFC"]][1]] >= ThrSet[["LogFC"]][2] &
+                               DE_Extract.df[,ThrSet[["pVal"]][1]] < ThrSet[["pVal"]][2])
+
+  DE_Extract_FltL.df <- filter(DE_Extract.df, DE_Extract.df[,ThrSet[["LogFC"]][1]] <= as.numeric(ThrSet[["LogFC"]][2])*(-1) &
+                               DE_Extract.df[,ThrSet[["pVal"]][1]] < ThrSet[["pVal"]][2])
+  DE_Extract_Flt.df <- rbind(DE_Extract_FltH.df,DE_Extract_FltL.df)
+
+  DE_Extract_Flt.set <- rownames(DE_Extract_Flt.df)
+  DE_Extract_FltH.set <- rownames(DE_Extract_FltH.df)
+  DE_Extract_FltL.set <- rownames(DE_Extract_FltL.df)
+
   #### Export file ####
   write.table(DE_Extract.df, file = paste0(Save.Path,"/",SampleName,"_DEGAnalysis_",AnnoName,".tsv"),
               sep="\t", row.names= F, quote = FALSE)
 
   #### Output ####
-  Output <- DE_Extract.df
+  Output <- list()
+  Output[["DE_Extract.df"]] <- DE_Extract.df
+  Output[["DE_Extract_Flt.df"]] <- DE_Extract_Flt.df
+  Output[["DE_Extract_FltH.set"]] <- DE_Extract_FltH.set
+  Output[["DE_Extract_FltL.set"]] <- DE_Extract_FltL.set
+  Output[["Thr.lt"]] <- ThrSet
 
   return(Output)
 
