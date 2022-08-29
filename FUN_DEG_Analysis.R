@@ -49,7 +49,7 @@ FUN_DEG_Analysis = function(GeneExp.df, Anno.df,
                            data.frame(Gene=row.names(.),.)
 
   #### Add gene sets by threshold filtering ####
-  ThrSet = Thr.lt
+  # ThrSet = Thr.lt
   length(ThrSet)
   DE_Extract_Flt.df <- DE_Extract.df
 

@@ -294,6 +294,4 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
     return(Output)
 
 
-return(Output)
-
 }
