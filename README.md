@@ -3,3 +3,5 @@
 
 Coming soon!
 
+Users can also run GseaGo by graphical user interface( https://github.com/Charlene717/GseaGoUI )
+
