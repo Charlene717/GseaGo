@@ -117,11 +117,16 @@
   Anno_Ori.df <- Anno.df
   colnames(Anno.df)
 
-  PhenoKeep.set <- c("X_INTEGRATION","X_PATIENT","histological_type","sample_type","gender")
-  Anno.df <- Anno.df[,c(PhenoKeep.set)]
+  PhenoColKeep.set <- c("X_INTEGRATION","X_PATIENT","histological_type","sample_type","gender")
+  Anno.df <- Anno.df[,c(PhenoColKeep.set)]
   colnames(Anno.df)
 
   head(Anno.df)
+
+  ## Select Pheno row
+  PhenoRowKeep.set <- list(col="sample_type",row=c("Primary Tumor","Recurrent Tumor"))
+  Anno.df <- Anno.df[Anno.df[,PhenoRowKeep.set[["col"]]] %in% PhenoRowKeep.set[["row"]], ]
+
 
 
 #************************************************************************************************************************#
