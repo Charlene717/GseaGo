@@ -70,19 +70,23 @@
                              header = F,sep = "\t")
 
 ##### Conditions setting* #####
-  ## Group by gene expression
+  Group_Mode <- "GoupByPheno"   # c("GoupByPheno","GoupByGeneExp")
   TarGene_name <- "TP53"
-  Mode_Group <- list(Mode="Mean",SD=1)
-  # Mode_Group <- list(Mode=c("Mean","Quartile","Tumor2Normal"),Q2="Only")
 
-  ## Group by phenotype
+  ## Group by GeneExp
+  GeneExpSet.lt <- list(GeneExpMode = "Mean", # c("Mean","Mean1SD","Mean2SD","Mean3SD","Median","Quartile","Customize"))
+                        UpCutoff = 1, LowerCutoff = 1)
+
+  ## Group by Pheno
+  AnnoSet.lt <- list(GroupType = "sample_type", GroupCompare = c("Primary Tumor","Recurrent Tumor") )
+  Thr.lt <- list(LogFC = c("logFC",1), pVal = c("PValue",0.05) )
 
 
 ##### Current path and new folder setting* #####
   ProjectName = "TCGA"
   Sampletype = "LGG"
 
-  Version = paste0(Sys.Date(),"_",ProjectName,"_",Sampletype,"_",TarGene_name)
+  Version = paste0(Sys.Date(),"_",ProjectName,"_",Sampletype,"_", TarGene_name)
   Save.Path = paste0(getwd(),"/",Version)
   ## Create new folder
   if (!dir.exists(Save.Path)){
@@ -109,20 +113,23 @@
 
 #************************************************************************************************************************#
 ##### Data preprocess setting #####
+  ## Select Pheno column
   Anno_Ori.df <- Anno.df
   colnames(Anno.df)
-  Anno.df <- Anno.df[,c("X_INTEGRATION","X_PATIENT","histological_type","sample_type","gender")]
+
+  PhenoKeep.set <- c("X_INTEGRATION","X_PATIENT","histological_type","sample_type","gender")
+  Anno.df <- Anno.df[,c(PhenoKeep.set)]
+  colnames(Anno.df)
+
   head(Anno.df)
 
-  AnnoSet.lt <- list(GroupType = "sample_type", GroupCompare = c("Primary Tumor","Recurrent Tumor") )
-  Thr.lt <- list(LogFC = c("logFC",1), pVal = c("PValue",0.05) )
 
 #************************************************************************************************************************#
 ##### Visualization #####
   source("FUN_DistrPlot.R")
   ##### Group by gene expression 1: CutOff by total  #####
   Plot.DistrPlot <- FUN_DistrPlot(GeneExp.df,
-                                  TarGeneName = TarGene_name, GroupMode = Mode_Group,
+                                  TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
                                   Save.Path = Save.Path, SampleName = SampleName)
   Plot.DistrPlot_SD_Q <- Plot.DistrPlot[["TGeneDen_SD_Q.p"]]
   Plot.DistrPlot_SD_Q
@@ -133,7 +140,7 @@
   source("FUN_Group_GE.R")
   ##### Group by gene expression 1: CutOff by total  #####
   GeneExp_group.set <- FUN_Group_GE(GeneExp.df,
-                                    TarGeneName = TarGene_name, GroupMode = Mode_Group,
+                                    TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
                                     Save.Path = Save.Path, SampleName = SampleName)
   GeneExp_high.set <- GeneExp_group.set[["GeneExp_high.set"]]
   GeneExp_low.set <- GeneExp_group.set[["GeneExp_low.set"]]
@@ -151,7 +158,7 @@
   DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
                                   GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
                                   ThrSet = Thr.lt,
-                                  TarGeneName = TarGene_name, GroupMode = Mode_Group, SampleID = "X_INTEGRATION",
+                                  TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "X_INTEGRATION",
                                   Save.Path = Save.Path, SampleName = SampleName, AnnoName = "AvB")
   DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
 
@@ -161,7 +168,7 @@
   source("FUN_GSEA_ANAL.R")
 
   GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, pathwayGeneSet = Pathway.all,
-                                  TarGeneName = TarGene_name, GroupMode = Mode_Group,
+                                  TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
                                   ThrSet = Thr.lt, Species = "Homo sapiens", # Speices type can check by msigdbr_species()
                                   Save.Path = Save.Path, SampleName = SampleName, AnnoName = "Path")
 
@@ -173,7 +180,7 @@
   source("FUN_GSEA_ForOFFL.R")
 
   FUN_GSEA_ForOFFL(GeneExp.df, Group1 = GeneExp_high.set, Group2 = GeneExp_low.set,
-                   TarGeneName = TarGene_name, GroupMode = Mode_Group,
+                   TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
                    Save.Path = Save.Path, SampleName = SampleName)
 
 ##### Build files for Metascape official input #####
