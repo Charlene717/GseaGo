@@ -60,6 +60,9 @@
 
   ## Import genetic data file
   GeneExp.df <- read.table(paste0(InFOLName_GE,"/",SampleName), header=T, row.names = 1, sep="\t")
+  colnames(GeneExp.df) <-  gsub("\\.", "-", colnames(GeneExp.df))
+
+
   Anno.df <- read.table(paste0(InFOLName_GE,"/",SamplePhenoName), header=T, row.names = 1, sep="\t")
 
   ## Import GSEA gene sets
@@ -149,6 +152,15 @@
                                     Save.Path = Save.Path, SampleName = SampleName)
   GeneExp_high.set <- GeneExp_group.set[["GeneExp_high.set"]]
   GeneExp_low.set <- GeneExp_group.set[["GeneExp_low.set"]]
+
+
+  GeneExp_high.df <- data.frame(ID = GeneExp_high.set %>% as.data.frame(), TarGene = "High")
+  GeneExp_low.df <- data.frame(ID = GeneExp_low.set %>% as.data.frame(), TarGene = "Low")
+  GeneExpAnno.df <- rbind(GeneExp_high.df, GeneExp_low.df)
+  colnames(GeneExpAnno.df) <- c(colnames(Anno.df)[1], TarGene_name)
+  rm(GeneExp_high.df, GeneExp_low.df)
+
+
 
   ##### Group by gene expression 2: CutOff by Comparison #####
   ## FUN Comparison (Visualization and value)
