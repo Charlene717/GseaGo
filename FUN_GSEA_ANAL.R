@@ -274,23 +274,23 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
       # dev.off()
 
     ##### Export Result #####
-      # pdf(
-      #   file = paste0(Save.Path,"/GSEAResult_",AnnoName,"_",SampleName,"_",TarGeneName,".pdf"),
-      #   width = 10,  height = 10
-      # )
-      #
-      #   print(p1)
-      #   print(p2)
-      #   print(p3)
-      #   # print(p4)
-      #   print(p5)
-      #   print(p6)
-      #   print(p7)
-      #   print(p8A)
-      #   print(p8B)
-      #   print(p9)
-      #
-      # dev.off()
+      pdf(
+        file = paste0(Save.Path,"/GSEAResult_",AnnoName,"_",SampleName,"_",TarGeneName,".pdf"),
+        width = 10,  height = 10
+      )
+
+        print(p1)
+        print(p2)
+        print(p3)
+        # print(p4)
+        print(p5)
+        print(p6)
+        print(p7)
+        print(p8A)
+        print(p8B)
+        print(p9)
+
+      dev.off()
 
     #### Output ####
       Output <- list()
