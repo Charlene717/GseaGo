@@ -69,14 +69,16 @@
   #
   # Anno.df <- read.table(paste0(InFOLName_GE,"/",SamplePhenoName), header=T, row.names = 1, sep="\t")
 
-  GeneExp.df.df <- scRNA.SeuObj@assays[["RNA"]]@counts %>% as.data.frame()
+  GeneExp.df <- scRNA.SeuObj@assays[["RNA"]]@counts %>% as.data.frame()
   Anno.df <- scRNA.SeuObj@meta.data
-
+  Anno.df <- data.frame(ID=row.names(Anno.df), Anno.df)
   ## Import GSEA gene sets
-  InputGSEA <- "GSEA_Geneset_Pathway_3Database_WithoutFilter.txt"
+  # InputGSEA <- "GSEA_Geneset_Pathway_3Database_WithoutFilter.txt"
+  InputGSEA <- "m5_go_bp_v0_3_symbols.gmt"
+
   InFOLName_GSEA <- "Input_Genesets"
   Pathway.all <- read.delim2(paste0(getwd(),"/",InFOLName_GSEA,"/",InputGSEA),
-                             col.names = 1:max(count.fields(paste0(getwd(),"/",InputGSEA))),
+                             col.names = 1:max(count.fields(paste0(getwd(),"/",InFOLName_GSEA,"/",InputGSEA))),
                              header = F,sep = "\t")
 
 ##### Conditions setting* #####
@@ -134,16 +136,17 @@
   Anno_Ori.df <- Anno.df
   colnames(Anno.df)
 
-  PhenoColKeep.set <- c("X_INTEGRATION","X_PATIENT","histological_type","sample_type","gender")
-  Anno.df <- Anno.df[,c(PhenoColKeep.set)]
-  colnames(Anno.df)
-
-  head(Anno.df)
+  # PhenoColKeep.set <- c("X_INTEGRATION","X_PATIENT","histological_type","sample_type","gender")
+  # Anno.df <- Anno.df[,c(PhenoColKeep.set)]
+  # colnames(Anno.df)
+  #
+  # head(Anno.df)
 
   ## Select Pheno row
   PhenoRowKeep.set <- list(col="Cachexia" ,row=c("EO"))
   Anno.df <- Anno.df[Anno.df[,PhenoRowKeep.set[["col"]]] %in% PhenoRowKeep.set[["row"]], ]
 
+  GeneExp.df <- GeneExp.df[,colnames(GeneExp.df) %in% Anno.df[,1] ]
 
 
 #************************************************************************************************************************#
@@ -152,7 +155,7 @@
   ##### Group by gene expression 1: CutOff by total  #####
   Plot.DistrPlot <- FUN_DistrPlot(GeneExp.df,
                                   TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
-                                  Save.Path = Save.Path, SampleName = SampleName)
+                                  Save.Path = Save.Path, SampleName = "PBMC")
   Plot.DistrPlot_SD_Q <- Plot.DistrPlot[["TGeneDen_SD_Q.p"]]
   Plot.DistrPlot_SD_Q
 
