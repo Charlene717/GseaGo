@@ -147,18 +147,12 @@
 ##### Grouping #####
   source("FUN_Group_GE.R")
   ##### Group by gene expression 1: CutOff by total  #####
-  GeneExp_group.set <- FUN_Group_GE(GeneExp.df,
+  GeneExp_group.set <- FUN_Group_GE(GeneExp.df, Anno.df,
                                     TarGeneName = TarGene_name, GroupSet = GeneExpSet.lt,
                                     Save.Path = Save.Path, SampleName = SampleName)
-  GeneExp_high.set <- GeneExp_group.set[["GeneExp_high.set"]]
-  GeneExp_low.set <- GeneExp_group.set[["GeneExp_low.set"]]
+  Anno.df <- GeneExp_group.set[["AnnoNew.df"]]
 
 
-  GeneExp_high.df <- data.frame(ID = GeneExp_high.set %>% as.data.frame(), TarGene = "High")
-  GeneExp_low.df <- data.frame(ID = GeneExp_low.set %>% as.data.frame(), TarGene = "Low")
-  GeneExpAnno.df <- rbind(GeneExp_high.df, GeneExp_low.df)
-  colnames(GeneExpAnno.df) <- c(colnames(Anno.df)[1], TarGene_name)
-  rm(GeneExp_high.df, GeneExp_low.df)
 
 
 
