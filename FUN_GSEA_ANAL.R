@@ -20,38 +20,38 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
 ){
 
 
-  ##### Load Packages  #####
-    #### Basic installation ####
-    ## Check whether the installation of those packages is required from basic
-    Package.set <- c("tidyverse","ggplot2")
-    for (i in 1:length(Package.set)) {
-      if (!requireNamespace(Package.set[i], quietly = TRUE)){
-        install.packages(Package.set[i])
-      }
-    }
-    ## Load Packages
-    lapply(Package.set, library, character.only = TRUE)
-    rm(Package.set,i)
-
-
-    #### BiocManager installation ####
-    ## Set the desired organism
-    organism = "org.Hs.eg.db" ## c("org.Hs.eg.db","org.Mm.eg.db")   ##  c("org.Dm.eg.db")
-
-    ## Check whether the installation of those packages is required from BiocManager
-    if (!require("BiocManager", quietly = TRUE))
-      install.packages("BiocManager")
-    Package.set <- c(organism,"fgsea","clusterProfiler","enrichplot","pathview")
-    for (i in 1:length(Package.set)) {
-      if (!requireNamespace(Package.set[i], quietly = TRUE)){
-        BiocManager::install(Package.set[i])
-      }
-    }
-    ## Load Packages
-    lapply(Package.set, library, character.only = TRUE)
-    rm(Package.set,i)
-
-    options(stringsAsFactors = FALSE)
+  # ##### Load Packages  #####
+  #   #### Basic installation ####
+  #   ## Check whether the installation of those packages is required from basic
+  #   Package.set <- c("tidyverse","ggplot2")
+  #   for (i in 1:length(Package.set)) {
+  #     if (!requireNamespace(Package.set[i], quietly = TRUE)){
+  #       install.packages(Package.set[i])
+  #     }
+  #   }
+  #   ## Load Packages
+  #   lapply(Package.set, library, character.only = TRUE)
+  #   rm(Package.set,i)
+  #
+  #
+  #   #### BiocManager installation ####
+  #   ## Set the desired organism
+  #   # organism = "org.Hs.eg.db" ## c("org.Hs.eg.db","org.Mm.eg.db")   ##  c("org.Dm.eg.db")
+  #
+  #   ## Check whether the installation of those packages is required from BiocManager
+  #   if (!require("BiocManager", quietly = TRUE))
+  #     install.packages("BiocManager")
+  #   Package.set <- c("clusterProfiler","enrichplot","pathview") # c(organism,"fgsea","clusterProfiler","enrichplot","pathview")
+  #   for (i in 1:length(Package.set)) {
+  #     if (!requireNamespace(Package.set[i], quietly = TRUE)){
+  #       BiocManager::install(Package.set[i])
+  #     }
+  #   }
+  #   ## Load Packages
+  #   lapply(Package.set, library, character.only = TRUE)
+  #   rm(Package.set,i)
+  #
+  #   options(stringsAsFactors = FALSE)
 
 
 # #************************************************************************************************************************#
@@ -171,14 +171,15 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
       #### Use online pathwayGeneSet ####
       ## MSigDB_C2
       library(msigdbr)
-      msigdbr_species()
-      m_c2 <- msigdbr(species = Species, category = "C2") %>%
-              dplyr::select(gs_name, gene_symbol, entrez_gene)
+      # msigdbr_species()
+      # m_c2 <- msigdbr(species = Species, category = "C2") %>%
+      #         dplyr::select(gs_name, gene_symbol, entrez_gene)
 
       #### Transform Customized pathwayGeneSet ####
+      # pathwayGeneSet <- data.frame(Geneset = row.names(pathwayGeneSet),pathwayGeneSet)
       Temp <- pathwayGeneSet[,-2]
       m_c2 <- Temp %>% pivot_longer(cols=2:ncol(.),names_to = "Temp", values_to = "Gene") %>%
-              dplyr::select(cols=c(1,3))
+                       dplyr::select(cols=c(1,3))
 
       m_c2 <- m_c2[!m_c2$cols2 == "",]
 
@@ -245,8 +246,12 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
       ## 2.8.1 gseaplot2
       n <- nrow(y2)
       p8_1 <- gseaplot2(y2, geneSetID = 1, title = y2$Description[1])   # max NES
+      p8_1_2 <- gseaplot2(y2, geneSetID = 2, title = y2$Description[2])   # Sec NES
+
       p8_2 <- gseaplot2(y2, geneSetID = n, title = y2$Description[n])   # min NES
-      p8A <- cowplot::plot_grid(p8_1, p8_2, ncol = 1, labels = LETTERS[1:2])
+      p8_2_2 <- gseaplot2(y2, geneSetID = (n-1), title = y2$Description[(n-1)])   # min NES
+
+      p8A <- cowplot::plot_grid(p8_1,p8_1_2, p8_2,p8_2_2, ncol = 2, labels = LETTERS[1:4])
 
       # ## Use keyword (Overlay graphics)
       # try({
@@ -256,6 +261,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
       # })
 
       ## Overlay graphics by ID
+      # p8B <- gseaplot2(y2, geneSetID = 1:10)
       p8B <- gseaplot2(y2, geneSetID = 1:10)
 
       # ## 2.8.2 gsearank
@@ -268,28 +274,38 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
       # dev.off()
 
     ##### Export Result #####
-      pdf(
-        file = paste0(Save.Path,"/GSEAResult_",AnnoName,"_",SampleName,"_",TarGeneName,".pdf"),
-        width = 10,  height = 10
-      )
-
-        print(p1)
-        print(p2)
-        print(p3)
-        # print(p4)
-        print(p5)
-        print(p6)
-        print(p7)
-        print(p8A)
-        print(p8B)
-        print(p9)
-
-      dev.off()
+      # pdf(
+      #   file = paste0(Save.Path,"/GSEAResult_",AnnoName,"_",SampleName,"_",TarGeneName,".pdf"),
+      #   width = 10,  height = 10
+      # )
+      #
+      #   print(p1)
+      #   print(p2)
+      #   print(p3)
+      #   # print(p4)
+      #   print(p5)
+      #   print(p6)
+      #   print(p7)
+      #   print(p8A)
+      #   print(p8B)
+      #   print(p9)
+      #
+      # dev.off()
 
     #### Output ####
       Output <- list()
       Output[["GSEA_Result"]] <- GSEA_Result
       Output[["geneList_ranks"]] <- geneList
+      Output[["GSEABar_Plot"]] <- p1
+      Output[["GSEADot_Plot"]] <- p2
+      Output[["p3"]] <- p3
+      # Output[["p4"]] <- p4
+      Output[["p5"]] <- p5
+      Output[["UpSet_Plot"]] <- p6
+      Output[["p7"]] <- p7
+      Output[["Gsea_Plot"]] <- p8A
+      Output[["OverlayGsea_Plot"]] <- p8B
+      Output[["p9"]] <- p9
 
     return(Output)
 
