@@ -145,7 +145,7 @@
   source("FUN_Group_GE.R")
   ##### Group by gene expression 1: CutOff by total  #####
   GeneExp_group.set <- FUN_Group_GE(GeneExp.df,
-                                    TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
+                                    TarGeneName = TarGene_name, GroupSet = GeneExpSet.lt,
                                     Save.Path = Save.Path, SampleName = SampleName)
   GeneExp_high.set <- GeneExp_group.set[["GeneExp_high.set"]]
   GeneExp_low.set <- GeneExp_group.set[["GeneExp_low.set"]]
