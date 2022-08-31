@@ -282,7 +282,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all, NumGeneset
         width = 15,  height = 10
       )
 
-        print(p1 %>% BeautifyggPlot(LegPos = c(0.9, 0.1),AxisTitleSize=1.7))
+        print(p1 %>% BeautifyggPlot(LegPos = c(0.9, 0.2),AxisTitleSize=1.7,YtextSize=14) )
         print(p2 %>% BeautifyggPlot(LegPos = c(0.9, 0.3),AxisTitleSize=1.7))
         print(p3)
         # print(p4)
