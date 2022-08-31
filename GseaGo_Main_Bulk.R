@@ -210,7 +210,8 @@
   FUN_GSEA_ForOFFL(GeneExp.df, Group1 = GeneExp_high.set, Group2 = GeneExp_low.set,
                    GroupMode = Group_Mode,
                    TarGeneName = TarGene_name, GeneExpSet = GeneExpSet.lt,
-                   Save.Path = Save.Path, SampleName = SampleName)
+                   Save.Path = Save.Path, SampleName = SampleName,
+                   AnnoName="Recur2Prim")
 
 ##### Build files for Metascape official input #####
 
