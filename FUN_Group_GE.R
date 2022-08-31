@@ -1,7 +1,7 @@
 ## Build files for GSEA official input
 
 FUN_Group_GE = function(GeneExp.df,
-                        TarGeneName = TarGene_name, GroupMode = Mode_Group,
+                        TarGeneName = TarGene_name, GroupSet = GeneExpSet.lt,
                         Save.Path = Save.Path, SampleName = SampleName
 ){
 
@@ -19,40 +19,52 @@ FUN_Group_GE = function(GeneExp.df,
   ##### Extract Target gene and Statistics ####
   # Extract data with TarGeneName
   TarGene_Mean <- GeneExp.df[TarGeneName,] %>%
-    as.numeric() %>%
-    mean()
+                  as.numeric() %>%
+                  mean()
 
   # rowMeans(data.matrix(TarGene))
   TarGene_SD <- GeneExp.df[TarGeneName,] %>%
-    as.numeric() %>%
-    sd()
+                as.numeric() %>%
+                sd()
 
   # Quartile
   TarGene_Q <- GeneExp.df[TarGeneName,] %>%
-    as.numeric() %>%
-    quantile()
+               as.numeric() %>%
+               quantile()
 
 
   ##### Group the expression matrix according to the expression level of Target gene ####
-  if(GroupMode$Mode=="Mean"){
-    if(GroupMode$SD==0){
-      GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Mean+TarGene_SD*(GroupMode$SD)]
-      GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] < TarGene_Mean-TarGene_SD*(GroupMode$SD)]
-    }else{
-      GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Mean+TarGene_SD*(GroupMode$SD)]
-      GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] <= TarGene_Mean-TarGene_SD*(GroupMode$SD)]
-    }
-    #rm(TarGene_Mean, TarGene_SD)
+  if(GroupSet$GeneExpMode == "Mean"){
+    GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Mean+TarGene_SD*0]
+    GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] < TarGene_Mean-TarGene_SD*0]
+
+  }else if(GroupSet$GeneExpMode == "Mean1SD"){
+    GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Mean+TarGene_SD*1]
+    GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] <= TarGene_Mean-TarGene_SD*1]
+
+  }else if(GroupSet$GeneExpMode == "Mean2SD"){
+    GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Mean+TarGene_SD*2]
+    GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] <= TarGene_Mean-TarGene_SD*2]
+
+  }else if(GroupSet$GeneExpMode == "Mean3SD"){
+    GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Mean+TarGene_SD*3]
+    GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] <= TarGene_Mean-TarGene_SD*3]
+
+  }else if(GroupSet$GeneExpMode == "Median"){
+    GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Q[3]]
+    GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] < TarGene_Q[3]]
+
+  }else if(GroupSet$GeneExpMode == "Quartile"){
+    GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Q[4]]
+    GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] <= TarGene_Q[2]]
+
+  }else if(GroupSet$GeneExpMode == "Customize"){
+    GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= GroupSet$UpCutoff]
+    GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] <= GroupSet$LowerCutoff]
 
   }else{
-    if(GroupMode$Q2=="Only"){ # Mode="Quartile"
-      GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Q[3]]
-      GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] < TarGene_Q[3]]
-    }else{
-      GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Q[4]]
-      GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] <= TarGene_Q[2]]
-    }
-    #rm(TarGene_Q)
+    GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Mean+TarGene_SD*0]
+    GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] < TarGene_Mean-TarGene_SD*0]
 
   }
 
