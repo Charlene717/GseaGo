@@ -69,7 +69,7 @@
   InputGSEA <- "GSEA_Geneset_Pathway_3Database_WithoutFilter.txt"
   InFOLName_GSEA <- "Input_Genesets"
   Pathway.all <- read.delim2(paste0(getwd(),"/",InFOLName_GSEA,"/",InputGSEA),
-                             col.names = 1:max(count.fields(paste0(getwd(),"/",InputGSEA))),
+                             col.names = 1:max(count.fields(paste0(getwd(),"/",InFOLName_GSEA,"/",InputGSEA))),
                              header = F,sep = "\t")
 
 ##### Conditions setting* #####
@@ -137,6 +137,7 @@
   PhenoRowKeep.set <- list(col="sample_type",row=c("Primary Tumor","Recurrent Tumor"))
   Anno.df <- Anno.df[Anno.df[,PhenoRowKeep.set[["col"]]] %in% PhenoRowKeep.set[["row"]], ]
 
+  ## Replace
 
 
 #************************************************************************************************************************#
@@ -158,7 +159,8 @@
                                     TarGeneName = TarGene_name, GroupSet = GeneExpSet.lt,
                                     Save.Path = Save.Path, SampleName = SampleName)
   Anno.df <- GeneExp_group.set[["AnnoNew.df"]]
-
+  GeneExp_high.set <- GeneExp_group.set[["GeneExp_high.set"]]
+  GeneExp_low.set <- GeneExp_group.set[["GeneExp_low.set"]]
 
   ##### Group by gene expression 2: CutOff by Comparison #####
   ## FUN Comparison (Visualization and value)
