@@ -178,7 +178,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
       #### Transform Customized pathwayGeneSet ####
       Temp <- pathwayGeneSet[,-2]
       m_c2 <- Temp %>% pivot_longer(cols=2:ncol(.),names_to = "Temp", values_to = "Gene") %>%
-                       select(cols=c(1,3))
+              dplyr::select(cols=c(1,3))
 
       m_c2 <- m_c2[!m_c2$cols2 == "",]
 
