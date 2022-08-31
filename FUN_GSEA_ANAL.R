@@ -13,7 +13,7 @@
 ## GSEA Chard Liu
 ## Ref: http://rstudio-pubs-static.s3.amazonaws.com/514990_9690f31b5ef7488bb4f0bb6c10ac4da8.html
 
-FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all, NumGenesetsPlt=10,
+FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all, NumGenesetsPlt = 10,
                          TarGeneName = TarGene_name, GroupMode = Mode_Group,
                          ThrSet = Thr.lt, Species = "Homo sapiens", # Speices type can check by msigdbr_species()
                          Save.Path = Save.Path, SampleName = SampleName, AnnoName = "C2"
@@ -202,11 +202,11 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all, NumGeneset
 
 
       n <- NumGenesetsPlt
-      y_bar <- group_by(y, sign(NES)) %>% slice(1:n)
+      y_bar <- group_by(y, sign(NES)) %>% slice(1:NumGenesetsPlt)
 
-      p1 <- ggplot(y_bar, aes(NES, fct_reorder(Description, NES), fill = qvalues), showCategory=(n*2)) +
+      p1 <- ggplot(y_bar, aes(NES, fct_reorder(Description, NES), fill = qvalues), showCategory=(NumGenesetsPlt*2)) +
                    geom_barh(stat='identity') +
-                   scale_fill_continuous(low='red', high='blue', guide = guide_colorbar(reverse=TRUE)) +
+                   scale_fill_continuous(low='#d45772', high='#3b74bf', guide = guide_colorbar(reverse=TRUE)) +
                    theme_minimal() + ylab(NULL)
 
 
@@ -218,7 +218,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all, NumGeneset
 
       ## 2.3 Gene-Concept Network
       # n <- 3
-      p3 <- cnetplot(GSEA_Result, showCategory = (n*2), colorEdge = TRUE, node_label = "category")
+      p3 <- cnetplot(GSEA_Result, showCategory = (NumGenesetsPlt*2), colorEdge = TRUE, node_label = "category")
       cowplot::plot_grid(p3, ncol=1, labels=LETTERS[1], rel_widths=c(1))
 
       ## 2.4 Heatmap-like functional classification
@@ -226,13 +226,13 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all, NumGeneset
 
 
       ## 2.5 Enrichment Map
-      p5 <- emapplot(pairwise_termsim(y), showCategory = n)
+      p5 <- emapplot(pairwise_termsim(y), showCategory = NumGenesetsPlt/2)
       cowplot::plot_grid(p5, ncol = 1, lables = LETTERS[1])
 
 
       ## 2.6 UpSet Plot
       library(ggupset)
-      p6 <- upsetplot(GSEA_Result)
+      p6 <- upsetplot(GSEA_Result, n = NumGenesetsPlt)
 
       ## 2.7 ridgeline plot for expressiong distribution
       p7 <- ridgeplot(GSEA_Result) +
