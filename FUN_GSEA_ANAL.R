@@ -205,13 +205,15 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
 
       p1 <- ggplot(y_bar, aes(NES, fct_reorder(Description, NES), fill = qvalues), showCategory=(n*2)) +
                    geom_barh(stat='identity') +
-                   scale_fill_continuous(low='red', high='blue', guide=guide_colorbar(reverse=TRUE)) +
+                   scale_fill_continuous(low='red', high='blue', guide = guide_colorbar(reverse=TRUE)) +
                    theme_minimal() + ylab(NULL)
+
 
       ## 2.2 Dotplot
       p2 <- dotplot(GSEA_Result, showCategory = 10, font.size = 8,
                     x = "GeneRatio",   # option -> c("GeneRatio", "Count")
                     color = "p.adjust")   # option -> c("pvalue", "p.adjust", "qvalue")
+
 
       ## 2.3 Gene-Concept Network
       n <- 3
@@ -276,11 +278,11 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
     ##### Export Result #####
       pdf(
         file = paste0(Save.Path,"/GSEAResult_",AnnoName,"_",SampleName,"_",TarGeneName,".pdf"),
-        width = 10,  height = 10
+        width = 15,  height = 10
       )
 
-        print(p1)
-        print(p2)
+        print(p1 %>% BeautifyggPlot(LegPos = c(0.9, 0.1),AxisTitleSize=1.7))
+        print(p2 %>% BeautifyggPlot(LegPos = c(0.9, 0.3),AxisTitleSize=1.7))
         print(p3)
         # print(p4)
         print(p5)
