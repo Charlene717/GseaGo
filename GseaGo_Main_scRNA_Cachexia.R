@@ -72,6 +72,7 @@
   GeneExp.df <- scRNA.SeuObj@assays[["RNA"]]@counts %>% as.data.frame()
   Anno.df <- scRNA.SeuObj@meta.data
   Anno.df <- data.frame(ID=row.names(Anno.df), Anno.df)
+  row.names(Anno.df) <- Anno.df[,1]
   ## Import GSEA gene sets
   # InputGSEA <- "GSEA_Geneset_Pathway_3Database_WithoutFilter.txt"
   InputGSEA <- "m5_go_bp_v0_3_symbols.gmt"
@@ -168,7 +169,8 @@
                                     TarGeneName = TarGene_name, GroupSet = GeneExpSet.lt,
                                     Save.Path = Save.Path, SampleName = SampleName)
   Anno.df <- GeneExp_group.set[["AnnoNew.df"]]
-
+  GeneExp_high.set <- GeneExp_group.set[["GeneExp_high.set"]]
+  GeneExp_low.set <- GeneExp_group.set[["GeneExp_low.set"]]
 
   ##### Group by gene expression 2: CutOff by Comparison #####
   ## FUN Comparison (Visualization and value)
@@ -183,8 +185,8 @@
   DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
                                   GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
                                   ThrSet = Thr.lt,
-                                  TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "X_INTEGRATION",
-                                  Save.Path = Save.Path, SampleName = SampleName, AnnoName = "AvB")
+                                  TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "ID",
+                                  Save.Path = Save.Path, SampleName = "PBMC", AnnoName = "AvB")
   DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
 
 
@@ -206,7 +208,7 @@
   GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, pathwayGeneSet = Pathway.all,
                                   TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
                                   ThrSet = Thr.lt, Species = "Homo sapiens", # Speices type can check by msigdbr_species()
-                                  Save.Path = Save.Path, SampleName = SampleName, AnnoName = "Path")
+                                  Save.Path = Save.Path, SampleName = "PBMC", AnnoName = "Path")
 
   #### Run ORA ####
   ## FUN ORA
@@ -217,14 +219,14 @@
 
   FUN_GSEA_ForOFFL(GeneExp.df, Group1 = GeneExp_high.set, Group2 = GeneExp_low.set,
                    TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
-                   Save.Path = Save.Path, SampleName = SampleName)
+                   Save.Path = Save.Path, SampleName = "PBMC")
 
 ##### Build files for Metascape official input #####
 
 
 
 #### Save RData ####
-  save.image(paste0(Save.Path,"/GseaGo_",SampleName,".RData"))
+  save.image(paste0(Save.Path,"/GseaGo_",Version,".RData"))
 
 
 
