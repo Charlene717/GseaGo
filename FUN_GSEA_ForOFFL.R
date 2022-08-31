@@ -1,7 +1,7 @@
 ## Build files for GSEA official input
 
 FUN_GSEA_ForOFFL = function(GeneExp.df, Group1 = GeneExp_high.set, Group2 = GeneExp_low.set,
-                            TarGeneName = TarGene_name, GroupMode = Mode_Group,
+                            TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
                             Save.Path = Save.Path, SampleName = SampleName
 ){
 
@@ -32,18 +32,18 @@ FUN_GSEA_ForOFFL = function(GeneExp.df, Group1 = GeneExp_high.set, Group2 = Gene
 
 
 ##### Export Result #####
-  if(GroupMode$Mode == "Mean"){
+  if(GroupMode$GeneExpMode == "Customize"){
     write.table(
       GeneExp_GSEA.df,
       file=paste0(Save.Path,"/OFFL_",SampleName,"_",
-                  GroupMode$Mode,GroupMode$SD,"SD_",
+                  GroupMode$GeneExpMode,"_Up", GroupMode$UpCutoff,"_Low_" ,GroupMode$LowerCutoff,
                   TarGeneName,"_collapsed.gct"),
       quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
     )
     write.table(
       Pheno_sum.df,
       file=paste0(Save.Path,"/OFFL_",SampleName,"_",
-                  GroupMode$Mode,GroupMode$SD,"SD_",
+                  GroupMode$GeneExpMode,"_Up", GroupMode$UpCutoff,"_Low_" ,GroupMode$LowerCutoff,
                   TarGeneName,".cls"),
       quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
     )
@@ -51,14 +51,14 @@ FUN_GSEA_ForOFFL = function(GeneExp.df, Group1 = GeneExp_high.set, Group2 = Gene
     write.table(
       GeneExp_GSEA.df,
       file=paste0(Save.Path,"/OFFL_",SampleName,"_",
-                  GroupMode$Mode,"Q2",GroupMode$Q2,"_",
+                  GroupMode$GeneExpMode,"_",
                   TarGeneName,"_collapsed.gct"),
       quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
     )
     write.table(
       Pheno_sum.df,
       file=paste0(Save.Path,"/OFFL_",SampleName,"_",
-                  GroupMode$Mode,"Q2",GroupMode$Q2,"_",
+                  GroupMode$GeneExpMode,"_",
                   TarGeneName,".cls"),
       quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
     )
