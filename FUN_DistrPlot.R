@@ -1,8 +1,8 @@
 ## Build files for GSEA official input
 
 FUN_DistrPlot = function(GeneExp.df,
-                        TarGeneName = TarGene_name, GroupMode = Mode_Group,
-                        Save.Path = Save.Path, SampleName = SampleName
+                         TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
+                         Save.Path = Save.Path, SampleName = SampleName
 ){
 
   ##### Load Packages #####
@@ -14,23 +14,21 @@ FUN_DistrPlot = function(GeneExp.df,
   library(patchwork)
   library(eoffice)
 
-
-
   ##### Extract Target gene and Statistics ####
   # Extract data with TarGeneName
   TarGene_Mean <- GeneExp.df[TarGeneName,] %>%
-    as.numeric() %>%
-    mean()
+                  as.numeric() %>%
+                  mean()
 
   # rowMeans(data.matrix(TarGene))
   TarGene_SD <- GeneExp.df[TarGeneName,] %>%
-    as.numeric() %>%
-    sd()
+                as.numeric() %>%
+                sd()
 
   # Quartile
   TarGene_Q <- GeneExp.df[TarGeneName,] %>%
-    as.numeric() %>%
-    quantile()
+               as.numeric() %>%
+               quantile()
 
 
   # ##### Group the expression matrix according to the expression level of Target gene ####
@@ -60,12 +58,11 @@ FUN_DistrPlot = function(GeneExp.df,
   ##### Visualization #####
   ## https://www.jianshu.com/p/9e5b7ffcf80f
 
-  data <- reshape2::melt(GeneExp.df[TarGeneName,]%>%
-                           as.numeric())
+  data <- reshape2::melt(GeneExp.df[TarGeneName,] %>% as.numeric())
   TGeneDen.p <- ggplot(data,aes(value,fill=value, color=value)) +
-    xlab("Expression level") +
-    geom_density(alpha = 0.6, fill = "lightgray") +
-    geom_rug() + theme_bw()
+                       xlab("Expression level") +
+                       geom_density(alpha = 0.6, fill = "lightgray") +
+                       geom_rug() + theme_bw()
 
   ## Set the color
   Mean_SD.clr <- list(rect="#ecbdfc", line="#994db3",text="#6a3b7a" )
