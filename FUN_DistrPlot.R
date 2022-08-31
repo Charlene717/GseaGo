@@ -117,15 +117,15 @@ FUN_DistrPlot = function(GeneExp.df,
 
   dev.off()
 
-  # Export PPT
-  TGeneDen_SD_Q.p  %>% BeautifyggPlot(LegPos = c(0.9, 0.8),AxisTitleSize=1.7,
-                                      OL_Thick = 1.5) +
-    labs(title= TarGeneName,
-         x ="Expression level", y = "Density") -> TGeneDen_SD_Q2.p
-
-  topptx(TGeneDen_SD_Q2.p,paste0(Save.Path,"/DensityPlot_",SampleName,"_",TarGeneName,".pptx"))
-
-  rm(TGeneDen_SD_Q2.p)
+  # # Export PPT
+  # TGeneDen_SD_Q.p  %>% BeautifyggPlot(LegPos = c(0.9, 0.8),AxisTitleSize=1.7,
+  #                                     OL_Thick = 1.5) +
+  #   labs(title= TarGeneName,
+  #        x ="Expression level", y = "Density") -> TGeneDen_SD_Q2.p
+  #
+  # topptx(TGeneDen_SD_Q2.p,paste0(Save.Path,"/DensityPlot_",SampleName,"_",TarGeneName,".pptx"))
+  #
+  # rm(TGeneDen_SD_Q2.p)
 
 
   ##### Note #####
