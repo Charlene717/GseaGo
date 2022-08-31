@@ -76,13 +76,18 @@
   Group_Mode <- "GoupByPheno"   # c("GoupByPheno","GoupByGeneExp")
   TarGene_name <- "TP53"
 
-  ## Group by GeneExp
   GeneExpSet.lt <- list(GeneExpMode = "Mean", # c("Mean","Mean1SD","Mean2SD","Mean3SD","Median","Quartile","Customize"))
                         UpCutoff = 1, LowerCutoff = 1)
 
-  ## Group by Pheno
-  AnnoSet.lt <- list(GroupType = "sample_type", GroupCompare = c("Primary Tumor","Recurrent Tumor") )
-  # AnnoSet.lt <- list(GroupType = TarGene_name, GroupCompare = c("High","Low") )   ## DEG by GeneExp group
+  if(Group_Mode == "GoupByGeneExp"){
+    ## Group by GeneExp
+    AnnoSet.lt <- list(GroupType = TarGene_name, GroupCompare = c("High","Low") )   ## DEG by GeneExp group
+  }else{
+    ## Group by Pheno
+    AnnoSet.lt <- list(GroupType = "sample_type", GroupCompare = c("Primary Tumor","Recurrent Tumor") )
+  }
+
+
 
   Thr.lt <- list(LogFC = c("logFC",1), pVal = c("PValue",0.05) )
 
@@ -173,15 +178,15 @@
   DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
 
 
-    #### Test: DEG by GeneExp group ####
-    AnnoSet.lt <- list(GroupType = TarGene_name, GroupCompare = c("High","Low") )
-    source("FUN_DEG_Analysis.R")
-    DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
-                                    GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
-                                    ThrSet = Thr.lt,
-                                    TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "X_INTEGRATION",
-                                    Save.Path = Save.Path, SampleName = SampleName, AnnoName = "AvB")
-    DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
+    # #### Test: DEG by GeneExp group ####
+    # AnnoSet.lt <- list(GroupType = TarGene_name, GroupCompare = c("High","Low") )
+    # source("FUN_DEG_Analysis.R")
+    # DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
+    #                                 GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
+    #                                 ThrSet = Thr.lt,
+    #                                 TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "X_INTEGRATION",
+    #                                 Save.Path = Save.Path, SampleName = SampleName, AnnoName = "AvB")
+    # DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
 
 
 
