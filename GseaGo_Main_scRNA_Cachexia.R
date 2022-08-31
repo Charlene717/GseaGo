@@ -207,6 +207,7 @@
 
   GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, pathwayGeneSet = Pathway.all,
                                   TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
+                                  NumGenesetsPlt=15,
                                   ThrSet = Thr.lt, Species = "Homo sapiens", # Speices type can check by msigdbr_species()
                                   Save.Path = Save.Path, SampleName = "PBMC", AnnoName = "Path")
 
@@ -218,7 +219,8 @@
   source("FUN_GSEA_ForOFFL.R")
 
   FUN_GSEA_ForOFFL(GeneExp.df, Group1 = GeneExp_high.set, Group2 = GeneExp_low.set,
-                   TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
+                   GroupMode = Group_Mode,
+                   TarGeneName = TarGene_name, GeneExpSet = GeneExpSet.lt,
                    Save.Path = Save.Path, SampleName = "PBMC")
 
 ##### Build files for Metascape official input #####
