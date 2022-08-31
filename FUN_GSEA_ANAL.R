@@ -13,7 +13,7 @@
 ## GSEA Chard Liu
 ## Ref: http://rstudio-pubs-static.s3.amazonaws.com/514990_9690f31b5ef7488bb4f0bb6c10ac4da8.html
 
-FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
+FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all, NumGenesetsPlt=10,
                          TarGeneName = TarGene_name, GroupMode = Mode_Group,
                          ThrSet = Thr.lt, Species = "Homo sapiens", # Speices type can check by msigdbr_species()
                          Save.Path = Save.Path, SampleName = SampleName, AnnoName = "C2"
@@ -200,7 +200,8 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
       library(forcats)
       library(ggplot2)
 
-      n <- 10
+
+      n <- NumGenesetsPlt
       y_bar <- group_by(y, sign(NES)) %>% slice(1:n)
 
       p1 <- ggplot(y_bar, aes(NES, fct_reorder(Description, NES), fill = qvalues), showCategory=(n*2)) +
@@ -210,13 +211,13 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
 
 
       ## 2.2 Dotplot
-      p2 <- dotplot(GSEA_Result, showCategory = 10, font.size = 8,
+      p2 <- dotplot(GSEA_Result, showCategory = NumGenesetsPlt, font.size = 8,
                     x = "GeneRatio",   # option -> c("GeneRatio", "Count")
                     color = "p.adjust")   # option -> c("pvalue", "p.adjust", "qvalue")
 
 
       ## 2.3 Gene-Concept Network
-      n <- 3
+      # n <- 3
       p3 <- cnetplot(GSEA_Result, showCategory = (n*2), colorEdge = TRUE, node_label = "category")
       cowplot::plot_grid(p3, ncol=1, labels=LETTERS[1], rel_widths=c(1))
 
@@ -225,7 +226,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
 
 
       ## 2.5 Enrichment Map
-      p5 <- emapplot(pairwise_termsim(y), showCategory = 10)
+      p5 <- emapplot(pairwise_termsim(y), showCategory = n)
       cowplot::plot_grid(p5, ncol = 1, lables = LETTERS[1])
 
 
@@ -264,7 +265,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
 
       ## Overlay graphics by ID
       # p8B <- gseaplot2(y2, geneSetID = 1:10)
-      p8B <- gseaplot2(y2, geneSetID = 1:10)
+      p8B <- gseaplot2(y2, geneSetID = 1:NumGenesetsPlt)
 
       # ## 2.8.2 gsearank
       # gsearank(y2, geneSetID = 1, title = y2$Description[1])
