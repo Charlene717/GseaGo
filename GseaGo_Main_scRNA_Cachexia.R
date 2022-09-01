@@ -53,8 +53,8 @@
   source("FUN_ggPlot_vline.R")
 
 ##### Load RData* #####
-  load("D:/Dropbox/##_GitHub/##_CAESAR/MagicDisc/2022-06-06_CC_PBMC/06_Cell_type_annotation.RData")
-
+  # load("D:/Dropbox/##_GitHub/##_CAESAR/MagicDisc/2022-06-06_CC_PBMC/06_Cell_type_annotation.RData")
+  load("D:/Dropbox/##_GitHub/##_PHH_Lab/PDAC_Cachexia_10X/2022-08-13_PBMC_Main/06_Cell_type_annotation.RData")
 
 ##### Import setting and Import* #####
   ## File setting*
@@ -75,7 +75,8 @@
   row.names(Anno.df) <- Anno.df[,1]
   ## Import GSEA gene sets
   # InputGSEA <- "GSEA_Geneset_Pathway_3Database_WithoutFilter.txt"
-  InputGSEA <- "m5_go_bp_v0_3_symbols.gmt"
+  # InputGSEA <- "m5_go_bp_v0_3_symbols.gmt"
+  InputGSEA <- "m2.all.v0.3.symbols.gmt"
 
   InFOLName_GSEA <- "Input_Genesets"
   Pathway.all <- read.delim2(paste0(getwd(),"/",InFOLName_GSEA,"/",InputGSEA),
@@ -106,7 +107,22 @@
   ProjectName = "CC10X"
   Sampletype = "PBMC"
 
-  Version = paste0(Sys.Date(),"_",ProjectName,"_",Sampletype,"_", TarGene_name)
+  ExportAnno2 = "EO"
+  if(Group_Mode == "GoupByGeneExp"){
+    ExportAnno = paste0(TarGene_name,"_",GeneExpSet.lt$GeneExpMode,"_",ExportAnno2)
+
+  }else{
+    ExportAnno = paste0(Group_Mode,"_",ExportAnno2)
+
+  }
+
+  # ExportAnno = "Chil3Mean_PathM2"
+  # ExportAnno = "Recur2Prim"
+
+  ExportName = paste0(ProjectName,"_",Sampletype,"_",ExportAnno)
+
+
+  Version = paste0(Sys.Date(),"_",ProjectName,"_",Sampletype,"_", ExportAnno)
   Save.Path = paste0(getwd(),"/",Version)
   ## Create new folder
   if (!dir.exists(Save.Path)){
@@ -156,7 +172,7 @@
   ##### Group by gene expression 1: CutOff by total  #####
   Plot.DistrPlot <- FUN_DistrPlot(GeneExp.df,
                                   TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
-                                  Save.Path = Save.Path, SampleName = "PBMC")
+                                  Save.Path = Save.Path, SampleName = ExportName)
   Plot.DistrPlot_SD_Q <- Plot.DistrPlot[["TGeneDen_SD_Q.p"]]
   Plot.DistrPlot_SD_Q
 
@@ -167,7 +183,7 @@
   ##### Group by gene expression 1: CutOff by total  #####
   GeneExp_group.set <- FUN_Group_GE(GeneExp.df, Anno.df,
                                     TarGeneName = TarGene_name, GroupSet = GeneExpSet.lt,
-                                    Save.Path = Save.Path, SampleName = SampleName)
+                                    Save.Path = Save.Path, SampleName = ExportName)
   Anno.df <- GeneExp_group.set[["AnnoNew.df"]]
   GeneExp_high.set <- GeneExp_group.set[["GeneExp_high.set"]]
   GeneExp_low.set <- GeneExp_group.set[["GeneExp_low.set"]]
@@ -186,7 +202,7 @@
                                   GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
                                   ThrSet = Thr.lt,
                                   TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "ID",
-                                  Save.Path = Save.Path, SampleName = "PBMC", AnnoName = "AvB")
+                                  Save.Path = Save.Path, SampleName = ExportName, AnnoName = "AvB")
   DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
 
 
@@ -206,10 +222,10 @@
   source("FUN_GSEA_ANAL.R")
 
   GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, pathwayGeneSet = Pathway.all,
-                                  TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
                                   NumGenesetsPlt=15,
+                                  TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
                                   ThrSet = Thr.lt, Species = "Homo sapiens", # Speices type can check by msigdbr_species()
-                                  Save.Path = Save.Path, SampleName = "PBMC", AnnoName = "Path")
+                                  Save.Path = Save.Path, SampleName = ExportName, AnnoName = "Path")
 
   #### Run ORA ####
   ## FUN ORA
@@ -221,7 +237,7 @@
   FUN_GSEA_ForOFFL(GeneExp.df, Group1 = GeneExp_high.set, Group2 = GeneExp_low.set,
                    GroupMode = Group_Mode,
                    TarGeneName = TarGene_name, GeneExpSet = GeneExpSet.lt,
-                   Save.Path = Save.Path, SampleName = "PBMC",
+                   Save.Path = Save.Path, SampleName = ExportName,
                    AnnoName="Recur2Prim")
 
 ##### Build files for Metascape official input #####
@@ -229,7 +245,7 @@
 
 
 #### Save RData ####
-  save.image(paste0(Save.Path,"/GseaGo_",Version,".RData"))
+  save.image(paste0(Save.Path,"/GseaGo_",ExportName,".RData"))
 
 
 
