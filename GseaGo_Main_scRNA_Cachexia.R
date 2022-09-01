@@ -43,6 +43,24 @@
 
 
 
+
+##### Load RData* #####
+  # load("D:/Dropbox/##_GitHub/##_CAESAR/MagicDisc/2022-06-06_CC_PBMC/06_Cell_type_annotation.RData")
+  load("D:/Dropbox/##_GitHub/##_PHH_Lab/PDAC_Cachexia_10X/2022-08-13_PBMC_Main/06_Cell_type_annotation.RData")
+
+  # Clean up
+  scRNA.SeuObj <- PBMC.combined
+  rm(list=setdiff(ls(), "scRNA.SeuObj"))
+
+  ## Save Ori
+  scRNA_Ori.SeuObj <- scRNA.SeuObj
+
+  ## Clean up data (Delete other type)
+  scRNA.SeuObj <- scRNA.SeuObj[,!grepl("Other", scRNA.SeuObj@meta.data[["celltype"]] )]
+
+  ## Clean up data (Delete other type)
+
+
 ##### Function setting #####
   ## Call function
   source("FUN_Beautify_ggplot.R")
@@ -51,16 +69,6 @@
   source("FUN_GSEA_LargeGeneSet.R")
   source("FUN_GSEA_ggplot.R")
   source("FUN_ggPlot_vline.R")
-
-##### Load RData* #####
-  # load("D:/Dropbox/##_GitHub/##_CAESAR/MagicDisc/2022-06-06_CC_PBMC/06_Cell_type_annotation.RData")
-  load("D:/Dropbox/##_GitHub/##_PHH_Lab/PDAC_Cachexia_10X/2022-08-13_PBMC_Main/06_Cell_type_annotation.RData")
-
-  ## Save Ori
-  scRNA_Ori.SeuObj <- scRNA.SeuObj
-
-  ## Clean up data (Delete other type)
-  scRNA.SeuObj <- scRNA.SeuObj[,!grepl("Other", scRNA.SeuObj@meta.data[["celltype"]] )]
 
 ##### Import setting and Import* #####
   ## File setting*
@@ -82,7 +90,9 @@
   ## Import GSEA gene sets
   # InputGSEA <- "GSEA_Geneset_Pathway_3Database_WithoutFilter.txt"
   # InputGSEA <- "m5_go_bp_v0_3_symbols.gmt"
-  InputGSEA <- "m2.all.v0.3.symbols.gmt"
+  # InputGSEA <- "m2.all.v0.3.symbols.gmt"
+
+  InputGSEA <- "m5_go_bp_v0_3_symbols.gmt"
 
   InFOLName_GSEA <- "Input_Genesets"
   Pathway.all <- read.delim2(paste0(getwd(),"/",InFOLName_GSEA,"/",InputGSEA),
@@ -113,7 +123,7 @@
   ProjectName = "CC10X"
   Sampletype = "PBMC"
 
-  ExportAnno2 = "EO"
+  ExportAnno2 = "EO_Mac3"
   if(Group_Mode == "GoupByGeneExp"){
     ExportAnno = paste0(TarGene_name,"_",GeneExpSet.lt$GeneExpMode,"_",ExportAnno2)
 
@@ -170,6 +180,19 @@
   Anno.df <- Anno.df[Anno.df[,PhenoRowKeep.set[["col"]]] %in% PhenoRowKeep.set[["row"]], ]
 
   GeneExp.df <- GeneExp.df[,colnames(GeneExp.df) %in% Anno.df[,1] ]
+
+  ## Select Pheno row2
+  PhenoRowKeep.set <- list(col="celltype" ,row=c("Mac3"))
+  Anno.df <- Anno.df[Anno.df[,PhenoRowKeep.set[["col"]]] %in% PhenoRowKeep.set[["row"]], ]
+
+  GeneExp.df <- GeneExp.df[,colnames(GeneExp.df) %in% Anno.df[,1] ]
+
+
+  # ## Delete specific cell type
+  # ## Clean up data
+  # Anno.df <- Anno.df[!grepl("Other", Anno.df$celltype),]
+  # GeneExp.df <- GeneExp.df[,colnames(GeneExp.df) %in% Anno.df$ID]
+
 
 
 #************************************************************************************************************************#
