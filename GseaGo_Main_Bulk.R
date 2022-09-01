@@ -96,7 +96,18 @@
   ProjectName = "TCGA"
   Sampletype = "LGG"
 
-  Version = paste0(Sys.Date(),"_",ProjectName,"_",Sampletype,"_", TarGene_name)
+  ExportAnno2 = "Recur2Prim"
+  if(Group_Mode == "GoupByGeneExp"){
+    ExportAnno = paste0(TarGene_name,"_",GeneExpSet.lt$GeneExpMode,"_",ExportAnno2)
+
+  }else{
+    ExportAnno = paste0(Group_Mode,"_",ExportAnno2)
+
+  }
+
+  ExportName = paste0(ProjectName,"_",Sampletype,"_",ExportAnno)
+
+  Version = paste0(Sys.Date(),"_",ProjectName,"_",Sampletype,"_", ExportAnno)
   Save.Path = paste0(getwd(),"/",Version)
   ## Create new folder
   if (!dir.exists(Save.Path)){
@@ -146,7 +157,7 @@
   ##### Group by gene expression 1: CutOff by total  #####
   Plot.DistrPlot <- FUN_DistrPlot(GeneExp.df,
                                   TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
-                                  Save.Path = Save.Path, SampleName = SampleName)
+                                  Save.Path = Save.Path, SampleName = ExportName)
   Plot.DistrPlot_SD_Q <- Plot.DistrPlot[["TGeneDen_SD_Q.p"]]
   Plot.DistrPlot_SD_Q
 
@@ -157,7 +168,7 @@
   ##### Group by gene expression 1: CutOff by total  #####
   GeneExp_group.set <- FUN_Group_GE(GeneExp.df, Anno.df,
                                     TarGeneName = TarGene_name, GroupSet = GeneExpSet.lt,
-                                    Save.Path = Save.Path, SampleName = SampleName)
+                                    Save.Path = Save.Path, SampleName = ExportName)
   Anno.df <- GeneExp_group.set[["AnnoNew.df"]]
   GeneExp_high.set <- GeneExp_group.set[["GeneExp_high.set"]]
   GeneExp_low.set <- GeneExp_group.set[["GeneExp_low.set"]]
@@ -176,7 +187,7 @@
                                   GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
                                   ThrSet = Thr.lt,
                                   TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "X_INTEGRATION",
-                                  Save.Path = Save.Path, SampleName = SampleName, AnnoName = "AvB")
+                                  Save.Path = Save.Path, SampleName = ExportName, AnnoName = "")
   DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
 
 
@@ -198,7 +209,7 @@
   GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, pathwayGeneSet = Pathway.all,
                                   TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
                                   ThrSet = Thr.lt, Species = "Homo sapiens", # Speices type can check by msigdbr_species()
-                                  Save.Path = Save.Path, SampleName = SampleName, AnnoName = "Path")
+                                  Save.Path = Save.Path, SampleName = ExportName, AnnoName = "Path")
 
   #### Run ORA ####
   ## FUN ORA
@@ -210,15 +221,15 @@
   FUN_GSEA_ForOFFL(GeneExp.df, Group1 = GeneExp_high.set, Group2 = GeneExp_low.set,
                    GroupMode = Group_Mode,
                    TarGeneName = TarGene_name, GeneExpSet = GeneExpSet.lt,
-                   Save.Path = Save.Path, SampleName = SampleName,
-                   AnnoName="Recur2Prim")
+                   Save.Path = Save.Path, SampleName = ExportName,
+                   AnnoName="")
 
 ##### Build files for Metascape official input #####
 
 
 
 #### Save RData ####
-  save.image(paste0(Save.Path,"/GseaGo_",SampleName,".RData"))
+  save.image(paste0(Save.Path,"/GseaGo_",ExportName,".RData"))
 
 
 
