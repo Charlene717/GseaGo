@@ -13,8 +13,9 @@
 ## GSEA Chard Liu
 ## Ref: http://rstudio-pubs-static.s3.amazonaws.com/514990_9690f31b5ef7488bb4f0bb6c10ac4da8.html
 
-FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all, NumGenesetsPlt = 10,
-                         TarGeneName = TarGene_name, GroupMode = Mode_Group,
+FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
+                         NumGenesetsPlt = 10,
+                         TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
                          ThrSet = Thr.lt, Species = "Homo sapiens", # Speices type can check by msigdbr_species()
                          Save.Path = Save.Path, SampleName = SampleName, AnnoName = "C2"
 ){
@@ -187,6 +188,9 @@ FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all, NumGeneset
 
       #### RUN GSEA ####
       GSEA_Result <- GSEA(geneList, TERM2GENE = m_c2) #       GSEA_Result <- GSEA(geneList, TERM2GENE = m_c2)
+      # nPerm=1000
+      # https://support.bioconductor.org/p/99810/
+      # https://bioinformatics.stackexchange.com/questions/149/are-fgsea-and-broad-institute-gsea-equivalent
 
       #### Visualization ####
 
