@@ -56,6 +56,12 @@
   # load("D:/Dropbox/##_GitHub/##_CAESAR/MagicDisc/2022-06-06_CC_PBMC/06_Cell_type_annotation.RData")
   load("D:/Dropbox/##_GitHub/##_PHH_Lab/PDAC_Cachexia_10X/2022-08-13_PBMC_Main/06_Cell_type_annotation.RData")
 
+  ## Save Ori
+  scRNA_Ori.SeuObj <- scRNA.SeuObj
+
+  ## Clean up data (Delete other type)
+  scRNA.SeuObj <- scRNA.SeuObj[,!grepl("Other", scRNA.SeuObj@meta.data[["celltype"]] )]
+
 ##### Import setting and Import* #####
   ## File setting*
   # InFOLName_GE <- "Input_TCGA"  # Input Folder Name
