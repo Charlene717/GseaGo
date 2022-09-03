@@ -43,6 +43,8 @@
                              header = F,sep = "\t")
 
 ##### Conditions setting* #####
+  DEGThr.lt <- list(LogFC = c("logFC",1), pVal = c("PValue",0.05) )
+
   Group_Mode <- "GoupByPheno"   # c("GoupByPheno","GoupByGeneExp")
 
   TarGene_name <- "TP53"
@@ -51,7 +53,6 @@
 
   GrpCompare_Pheno <- c("Primary Tumor","Recurrent Tumor")
 
-
   if(Group_Mode == "GoupByGeneExp"){
     ## Group by GeneExp
     AnnoSet.lt <- list(GroupType = TarGene_name, GroupCompare = c("High","Low") )   ## DEG by GeneExp group
@@ -59,11 +60,6 @@
     ## Group by Pheno
     AnnoSet.lt <- list(GroupType = "sample_type", GroupCompare = GrpCompare_Pheno )
   }
-
-
-
-  Thr.lt <- list(LogFC = c("logFC",1), pVal = c("PValue",0.05) )
-
 
 ##### Current path and new folder setting* #####
   ProjectName = "TCGA"
@@ -84,9 +80,7 @@
   Version = paste0(Sys.Date(),"_",ExportName)
   Save.Path = paste0(getwd(),"/",Version)
   ## Create new folder
-  if (!dir.exists(Save.Path)){
-    dir.create(Save.Path)
-  }
+  if (!dir.exists(Save.Path)){dir.create(Save.Path)}
 
 ##### Update the genename ####
   # ## Test
@@ -99,12 +93,21 @@
   #
   ## Error: Timeout was reached: [rest.genenames.org] Operation timed out after 10005 milliseconds with 0 bytes received
 
+  ## https://rdrr.io/github/vertesy/Seurat.utils/src/Development/Functions/Seurat.update.gene.symbols.HGNC.R
+  HGNC.EnforceUniquet("SEPT1")
 
   ## Update the genename ##* Take very long time
   UpdateGene <- "No"  # UpdateGene <- c("Yes","No")
   if(UpdateGene == "Yes"){
     row.names(GeneExp.df) <- UpdateSymbolList(row.names(GeneExp.df))
   }
+
+  ## https://www.nature.com/articles/s41588-020-0669-3#Sec18
+  ## Genenames.org: the HGNC and VGNC resources in 2021
+  ## https://academic.oup.com/nar/article/49/D1/D939/5957168
+
+  # HGNC
+  # https://www.genenames.org/
 
 #************************************************************************************************************************#
 ##### Data preprocess setting #####
@@ -159,7 +162,7 @@
   source("FUN_DEG_Analysis.R")
   DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
                                   GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
-                                  ThrSet = Thr.lt,
+                                  ThrSet = DEGThr.lt,
                                   TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "X_INTEGRATION",
                                   Save.Path = Save.Path, SampleName = ExportName, AnnoName = "")
   DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
@@ -170,7 +173,7 @@
     # source("FUN_DEG_Analysis.R")
     # DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
     #                                 GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
-    #                                 ThrSet = Thr.lt,
+    #                                 ThrSet = DEGThr.lt,
     #                                 TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "X_INTEGRATION",
     #                                 Save.Path = Save.Path, SampleName = SampleName, AnnoName = "AvB")
     # DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
@@ -182,7 +185,7 @@
 
   GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, pathwayGeneSet = Pathway.all,
                                   TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
-                                  ThrSet = Thr.lt, Species = "Homo sapiens", # Speices type can check by msigdbr_species()
+                                  ThrSet = DEGThr.lt, Species = "Homo sapiens", # Speices type can check by msigdbr_species()
                                   Save.Path = Save.Path, SampleName = ExportName, AnnoName = "Path")
 
   #### Run ORA ####
