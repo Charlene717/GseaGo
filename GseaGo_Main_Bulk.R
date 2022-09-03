@@ -3,9 +3,6 @@
   memory.limit(150000)
 
 ##### Load Packages #####
-  # if(!require("tidyverse")) install.packages("tidyverse")
-  # library(tidyverse)
-
   source("FUN_Package_InstLoad.R")
   Basic.set <- c("tidyverse","ggplot2","Seurat","SeuratData","patchwork","plyr","eoffice","DT")
 
@@ -35,29 +32,32 @@
   GeneExp.df <- read.table(paste0(InFOLName_GE,"/",SampleName), header=T, row.names = 1, sep="\t")
   colnames(GeneExp.df) <-  gsub("\\.", "-", colnames(GeneExp.df))
 
-
-  Anno.df <- read.table(paste0(InFOLName_GE,"/",SamplePhenoName), header=T, row.names = 1, sep="\t")
+  Anno.df <- read.table(paste0(InFOLName_GE,"/",SamplePhenoName), header=T, sep="\t")
+  row.names(Anno.df) <- Anno.df[,1]
 
   ## Import GSEA gene sets
+  InFOLName_Genesets <- "Input_Genesets"
   InputGSEA <- "GSEA_Geneset_Pathway_3Database_WithoutFilter.txt"
-  InFOLName_GSEA <- "Input_Genesets"
-  Pathway.all <- read.delim2(paste0(getwd(),"/",InFOLName_GSEA,"/",InputGSEA),
-                             col.names = 1:max(count.fields(paste0(getwd(),"/",InFOLName_GSEA,"/",InputGSEA))),
+  Pathway.all <- read.delim2(paste0(getwd(),"/",InFOLName_Genesets,"/",InputGSEA),
+                             col.names = 1:max(count.fields(paste0(getwd(),"/",InFOLName_Genesets,"/",InputGSEA))),
                              header = F,sep = "\t")
 
 ##### Conditions setting* #####
   Group_Mode <- "GoupByPheno"   # c("GoupByPheno","GoupByGeneExp")
-  TarGene_name <- "TP53"
 
+  TarGene_name <- "TP53"
   GeneExpSet.lt <- list(GeneExpMode = "Mean", # c("Mean","Mean1SD","Mean2SD","Mean3SD","Median","Quartile","Customize"))
                         UpCutoff = 1, LowerCutoff = 1)
+
+  GrpCompare_Pheno <- c("Primary Tumor","Recurrent Tumor")
+
 
   if(Group_Mode == "GoupByGeneExp"){
     ## Group by GeneExp
     AnnoSet.lt <- list(GroupType = TarGene_name, GroupCompare = c("High","Low") )   ## DEG by GeneExp group
   }else{
     ## Group by Pheno
-    AnnoSet.lt <- list(GroupType = "sample_type", GroupCompare = c("Primary Tumor","Recurrent Tumor") )
+    AnnoSet.lt <- list(GroupType = "sample_type", GroupCompare = GrpCompare_Pheno )
   }
 
 
@@ -70,6 +70,7 @@
   Sampletype = "LGG"
 
   ExportAnno2 = "Recur2Prim"
+
   if(Group_Mode == "GoupByGeneExp"){
     ExportAnno = paste0(TarGene_name,"_",GeneExpSet.lt$GeneExpMode,"_",ExportAnno2)
 
@@ -80,7 +81,7 @@
 
   ExportName = paste0(ProjectName,"_",Sampletype,"_",ExportAnno)
 
-  Version = paste0(Sys.Date(),"_",ProjectName,"_",Sampletype,"_", ExportAnno)
+  Version = paste0(Sys.Date(),"_",ExportName)
   Save.Path = paste0(getwd(),"/",Version)
   ## Create new folder
   if (!dir.exists(Save.Path)){
