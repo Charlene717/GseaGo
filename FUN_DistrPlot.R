@@ -1,7 +1,7 @@
 ## Build files for GSEA official input
 
 FUN_DistrPlot = function(GeneExp.df,
-                         TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
+                         TarGeneName = TarGene_name, GroupSet = GeneExpSet.lt,
                          Save.Path = Save.Path, SampleName = SampleName
 ){
 
@@ -31,18 +31,19 @@ FUN_DistrPlot = function(GeneExp.df,
                quantile()
 
 
-  ##### DistPlt Function ####
-
+  ##### Basic DistPlt Function ####
+  ## reshape df
   data <- reshape2::melt(GeneExp.df[TarGeneName,] %>% as.numeric())
 
   ## Set the color
-  Custom.clr <- list(rect="#ecbdfc", line="#994db3",text="#6a3b7a" )
+  Custom.clr <- list(rect="#ecbdfc", line="#994db3",text="#6a3b7a")
+
   ## Line.Set
   Line1V = 8
   Line2V = 10
   Line3V = 12
 
-  DistPlt_Ori <- function(data,Line1V,Line2V,Line3V,Custom.clr) {
+  DistPlt_Ori <- function(data,Line1V,Line2V,Line3V,Custom.clr,TarGene = TarGeneName ,Text.setO = c("L1","L2","L3")) {
     TGeneDen.p <- ggplot(data,aes(value,fill=value, color=value)) +
       xlab("Expression level") +
       geom_density(alpha = 0.6, fill = "lightgray") +
@@ -53,37 +54,67 @@ FUN_DistrPlot = function(GeneExp.df,
                                   Line.clr = Custom.clr,
                                   Line1 = Line1V,
                                   Line2 = Line2V,
-                                  Line3 = Line3V)
+                                  Line3 = Line3V,
+                                  Text.set = Text.setO)
     TGeneDen_SD.p  %>% BeautifyggPlot(LegPos = c(0.9, 0.8),AxisTitleSize=1.7) +
-      labs(title= TarGeneName, x ="Expression level", y = "Density") -> TGeneDen_SD.p
-    print(TGeneDen_SD.p)
+      labs(title= TarGene, x ="Expression level", y = "Density") -> TGeneDen_SD.p
 
+    return(TGeneDen_SD.p)
   }
 
   DistPlt_Ori(data,Line1V,Line2V,Line3V,Custom.clr)
 
-  # ##### Group the expression matrix according to the expression level of Target gene ####
-  # if(GroupMode$Mode=="Mean"){
-  #   if(GroupMode$SD==0){
-  #     GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Mean+TarGene_SD*(GroupMode$SD)]
-  #     GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] < TarGene_Mean-TarGene_SD*(GroupMode$SD)]
-  #   }else{
-  #     GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Mean+TarGene_SD*(GroupMode$SD)]
-  #     GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] <= TarGene_Mean-TarGene_SD*(GroupMode$SD)]
-  #   }
-  #   #rm(TarGene_Mean, TarGene_SD)
-  #
-  # }else{
-  #   if(GroupMode$Q2=="Only"){ # Mode="Quartile"
-  #     GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Q[3]]
-  #     GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] < TarGene_Q[3]]
-  #   }else{
-  #     GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Q[4]]
-  #     GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] <= TarGene_Q[2]]
-  #   }
-  #   #rm(TarGene_Q)
-  #
-  # }
+##### Set group conditions ####
+  if(GroupSet$GeneExpMode == "Mean1SD"){
+    Line1V = TarGene_Mean+TarGene_SD
+    Line2V = TarGene_Mean
+    Line3V = TarGene_Mean-TarGene_SD
+    Text.set = c("Mean-1SD","Mean","Mean+1SD")
+
+  }else if(GroupSet$GeneExpMode == "Mean2SD"){
+    Line1V = TarGene_Mean+2*TarGene_SD
+    Line2V = TarGene_Mean
+    Line3V = TarGene_Mean-2*TarGene_SD
+    Text.set = c("Mean-2SD","Mean","Mean+2SD")
+
+  }else if(GroupSet$GeneExpMode == "Mean3SD"){
+    Line1V = TarGene_Mean+3*TarGene_SD
+    Line2V = TarGene_Mean
+    Line3V = TarGene_Mean-3*TarGene_SD
+    Text.set = c("Mean-3SD","Mean","Mean+3SD")
+
+  }else if(GroupSet$GeneExpMode == "Mean"){
+    Line1V = TarGene_Mean
+    Line2V = TarGene_Mean
+    Line3V = TarGene_Mean
+    Text.set = c("Mean","Mean","Mean")
+
+  }else if(GroupSet$GeneExpMode == "Quartile"){
+    Line1V = TarGene_Q[2]
+    Line2V = TarGene_Q[3]
+    Line3V = TarGene_Q[4]
+    Text.set = c("Q1","Q2","Q3")
+
+  }else if(GroupSet$GeneExpMode == "Median"){
+    Line1V = TarGene_Q[3]
+    Line2V = TarGene_Q[3]
+    Line3V = TarGene_Q[3]
+    Text.set = c("Q2","Q2","Q2")
+
+  }else if(GroupSet$GeneExpMode == "Customize"){
+    Line1V = Line1V
+    Line2V = Line2V
+    Line3V = Line3V
+
+  }else{
+    Line1V = TarGene_Mean+TarGene_SD
+    Line2V = TarGene_Mean
+    Line3V = TarGene_Mean-TarGene_SD
+    Text.set = c("Mean-1SD","Mean","Mean+1SD")
+  }
+
+  TGeneDen.p <- DistPlt_Ori(data,Line1V,Line2V,Line3V,Custom.clr,Text.setO = Text.set)
+  TGeneDen.p
 
 
   ##### Visualization #####
