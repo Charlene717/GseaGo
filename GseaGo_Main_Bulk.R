@@ -34,10 +34,11 @@
   GeneExp_Ori.df <- GeneExp.df
 
   Anno.df <- read.table(paste0(InFOLName_GE,"/",SamplePhenoName), header=T, sep="\t")
-  row.names(Anno.df) <- Anno.df[,1]
   Anno_Ori.df <- Anno.df
   Anno.df <- left_join(data.frame("sampleID"=colnames(GeneExp.df)),
                        Anno.df)
+  row.names(Anno.df) <- Anno.df[,1]
+
 
   ## Import GSEA gene sets
   InFOLName_Genesets <- "Input_Genesets"
@@ -47,6 +48,7 @@
                              header = F,sep = "\t")
 
 ##### Conditions setting* #####
+  SpeciesSet = "Homo sapiens"
   DEGThr.lt <- list(LogFC = c("logFC",1), pVal = c("PValue",0.05) )
 
   Group_Mode <- "GoupByPheno"   # c("GoupByPheno","GoupByGeneExp")
@@ -98,8 +100,8 @@
   #
   ## Error: Timeout was reached: [rest.genenames.org] Operation timed out after 10005 milliseconds with 0 bytes received
 
-  ## https://rdrr.io/github/vertesy/Seurat.utils/src/Development/Functions/Seurat.update.gene.symbols.HGNC.R
-  HGNC.EnforceUniquet("SEPT1")
+  # ## https://rdrr.io/github/vertesy/Seurat.utils/src/Development/Functions/Seurat.update.gene.symbols.HGNC.R
+  # HGNC.EnforceUniquet("SEPT1")
 
   ## Update the genename ##* Take very long time
   UpdateGene <- "No"  # UpdateGene <- c("Yes","No")
@@ -185,7 +187,7 @@
 
   GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, pathwayGeneSet = Pathway.all,
                                   TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
-                                  ThrSet = DEGThr.lt, Species = "Homo sapiens", # Speices type can check by msigdbr_species()
+                                  ThrSet = DEGThr.lt, Species = SpeciesSet, # Speices type can check by msigdbr_species()
                                   Save.Path = Save.Path, SampleName = ExportName, AnnoName = "Path")
 
   #### Run ORA ####
