@@ -31,6 +31,37 @@ FUN_DistrPlot = function(GeneExp.df,
                quantile()
 
 
+  ##### DistPlt Function ####
+
+  data <- reshape2::melt(GeneExp.df[TarGeneName,] %>% as.numeric())
+
+  ## Set the color
+  Custom.clr <- list(rect="#ecbdfc", line="#994db3",text="#6a3b7a" )
+  ## Line.Set
+  Line1V = 8
+  Line2V = 10
+  Line3V = 12
+
+  DistPlt_Ori <- function(data,Line1V,Line2V,Line3V,Custom.clr) {
+    TGeneDen.p <- ggplot(data,aes(value,fill=value, color=value)) +
+      xlab("Expression level") +
+      geom_density(alpha = 0.6, fill = "lightgray") +
+      geom_rug() + theme_bw()
+
+    ## Plot Mean and SD
+    TGeneDen_SD.p <- ggPlot_vline(TGeneDen.p,data,
+                                  Line.clr = Custom.clr,
+                                  Line1 = Line1V,
+                                  Line2 = Line2V,
+                                  Line3 = Line3V)
+    TGeneDen_SD.p  %>% BeautifyggPlot(LegPos = c(0.9, 0.8),AxisTitleSize=1.7) +
+      labs(title= TarGeneName, x ="Expression level", y = "Density") -> TGeneDen_SD.p
+    print(TGeneDen_SD.p)
+
+  }
+
+  DistPlt_Ori(data,Line1V,Line2V,Line3V,Custom.clr)
+
   # ##### Group the expression matrix according to the expression level of Target gene ####
   # if(GroupMode$Mode=="Mean"){
   #   if(GroupMode$SD==0){
@@ -111,9 +142,9 @@ FUN_DistrPlot = function(GeneExp.df,
     file = paste0(Save.Path,"/DensityPlot_",SampleName,"_",TarGeneName,".pdf"),
     width = 10,  height = 8
   )
-  print(TGeneDen_SD.p)
-  print(TGeneDen_Q.p)
-  print(TGeneDen_SD_Q.p)
+    print(TGeneDen_SD.p)
+    print(TGeneDen_Q.p)
+    print(TGeneDen_SD_Q.p)
 
   dev.off()
 
