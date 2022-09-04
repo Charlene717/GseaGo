@@ -36,6 +36,8 @@
   Anno.df <- read.table(paste0(InFOLName_GE,"/",SamplePhenoName), header=T, sep="\t")
   row.names(Anno.df) <- Anno.df[,1]
   Anno_Ori.df <- Anno.df
+  Anno.df <- left_join(data.frame("sampleID"=colnames(GeneExp.df)),
+                       Anno.df)
 
   ## Import GSEA gene sets
   InFOLName_Genesets <- "Input_Genesets"
