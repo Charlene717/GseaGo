@@ -4,8 +4,8 @@
 
 FUN_DEG_Analysis = function(GeneExp.df, Anno.df,
                             GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
-                            ThrSet = Thr.lt,
-                            TarGeneName = TarGene_name, GroupMode = Mode_Group, SampleID = "X_INTEGRATION",
+                            ThrSet = DEGThr.lt,
+                            TarGeneName = TarGene_name, GroupMode = Mode_Group, SampleID = "sampleID",
                             Save.Path = Save.Path, SampleName = SampleName, AnnoName = "AvB"
 ){
 
@@ -34,7 +34,7 @@ FUN_DEG_Analysis = function(GeneExp.df, Anno.df,
   Anno_Ints.df <- Anno.df[Anno.df[,GroupType] %in% GroupCompare,]
   # Anno_Ints.df <- Anno.df[Anno.df$ReCluster %in% c("AD","AC"),]  # c("CoreCD00","CDOri")
   matrix_Ints.df <- GeneExp.df
-  colnames(matrix_Ints.df) <-  gsub("\\.", "-", colnames(matrix_Ints.df))
+  # colnames(matrix_Ints.df) <-  gsub("\\.", "-", colnames(matrix_Ints.df))
   matrix_Ints.df <- matrix_Ints.df[,colnames(matrix_Ints.df) %in% Anno_Ints.df[,SampleID]]
 
   matrix_Ints_ID.df <- data.frame(ID = colnames(matrix_Ints.df))
