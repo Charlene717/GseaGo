@@ -1,6 +1,7 @@
 ## Build files for GSEA official input
 
-FUN_GSEA_ForOFFL = function(GeneExp.df, Group1 = GeneExp_high.set, Group2 = GeneExp_low.set,
+FUN_GSEA_ForOFFL = function(GeneExp.df,
+                            Group1 = Group1.set, Group2 = Group2.set,
                             GroupMode = Group_Mode,
                             TarGeneName = TarGene_name, GeneExpSet = GeneExpSet.lt,
                             Save.Path = Save.Path, SampleName = SampleName,
@@ -40,14 +41,14 @@ FUN_GSEA_ForOFFL = function(GeneExp.df, Group1 = GeneExp_high.set, Group2 = Gene
         GeneExp_GSEA.df,
         file=paste0(Save.Path,"/OFFL_",SampleName,"_",
                     GeneExpSet$GeneExpMode,"_Up", GeneExpSet$UpCutoff,"_Low_" ,GeneExpSet$LowerCutoff,
-                    TarGeneName,"_collapsed.gct"),
+                    TarGeneName,"_",AnnoName,"_collapsed.gct"),
         quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
       )
       write.table(
         Pheno_sum.df,
         file=paste0(Save.Path,"/OFFL_",SampleName,"_",
                     GeneExpSet$GeneExpMode,"_Up", GeneExpSet$UpCutoff,"_Low_" ,GeneExpSet$LowerCutoff,
-                    TarGeneName,".cls"),
+                    TarGeneName,"_",AnnoName,".cls"),
         quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
       )
 
@@ -56,14 +57,14 @@ FUN_GSEA_ForOFFL = function(GeneExp.df, Group1 = GeneExp_high.set, Group2 = Gene
         GeneExp_GSEA.df,
         file=paste0(Save.Path,"/OFFL_",SampleName,"_",
                     GeneExpSet$GeneExpMode,"_",
-                    TarGeneName,"_collapsed.gct"),
+                    TarGeneName,"_",AnnoName,"_collapsed.gct"),
         quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
       )
       write.table(
         Pheno_sum.df,
         file=paste0(Save.Path,"/OFFL_",SampleName,"_",
                     GeneExpSet$GeneExpMode,"_",
-                    TarGeneName,".cls"),
+                    TarGeneName,"_",AnnoName,".cls"),
         quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
       )
 
@@ -72,15 +73,13 @@ FUN_GSEA_ForOFFL = function(GeneExp.df, Group1 = GeneExp_high.set, Group2 = Gene
     write.table(
       GeneExp_GSEA.df,
       file=paste0(Save.Path,"/OFFL_",SampleName,"_",
-                  AnnoName,"_",
-                  TarGeneName,"_collapsed.gct"),
+                  AnnoName,"_collapsed.gct"),
       quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
     )
     write.table(
       Pheno_sum.df,
       file=paste0(Save.Path,"/OFFL_",SampleName,"_",
-                  AnnoName,"_",
-                  TarGeneName,".cls"),
+                  AnnoName,".cls"),
       quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
     )
 
