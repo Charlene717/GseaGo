@@ -15,7 +15,7 @@
 
 FUN_GSEA_ANAL = function(DE_Extract.df, pathwayGeneSet = Pathway.all,
                          NumGenesetsPlt = 10,
-                         TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
+                         TarGeneName = TarGene_name,
                          ThrSet = Thr.lt, Species = "Homo sapiens", # Speices type can check by msigdbr_species()
                          Save.Path = Save.Path, SampleName = SampleName, AnnoName = "C2"
 ){
