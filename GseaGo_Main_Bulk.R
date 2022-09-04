@@ -31,9 +31,11 @@
   ## Import genetic data file
   GeneExp.df <- read.table(paste0(InFOLName_GE,"/",SampleName), header=T, row.names = 1, sep="\t")
   colnames(GeneExp.df) <-  gsub("\\.", "-", colnames(GeneExp.df))
+  GeneExp_Ori.df <- GeneExp.df
 
   Anno.df <- read.table(paste0(InFOLName_GE,"/",SamplePhenoName), header=T, sep="\t")
   row.names(Anno.df) <- Anno.df[,1]
+  Anno_Ori.df <- Anno.df
 
   ## Import GSEA gene sets
   InFOLName_Genesets <- "Input_Genesets"
@@ -51,14 +53,15 @@
   GeneExpSet.lt <- list(GeneExpMode = "Mean", # c("Mean","Mean1SD","Mean2SD","Mean3SD","Median","Quartile","Customize"))
                         UpCutoff = 1, LowerCutoff = 1)
 
-  GrpCompare_Pheno <- c("Primary Tumor","Recurrent Tumor")
+  GrpCompare_Pheno.lt <- list(Type = "sample_type", GroupPair = c("Primary Tumor","Recurrent Tumor"))
 
   if(Group_Mode == "GoupByGeneExp"){
     ## Group by GeneExp
     AnnoSet.lt <- list(GroupType = TarGene_name, GroupCompare = c("High","Low") )   ## DEG by GeneExp group
   }else{
     ## Group by Pheno
-    AnnoSet.lt <- list(GroupType = "sample_type", GroupCompare = GrpCompare_Pheno )
+    AnnoSet.lt <- list(GroupType = GrpCompare_Pheno.lt[["Type"]],
+                       GroupCompare = GrpCompare_Pheno.lt[["GroupPair"]] )
   }
 
 ##### Current path and new folder setting* #####
@@ -112,10 +115,9 @@
 #************************************************************************************************************************#
 ##### Data preprocess setting #####
   ## Select Pheno column
-  Anno_Ori.df <- Anno.df
   colnames(Anno.df)
 
-  PhenoColKeep.set <- c("X_INTEGRATION","X_PATIENT","histological_type","sample_type","gender")
+  PhenoColKeep.set <- c("sampleID","X_PATIENT","histological_type","sample_type","gender")
   Anno.df <- Anno.df[,c(PhenoColKeep.set)]
   colnames(Anno.df)
 
@@ -124,8 +126,11 @@
   ## Select Pheno row
   PhenoRowKeep.set <- list(col="sample_type",row=c("Primary Tumor","Recurrent Tumor"))
   Anno.df <- Anno.df[Anno.df[,PhenoRowKeep.set[["col"]]] %in% PhenoRowKeep.set[["row"]], ]
+  GeneExp.df <- GeneExp.df[,colnames(GeneExp.df) %in% row.names(Anno.df)]
 
-  ## Replace
+  # ## Replace
+  # Anno.df[,"sample_type"] <- gsub("Primary Tumor", "PrimTu", Anno.df[,"sample_type"])
+
 
 
 #************************************************************************************************************************#
@@ -140,21 +145,14 @@
 
 
 #************************************************************************************************************************#
-##### Grouping #####
+##### Grouping by GeneExp #####
   source("FUN_Group_GE.R")
-  ##### Group by gene expression 1: CutOff by total  #####
   GeneExp_group.set <- FUN_Group_GE(GeneExp.df, Anno.df,
                                     TarGeneName = TarGene_name, GroupSet = GeneExpSet.lt,
                                     Save.Path = Save.Path, SampleName = ExportName)
   Anno.df <- GeneExp_group.set[["AnnoNew.df"]]
   GeneExp_high.set <- GeneExp_group.set[["GeneExp_high.set"]]
   GeneExp_low.set <- GeneExp_group.set[["GeneExp_low.set"]]
-
-  ##### Group by gene expression 2: CutOff by Comparison #####
-  ## FUN Comparison (Visualization and value)
-
-  ##### Group by phenotype #####
-
 
 #************************************************************************************************************************#
 ##### Run Enrichment analysis in R #####
@@ -163,7 +161,7 @@
   DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
                                   GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
                                   ThrSet = DEGThr.lt,
-                                  TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "X_INTEGRATION",
+                                  TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "sampleID",
                                   Save.Path = Save.Path, SampleName = ExportName, AnnoName = "")
   DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
 
@@ -174,7 +172,7 @@
     # DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
     #                                 GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
     #                                 ThrSet = DEGThr.lt,
-    #                                 TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "X_INTEGRATION",
+    #                                 TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "sampleID",
     #                                 Save.Path = Save.Path, SampleName = SampleName, AnnoName = "AvB")
     # DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
 
@@ -194,12 +192,24 @@
 #************************************************************************************************************************#
 ##### Build files for GSEA official input #####
   source("FUN_GSEA_ForOFFL.R")
+  if(Group_Mode == "GoupByGeneExp"){
+     Group1.set <- GeneExp_high.set
+     Group2.set <- GeneExp_low.set
+     AnnoName = ""
 
-  FUN_GSEA_ForOFFL(GeneExp.df, Group1 = GeneExp_high.set, Group2 = GeneExp_low.set,
+  }else{
+    Group1.set <- Anno.df[Anno.df[,GrpCompare_Pheno.lt[["Type"]] ]%in% GrpCompare_Pheno.lt[["GroupPair"]][1],][,1]
+    Group2.set <- Anno.df[Anno.df[,GrpCompare_Pheno.lt[["Type"]] ]%in% GrpCompare_Pheno.lt[["GroupPair"]][2],][,1]
+    AnnoName = ExportAnno2
+  }
+
+
+  FUN_GSEA_ForOFFL(GeneExp.df,
+                   Group1 = Group1.set, Group2 = Group2.set,
                    GroupMode = Group_Mode,
                    TarGeneName = TarGene_name, GeneExpSet = GeneExpSet.lt,
                    Save.Path = Save.Path, SampleName = ExportName,
-                   AnnoName="")
+                   AnnoName = AnnoName)
 
 ##### Build files for Metascape official input #####
 
