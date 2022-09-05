@@ -117,8 +117,10 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     upsetplot <- upsetplot(GSEA_Result, n = NumGenesetsPlt)
 
     ## 2.7 ridgeline plot for expressiong distribution
-    p7 <- ridgeplot(GSEA_Result) +
-          theme(axis.text.y = element_text(size = 10))
+    ridgeplot <- ridgeplot(GSEA_Result) +
+          theme(axis.text.y = element_text(size = 10)) +
+          scale_fill_continuous(low = "#d45772", high = "#3b74bf")
+    ridgeplot %>% BeautifyggPlot(LegPos = c(1.05, 0.5),YtextSize = 10)
 
     ## 2.8 gseaplot
     y2 <- arrange(GSEA_Result, desc(NES))
@@ -170,7 +172,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
       # print(heatplot)
       print(emapplot)
       print(upsetplot)
-      print(p7)
+      print(ridgeplot)
       print(p8A)
       print(p8B)
       print(p9)
@@ -187,7 +189,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     # Output[["heatplot"]] <- heatplot
     Output[["emapplot"]] <- emapplot
     Output[["UpSet_Plot"]] <- upsetplot
-    Output[["p7"]] <- p7
+    Output[["ridgeplot"]] <- ridgeplot
     Output[["Gsea_Plot"]] <- p8A
     Output[["OverlayGsea_Plot"]] <- p8B
     Output[["p9"]] <- p9
