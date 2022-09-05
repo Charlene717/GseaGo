@@ -43,19 +43,20 @@ FUN_DistrPlot = function(GeneExp.df,
   Line2V = GroupSet[["LowerCutoff"]]
   Line3V = GroupSet[["UpCutoff"]]
 
-  DistPlt_Ori <- function(data,Line1V,Line2V,Line3V,Custom.clr,TarGene = TarGeneName ,Text.setO = c("L1","L2","L3")) {
+  DistPlt_Ori <- function(data,Line1V,Line2V,Line3V,Custom.clr,TarGene = TarGeneName ,Text_Basic.set = c("L1","L2","L3")) {
     TGeneDen.p <- ggplot(data,aes(value,fill=value, color=value)) +
       xlab("Expression level") +
       geom_density(alpha = 0.6, fill = "lightgray") +
       geom_rug() + theme_bw()
 
     ## Plot Mean and SD
-    TGeneDen_SD.p <- ggPlot_vline(TGeneDen.p,data,
+    TGeneDen_SD.p <- ggPlot_vline(TGeneDen.p,
+                                  data,
                                   Line.clr = Custom.clr,
                                   Line1 = Line1V,
                                   Line2 = Line2V,
                                   Line3 = Line3V,
-                                  Text.set = Text.setO)
+                                  Text.set = Text_Basic.set)
     TGeneDen_SD.p  %>% BeautifyggPlot(LegPos = c(0.9, 0.8),AxisTitleSize=1.7) +
       labs(title= TarGene, x ="Expression level", y = "Density") -> TGeneDen_SD.p
 
@@ -64,94 +65,83 @@ FUN_DistrPlot = function(GeneExp.df,
 
   DistPlt_Ori(data,Line1V,Line2V,Line3V,Custom.clr)
 
-##### Set group conditions ####
-  if(GroupSet$GeneExpMode == "Mean1SD"){
-    Line1V = TarGene_Mean+TarGene_SD
-    Line2V = TarGene_Mean
-    Line3V = TarGene_Mean-TarGene_SD
-    Text.set = c("Mean-1SD","Mean","Mean+1SD")
+  ##### Set group conditions ####
+    if(GroupSet$GeneExpMode == "Mean1SD"){
+      Line1V = TarGene_Mean+TarGene_SD
+      Line2V = TarGene_Mean
+      Line3V = TarGene_Mean-TarGene_SD
+      Text.set = c("Mean-1SD","Mean","Mean+1SD")
 
-  }else if(GroupSet$GeneExpMode == "Mean2SD"){
-    Line1V = TarGene_Mean+2*TarGene_SD
-    Line2V = TarGene_Mean
-    Line3V = TarGene_Mean-2*TarGene_SD
-    Text.set = c("Mean-2SD","Mean","Mean+2SD")
+    }else if(GroupSet$GeneExpMode == "Mean2SD"){
+      Line1V = TarGene_Mean+2*TarGene_SD
+      Line2V = TarGene_Mean
+      Line3V = TarGene_Mean-2*TarGene_SD
+      Text.set = c("Mean-2SD","Mean","Mean+2SD")
 
-  }else if(GroupSet$GeneExpMode == "Mean3SD"){
-    Line1V = TarGene_Mean+3*TarGene_SD
-    Line2V = TarGene_Mean
-    Line3V = TarGene_Mean-3*TarGene_SD
-    Text.set = c("Mean-3SD","Mean","Mean+3SD")
+    }else if(GroupSet$GeneExpMode == "Mean3SD"){
+      Line1V = TarGene_Mean+3*TarGene_SD
+      Line2V = TarGene_Mean
+      Line3V = TarGene_Mean-3*TarGene_SD
+      Text.set = c("Mean-3SD","Mean","Mean+3SD")
 
-  }else if(GroupSet$GeneExpMode == "Mean"){
-    Line1V = TarGene_Mean
-    Line2V = TarGene_Mean
-    Line3V = TarGene_Mean
-    Text.set = c("Mean","Mean","Mean")
+    }else if(GroupSet$GeneExpMode == "Mean"){
+      Line1V = TarGene_Mean
+      Line2V = TarGene_Mean
+      Line3V = TarGene_Mean
+      Text.set = c("Mean","Mean","Mean")
 
-  }else if(GroupSet$GeneExpMode == "Quartile"){
-    Line1V = TarGene_Q[2]
-    Line2V = TarGene_Q[3]
-    Line3V = TarGene_Q[4]
-    Text.set = c("Q1","Q2","Q3")
+    }else if(GroupSet$GeneExpMode == "Quartile"){
+      Line1V = TarGene_Q[2]
+      Line2V = TarGene_Q[3]
+      Line3V = TarGene_Q[4]
+      Text.set = c("Q1","Q2","Q3")
 
-  }else if(GroupSet$GeneExpMode == "Median"){
-    Line1V = TarGene_Q[3]
-    Line2V = TarGene_Q[3]
-    Line3V = TarGene_Q[3]
-    Text.set = c("Q2","Q2","Q2")
+    }else if(GroupSet$GeneExpMode == "Median"){
+      Line1V = TarGene_Q[3]
+      Line2V = TarGene_Q[3]
+      Line3V = TarGene_Q[3]
+      Text.set = c("Q2","Q2","Q2")
 
-  }else if(GroupSet$GeneExpMode == "Customize"){
-    Line1V = Line1V
-    Line2V = Line2V
-    Line3V = Line3V
-    Text.set = c("LLow","LLow","LHigh")
+    }else if(GroupSet$GeneExpMode == "Customize"){
+      Line1V = Line1V
+      Line2V = Line2V
+      Line3V = Line3V
+      Text.set = c("LLow","LLow","LHigh")
 
-  }else{
-    Line1V = TarGene_Mean+TarGene_SD
-    Line2V = TarGene_Mean
-    Line3V = TarGene_Mean-TarGene_SD
-    Text.set = c("Mean-1SD","Mean","Mean+1SD")
-  }
+    }else{
+      Line1V = TarGene_Mean+TarGene_SD
+      Line2V = TarGene_Mean
+      Line3V = TarGene_Mean-TarGene_SD
+      Text.set = c("Mean-1SD","Mean","Mean+1SD")
+    }
 
-  TGeneDenR.p <- DistPlt_Ori(data,Line1V,Line2V,Line3V,Custom.clr,Text.setO = Text.set)
-  TGeneDenR.p
+    TGeneDenR.p <- DistPlt_Ori(data,Line1V,Line2V,Line3V,Custom.clr,Text_Basic.set = Text.set)
+    TGeneDenR.p
 
 
   ##### Visualization #####
   ## https://www.jianshu.com/p/9e5b7ffcf80f
-
-  data <- reshape2::melt(GeneExp.df[TarGeneName,] %>% as.numeric())
-  TGeneDen.p <- ggplot(data,aes(value,fill=value, color=value)) +
-                       xlab("Expression level") +
-                       geom_density(alpha = 0.6, fill = "lightgray") +
-                       geom_rug() + theme_bw()
 
   ## Set the color
   Mean_SD.clr <- list(rect="#ecbdfc", line="#994db3",text="#6a3b7a" )
   Mean_Q.clr <- list(rect="#abede1", line="#12705f",text="#12705f" )
 
   ## Plot Mean and SD
-  TGeneDen.p
-  TGeneDen_SD.p <- ggPlot_vline(TGeneDen.p,data,
-                                Line1 = TarGene_Mean+TarGene_SD,
-                                Line2 = TarGene_Mean,
-                                Line3 = TarGene_Mean-TarGene_SD,)
-  TGeneDen_SD.p  %>% BeautifyggPlot(LegPos = c(0.9, 0.8),AxisTitleSize=1.7) +
-    labs(title= TarGeneName, x ="Expression level", y = "Density") -> TGeneDen_SD.p
-
+  TGeneDen_SD.p <- DistPlt_Ori(data,
+                               Line1V = TarGene_Mean+TarGene_SD,
+                               Line2V = TarGene_Mean,
+                               Line3V = TarGene_Mean-TarGene_SD,
+                               Mean_SD.clr,
+                               Text_Basic.set = c("Mean-1SD","Mean","Mean+1SD"))
   ## Plot Quartiles
-  TGeneDen_Q.p <- ggPlot_vline(TGeneDen.p,data,
-                               Line.clr = Mean_Q.clr,
-                               Line1 = TarGene_Q[2],
-                               Line2 = TarGene_Q[3],
-                               Line3 = TarGene_Q[4],
-                               Text.set = c("Q1","Q2","Q3"),
-                               rectP = list(xWidth=0.015, yminP=0.45, ymaxP=0.55,alpha=0.8)
-  )
+  TGeneDen_Q.p <- DistPlt_Ori(data,
+                               Line1V = TarGene_Q[2],
+                               Line2V = TarGene_Q[3],
+                               Line3V = TarGene_Q[4],
+                               Mean_Q.clr,
+                               Text_Basic.set = c("Q1","Q2","Q3"))
 
-  TGeneDen_Q.p  %>% BeautifyggPlot(LegPos = c(0.9, 0.8),AxisTitleSize=1.7) +
-    labs(title= TarGeneName, x ="Expression level", y = "Density") -> TGeneDen_Q.p
+
 
   ## Plot Quartiles & Mean and SD
   TGeneDen_SD_Q.p <- ggPlot_vline(TGeneDen_SD.p,data,
@@ -169,7 +159,7 @@ FUN_DistrPlot = function(GeneExp.df,
 
 
 
-
+  #### Export PDF ####
   pdf(
     file = paste0(Save.Path,"/DensityPlot_",SampleName,"_",TarGeneName,".pdf"),
     width = 10,  height = 8
@@ -181,7 +171,7 @@ FUN_DistrPlot = function(GeneExp.df,
 
   dev.off()
 
-  # # Export PPT
+  # #### Export PPT ####
   # TGeneDen_SD_Q.p  %>% BeautifyggPlot(LegPos = c(0.9, 0.8),AxisTitleSize=1.7,
   #                                     OL_Thick = 1.5) +
   #   labs(title= TarGeneName,
