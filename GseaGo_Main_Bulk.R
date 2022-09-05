@@ -76,12 +76,17 @@
   ExportAnno2 = "Recur2Prim"
 
   if(Group_Mode == "GoupByGeneExp"){
-    ExportAnno = paste0(TarGene_name,"_",GeneExpSet.lt$GeneExpMode,"_",ExportAnno2)
+    if(GeneExpSet.lt$GeneExpMode == "Customize"){
+      ExportAnno = paste0(Group_Mode,"_",TarGene_name,"_",GeneExpSet.lt$GeneExpMode,"_Up", GeneExpSet.lt$UpCutoff,
+                          "_Low_" ,GeneExpSet.lt$LowerCutoff,"_",ExportAnno2)
+    }else{
+      ExportAnno = paste0(Group_Mode,"_",TarGene_name,"_",GeneExpSet.lt$GeneExpMode,"_",ExportAnno2)
+    }
 
   }else{
     ExportAnno = paste0(Group_Mode,"_",ExportAnno2)
-
   }
+
 
   ExportName = paste0(ProjectName,"_",Sampletype,"_",ExportAnno)
 
@@ -89,6 +94,15 @@
   Save.Path = paste0(getwd(),"/",Version)
   ## Create new folder
   if (!dir.exists(Save.Path)){dir.create(Save.Path)}
+
+
+
+
+
+
+
+
+
 
 ##### Update the genename ####
   # ## Test
@@ -186,10 +200,13 @@
   #### Run GSEA ####
   source("FUN_GSEA_ANAL.R")
 
-  GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, pathwayGeneSet = Pathway.all,
-                                  TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
-                                  ThrSet = DEGThr.lt, Species = SpeciesSet, # Speices type can check by msigdbr_species()
+  GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, CMGeneSet = Pathway.all,
+                                  DefaultGeneSet = "C2", Species = SpeciesSet, # Speices type can check by msigdbr_species()
+                                  NumGenesetsPlt = 15,
+                                  TarGeneName = TarGene_name,
+                                  ThrSet = DEGThr.lt,
                                   Save.Path = Save.Path, SampleName = ExportName, AnnoName = "Path")
+
 
   #### Run ORA ####
   ## FUN ORA
