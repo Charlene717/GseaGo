@@ -70,19 +70,19 @@ FUN_DistrPlot = function(GeneExp.df,
       Line1V = TarGene_Mean+TarGene_SD
       Line2V = TarGene_Mean
       Line3V = TarGene_Mean-TarGene_SD
-      Text.set = c("Mean-1SD","Mean","Mean+1SD")
+      Text.set = c("Mean+1SD","Mean","Mean-1SD")
 
     }else if(GroupSet$GeneExpMode == "Mean2SD"){
       Line1V = TarGene_Mean+2*TarGene_SD
       Line2V = TarGene_Mean
       Line3V = TarGene_Mean-2*TarGene_SD
-      Text.set = c("Mean-2SD","Mean","Mean+2SD")
+      Text.set = c("Mean+2SD","Mean","Mean-2SD")
 
     }else if(GroupSet$GeneExpMode == "Mean3SD"){
       Line1V = TarGene_Mean+3*TarGene_SD
       Line2V = TarGene_Mean
       Line3V = TarGene_Mean-3*TarGene_SD
-      Text.set = c("Mean-3SD","Mean","Mean+3SD")
+      Text.set = c("Mean+3SD","Mean","Mean-3SD")
 
     }else if(GroupSet$GeneExpMode == "Mean"){
       Line1V = TarGene_Mean
@@ -91,10 +91,10 @@ FUN_DistrPlot = function(GeneExp.df,
       Text.set = c("Mean","Mean","Mean")
 
     }else if(GroupSet$GeneExpMode == "Quartile"){
-      Line1V = TarGene_Q[2]
+      Line1V = TarGene_Q[4]
       Line2V = TarGene_Q[3]
-      Line3V = TarGene_Q[4]
-      Text.set = c("Q1","Q2","Q3")
+      Line3V = TarGene_Q[2]
+      Text.set = c("Q3","Q2","Q1")
 
     }else if(GroupSet$GeneExpMode == "Median"){
       Line1V = TarGene_Q[3]
@@ -106,13 +106,13 @@ FUN_DistrPlot = function(GeneExp.df,
       Line1V = Line1V
       Line2V = Line2V
       Line3V = Line3V
-      Text.set = c("LLow","LLow","LHigh")
+      Text.set = c("LHigh","LHigh","LLow")
 
     }else{
       Line1V = TarGene_Mean+TarGene_SD
       Line2V = TarGene_Mean
       Line3V = TarGene_Mean-TarGene_SD
-      Text.set = c("Mean-1SD","Mean","Mean+1SD")
+      Text.set = c("Mean+1SD","Mean","Mean-1SD")
     }
 
     TGeneDenR.p <- DistPlt_Ori(data,Line1V,Line2V,Line3V,Custom.clr,Text_Basic.set = Text.set)
@@ -132,24 +132,24 @@ FUN_DistrPlot = function(GeneExp.df,
                                Line2V = TarGene_Mean,
                                Line3V = TarGene_Mean-TarGene_SD,
                                Mean_SD.clr,
-                               Text_Basic.set = c("Mean-1SD","Mean","Mean+1SD"))
+                               Text_Basic.set = c("Mean+1SD","Mean","Mean-1SD"))
   ## Plot Quartiles
   TGeneDen_Q.p <- DistPlt_Ori(data,
-                               Line1V = TarGene_Q[2],
+                               Line1V = TarGene_Q[4],
                                Line2V = TarGene_Q[3],
-                               Line3V = TarGene_Q[4],
+                               Line3V = TarGene_Q[2],
                                Mean_Q.clr,
-                               Text_Basic.set = c("Q1","Q2","Q3"))
+                               Text_Basic.set = c("Q3","Q2","Q1"))
 
 
 
   ## Plot Quartiles & Mean and SD
   TGeneDen_SD_Q.p <- ggPlot_vline(TGeneDen_SD.p,data,
                                   Line.clr = Mean_Q.clr,
-                                  Line1 = TarGene_Q[2],
+                                  Line1 = TarGene_Q[4],
                                   Line2 = TarGene_Q[3],
-                                  Line3 = TarGene_Q[4],
-                                  Text.set = c("Q1","Q2","Q3"),
+                                  Line3 = TarGene_Q[2],
+                                  Text.set = c("Q3","Q2","Q1"),
                                   Text.yPos = 0.35,
                                   rectP = list(xWidth=0.015, yminP=0.3, ymaxP=0.4,alpha=0.8)
   )
