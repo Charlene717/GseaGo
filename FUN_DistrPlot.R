@@ -39,9 +39,9 @@ FUN_DistrPlot = function(GeneExp.df,
   Custom.clr <- list(rect="#ecbdfc", line="#994db3",text="#6a3b7a")
 
   ## Line.Set
-  Line1V = 8
-  Line2V = 10
-  Line3V = 12
+  Line1V = GroupSet[["LowerCutoff"]]
+  Line2V = GroupSet[["LowerCutoff"]]
+  Line3V = GroupSet[["UpCutoff"]]
 
   DistPlt_Ori <- function(data,Line1V,Line2V,Line3V,Custom.clr,TarGene = TarGeneName ,Text.setO = c("L1","L2","L3")) {
     TGeneDen.p <- ggplot(data,aes(value,fill=value, color=value)) +
@@ -105,6 +105,7 @@ FUN_DistrPlot = function(GeneExp.df,
     Line1V = Line1V
     Line2V = Line2V
     Line3V = Line3V
+    Text.setO = c("LLow","LLow","LHigh")
 
   }else{
     Line1V = TarGene_Mean+TarGene_SD
@@ -113,8 +114,8 @@ FUN_DistrPlot = function(GeneExp.df,
     Text.set = c("Mean-1SD","Mean","Mean+1SD")
   }
 
-  TGeneDen.p <- DistPlt_Ori(data,Line1V,Line2V,Line3V,Custom.clr,Text.setO = Text.set)
-  TGeneDen.p
+  TGeneDenR.p <- DistPlt_Ori(data,Line1V,Line2V,Line3V,Custom.clr,Text.setO = Text.set)
+  TGeneDenR.p
 
 
   ##### Visualization #####
@@ -173,6 +174,7 @@ FUN_DistrPlot = function(GeneExp.df,
     file = paste0(Save.Path,"/DensityPlot_",SampleName,"_",TarGeneName,".pdf"),
     width = 10,  height = 8
   )
+    print(TGeneDenR.p)
     print(TGeneDen_SD.p)
     print(TGeneDen_Q.p)
     print(TGeneDen_SD_Q.p)
