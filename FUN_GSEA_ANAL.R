@@ -99,7 +99,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     ## 2.3 Gene-Concept Network
     try({
     cnetplot <- cnetplot(GSEA_Result, showCategory = round(NumGenesetsPlt/2), colorEdge = TRUE, node_label = "category")
-    cowplot::plot_grid(cnetplot, ncol=1, labels=LETTERS[1], rel_widths=c(1))
+    # cowplot::plot_grid(cnetplot, ncol=1, labels=LETTERS[1], rel_widths=c(1))
     })
 
     # ## 2.4 Heatmap-like functional classification
@@ -107,8 +107,9 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     #                      foldChange=geneList,label_format = 30) + scale_fill_continuous(low='#3b74bf', high='#d45772')
 
     ## 2.5 Enrichment Map
-    p5 <- emapplot(pairwise_termsim(y), showCategory = NumGenesetsPlt/2)
-    cowplot::plot_grid(p5, ncol = 1, lables = LETTERS[1])
+    emapplot <- emapplot(pairwise_termsim(y), showCategory = NumGenesetsPlt*3) +
+                scale_fill_continuous(low = "#d45772", high = "#3b74bf")
+    # cowplot::plot_grid(emapplot, ncol = 1, lables = LETTERS[1])
 
 
     ## 2.6 UpSet Plot
@@ -167,7 +168,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
       print(Dotplot)
       print(cnetplot)
       # print(heatplot)
-      print(p5)
+      print(emapplot)
       print(p6)
       print(p7)
       print(p8A)
@@ -184,7 +185,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     Output[["GSEADot_Plot"]] <- Dotplot
     Output[["cnetplot"]] <- cnetplot
     # Output[["heatplot"]] <- heatplot
-    Output[["p5"]] <- p5
+    Output[["emapplot"]] <- emapplot
     Output[["UpSet_Plot"]] <- p6
     Output[["p7"]] <- p7
     Output[["Gsea_Plot"]] <- p8A
