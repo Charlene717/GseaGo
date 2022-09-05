@@ -105,7 +105,7 @@ FUN_DistrPlot = function(GeneExp.df,
     Line1V = Line1V
     Line2V = Line2V
     Line3V = Line3V
-    Text.setO = c("LLow","LLow","LHigh")
+    Text.set = c("LLow","LLow","LHigh")
 
   }else{
     Line1V = TarGene_Mean+TarGene_SD
@@ -202,6 +202,7 @@ FUN_DistrPlot = function(GeneExp.df,
 
   ## Set Output
   Output <- list()
+  Output[["TGeneDenR.p"]] <- TGeneDenR.p
   Output[["TGeneDen_SD.p"]] <- TGeneDen_SD.p
   Output[["TGeneDen_Q.p"]] <- TGeneDen_Q.p
   Output[["TGeneDen_SD_Q.p"]] <- TGeneDen_SD_Q.p
