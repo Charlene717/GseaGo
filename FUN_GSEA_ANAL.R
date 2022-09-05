@@ -132,13 +132,41 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
 
     ## 2.8.1 gseaplot2
     n <- nrow(y2)
-    p8_1 <- gseaplot2(y2, geneSetID = 1, title = y2$Description[1] ,color = "#547d99") + scale_color_gradient(low = "#d45772", high = "#3b74bf")   # max NES
-    p8_1_2 <- gseaplot2(y2, geneSetID = 2, title = y2$Description[2])   # Sec NES
 
-    p8_2 <- gseaplot2(y2, geneSetID = n, title = y2$Description[n])   # min NES
-    p8_2_2 <- gseaplot2(y2, geneSetID = (n-1), title = y2$Description[(n-1)])   # min NES
+    ## gseaplot2_Up.lt
+    gseaplot2_Up.lt <- list()
+    for (i in 1:NumGenesetsPlt) {
 
-    p8A <- cowplot::plot_grid(p8_1,p8_1_2, p8_2,p8_2_2, ncol = 2, labels = LETTERS[1:4])
+      gseaplot2_Up.lt[[i]] <- gseaplot2(y2, geneSetID = i, title = y2$Description[i] ,color = "#547d99") + scale_color_gradient(low = "#d45772", high = "#3b74bf")
+    }
+    rm(i)
+
+    library(ggpubr)
+    gseaplot2_UpA <- ggpubr::ggarrange(plotlist = gseaplot2_Up.lt, ncol = ceiling(sqrt(NumGenesetsPlt)), nrow = ceiling(sqrt(NumGenesetsPlt)), labels = LETTERS[1:NumGenesetsPlt])
+    gseaplot2_UpA
+
+    ## gseaplot2_Down.lt
+    gseaplot2_Down.lt <- list()
+    for (i in 0:(NumGenesetsPlt-1)) {
+
+      gseaplot2_Down.lt[[i+1]] <- gseaplot2(y2, geneSetID = n-1, title = y2$Description[n-1] ,color = "#547d99") + scale_color_gradient(low = "#d45772", high = "#3b74bf")
+    }
+    rm(i)
+
+    library(ggpubr)
+    gseaplot2_DownA <- ggpubr::ggarrange(plotlist = gseaplot2_Down.lt, ncol = ceiling(sqrt(NumGenesetsPlt)), nrow = ceiling(sqrt(NumGenesetsPlt)), labels = LETTERS[1:NumGenesetsPlt])
+    gseaplot2_DownA
+
+
+
+    # ## Old version
+    # p8_1 <- gseaplot2(y2, geneSetID = 1, title = y2$Description[1] ,color = "#547d99") + scale_color_gradient(low = "#d45772", high = "#3b74bf")   # max NES
+    # p8_1_2 <- gseaplot2(y2, geneSetID = 2, title = y2$Description[2])   # Sec NES
+    #
+    # p8_2 <- gseaplot2(y2, geneSetID = n, title = y2$Description[n])   # min NES
+    # p8_2_2 <- gseaplot2(y2, geneSetID = (n-1), title = y2$Description[(n-1)])   # min NES
+    #
+    #  gseaplot2_UpA <- cowplot::plot_grid(p8_1,p8_1_2, p8_2,p8_2_2, ncol = 2, labels = LETTERS[1:4])
 
     # ## Use keyword (Overlay graphics)
     # try({
@@ -174,7 +202,8 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
       print(emapplot)
       print(upsetplot)
       print(ridgeplot)
-      print(p8A)
+      print(gseaplot2_UpA)
+      print(gseaplot2_DownA)
       print(p8B)
       # print(pmcplot)
 
@@ -191,7 +220,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     Output[["emapplot"]] <- emapplot
     Output[["UpSet_Plot"]] <- upsetplot
     Output[["ridgeplot"]] <- ridgeplot
-    Output[["Gsea_Plot"]] <- p8A
+    Output[["Gsea_Plot"]] <-  gseaplot2_UpA
     Output[["OverlayGsea_Plot"]] <- p8B
     # Output[["pmcplot"]] <- pmcplot
 
