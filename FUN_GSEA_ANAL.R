@@ -84,10 +84,14 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     Barplot <- Barplot %>% BeautifyggPlot(LegPos = c(0.9, 0.2), AxisTitleSize=1.7, YtextSize=14)
 
     ## 2.2 Dotplot
-    p2 <- dotplot(GSEA_Result, showCategory = NumGenesetsPlt, font.size = 8,
-                  x = "GeneRatio",   # option -> c("GeneRatio", "Count")
-                  color = "p.adjust")   # option -> c("pvalue", "p.adjust", "qvalue")
+    Dotplot <- dotplot(GSEA_Result, showCategory = NumGenesetsPlt, font.size = 8,
+                       x = "GeneRatio",   # option -> c("GeneRatio", "Count")
+                       color = "p.adjust")+   # option -> c("pvalue", "p.adjust", "qvalue")
+                       scale_color_gradient(low = "#d45772", high = "#3b74bf")
 
+    Dotplot <- Dotplot %>% BeautifyggPlot(LegPos = c(0.9, 0.3),AxisTitleSize=1.5)
+
+    Dotplot
 
     ## 2.3 Gene-Concept Network
     # n <- 3
@@ -116,8 +120,8 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
 
     # Barplot <- gseaplot(y2, geneSetID = 1, title = y2$Description[1])   # max NES
     # n <- nrow(y2)
-    # p2 <- gseaplot(y2, geneSetID = n, title = y2$Description[n])   # min NES
-    # cowplot::plot_grid(Barplot, p2, ncol = 1, labels = LETTERS[1:2])
+    # Dotplot <- gseaplot(y2, geneSetID = n, title = y2$Description[n])   # min NES
+    # cowplot::plot_grid(Barplot, Dotplot, ncol = 1, labels = LETTERS[1:2])
 
     ## 2.8.1 gseaplot2
     n <- nrow(y2)
@@ -156,7 +160,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     )
 
       print(Barplot)
-      print(p2 %>% BeautifyggPlot(LegPos = c(0.9, 0.3),AxisTitleSize=1.7))
+      print(Dotplot)
       print(p3)
       # print(p4)
       print(p5)
@@ -173,7 +177,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     Output[["GSEA_Result"]] <- GSEA_Result
     Output[["geneList_ranks"]] <- geneList
     Output[["GSEABar_Plot"]] <- Barplot
-    Output[["GSEADot_Plot"]] <- p2
+    Output[["GSEADot_Plot"]] <- Dotplot
     Output[["p3"]] <- p3
     # Output[["p4"]] <- p4
     Output[["p5"]] <- p5
