@@ -12,7 +12,7 @@
 
 FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
                          DefaultGeneSet = "C2", Species = "Homo sapiens", # Speices type can check by msigdbr_species()
-                         NumGenesetsPlt = 10,
+                         NumGenesetsPlt = 15,
                          TarGeneName = TarGene_name,
                          ThrSet = DEGThr.lt,
                          Save.Path = Save.Path, SampleName = SampleName, AnnoName = "C2"
@@ -72,16 +72,16 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     library(ggplot2)
 
     ## 2.1 Barplot
-    y <- mutate(GSEA_Result, ordering = abs(NES)) %>%
-         arrange(desc(ordering))
+    y <- mutate(GSEA_Result, ordering = abs(NES)) %>% arrange(desc(ordering))
 
     y_bar <- group_by(y, sign(NES)) %>% slice(1:NumGenesetsPlt)
 
-    p1 <- ggplot(y_bar, aes(NES, fct_reorder(Description, NES), fill = qvalues), showCategory=(NumGenesetsPlt*2)) +
+    Barplot <- ggplot(y_bar, aes(NES, fct_reorder(Description, NES), fill = qvalues), showCategory=(NumGenesetsPlt*2)) +
                  geom_barh(stat='identity') +
                  scale_fill_continuous(low='#d45772', high='#3b74bf', guide = guide_colorbar(reverse=TRUE)) +
                  theme_minimal() + ylab(NULL)
 
+    Barplot <- Barplot %>% BeautifyggPlot(LegPos = c(0.9, 0.2), AxisTitleSize=1.7, YtextSize=14)
 
     ## 2.2 Dotplot
     p2 <- dotplot(GSEA_Result, showCategory = NumGenesetsPlt, font.size = 8,
@@ -114,10 +114,10 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     ## 2.8 gseaplot
     y2 <- arrange(GSEA_Result, desc(NES))
 
-    # p1 <- gseaplot(y2, geneSetID = 1, title = y2$Description[1])   # max NES
+    # Barplot <- gseaplot(y2, geneSetID = 1, title = y2$Description[1])   # max NES
     # n <- nrow(y2)
     # p2 <- gseaplot(y2, geneSetID = n, title = y2$Description[n])   # min NES
-    # cowplot::plot_grid(p1, p2, ncol = 1, labels = LETTERS[1:2])
+    # cowplot::plot_grid(Barplot, p2, ncol = 1, labels = LETTERS[1:2])
 
     ## 2.8.1 gseaplot2
     n <- nrow(y2)
@@ -155,7 +155,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
       width = 15,  height = 10
     )
 
-      print(p1 %>% BeautifyggPlot(LegPos = c(0.9, 0.2),AxisTitleSize=1.7,YtextSize=14) )
+      print(Barplot)
       print(p2 %>% BeautifyggPlot(LegPos = c(0.9, 0.3),AxisTitleSize=1.7))
       print(p3)
       # print(p4)
@@ -172,7 +172,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     Output <- list()
     Output[["GSEA_Result"]] <- GSEA_Result
     Output[["geneList_ranks"]] <- geneList
-    Output[["GSEABar_Plot"]] <- p1
+    Output[["GSEABar_Plot"]] <- Barplot
     Output[["GSEADot_Plot"]] <- p2
     Output[["p3"]] <- p3
     # Output[["p4"]] <- p4
