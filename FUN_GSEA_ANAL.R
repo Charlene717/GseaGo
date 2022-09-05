@@ -114,7 +114,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
 
     ## 2.6 UpSet Plot
     library(ggupset)
-    p6 <- upsetplot(GSEA_Result, n = NumGenesetsPlt)
+    upsetplot <- upsetplot(GSEA_Result, n = NumGenesetsPlt)
 
     ## 2.7 ridgeline plot for expressiong distribution
     p7 <- ridgeplot(GSEA_Result) +
@@ -169,7 +169,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
       print(cnetplot)
       # print(heatplot)
       print(emapplot)
-      print(p6)
+      print(upsetplot)
       print(p7)
       print(p8A)
       print(p8B)
@@ -186,7 +186,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     Output[["cnetplot"]] <- cnetplot
     # Output[["heatplot"]] <- heatplot
     Output[["emapplot"]] <- emapplot
-    Output[["UpSet_Plot"]] <- p6
+    Output[["UpSet_Plot"]] <- upsetplot
     Output[["p7"]] <- p7
     Output[["Gsea_Plot"]] <- p8A
     Output[["OverlayGsea_Plot"]] <- p8B
