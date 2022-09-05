@@ -93,7 +93,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
                        color = "p.adjust")+   # option -> c("pvalue", "p.adjust", "qvalue")
                        scale_color_gradient(low = "#d45772", high = "#3b74bf")
 
-    Dotplot <- Dotplot %>% BeautifyggPlot(LegPos = c(0.9, 0.3),AxisTitleSize=1.5)
+    Dotplot <- Dotplot %>% BeautifyggPlot(LegPos = c(0.9, 0.3),AxisTitleSize=1.5,YtextSize = 15)
 
 
     ## 2.3 Gene-Concept Network
@@ -132,7 +132,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
 
     ## 2.8.1 gseaplot2
     n <- nrow(y2)
-    p8_1 <- gseaplot2(y2, geneSetID = 1, title = y2$Description[1])   # max NES
+    p8_1 <- gseaplot2(y2, geneSetID = 1, title = y2$Description[1] ,color = "#547d99") + scale_color_gradient(low = "#d45772", high = "#3b74bf")   # max NES
     p8_1_2 <- gseaplot2(y2, geneSetID = 2, title = y2$Description[2])   # Sec NES
 
     p8_2 <- gseaplot2(y2, geneSetID = n, title = y2$Description[n])   # min NES
@@ -150,15 +150,16 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     ## Overlay graphics by ID
     # p8B <- gseaplot2(y2, geneSetID = 1:10)
     p8B <- gseaplot2(y2, geneSetID = 1:NumGenesetsPlt)
-
+    p8B
     # ## 2.8.2 gsearank
     # gsearank(y2, geneSetID = 1, title = y2$Description[1])
 
 
-    ## 2.9 PubMed trend of enriched terms
-    terms <- GSEA_Result$Description[1:3]
-    p9 <- pmcplot(terms, 2010:2017, proportion=FALSE)
-    # dev.off()
+    # ## 2.9 PubMed trend of enriched terms
+    # terms <- GSEA_Result$Description[1:NumGenesetsPlt]
+    # pmcplot <- pmcplot(terms, 2020:2022, proportion=FALSE)
+    # rm(terms)
+    # # dev.off()
 
   ##### Export Result #####
     pdf(
@@ -175,7 +176,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
       print(ridgeplot)
       print(p8A)
       print(p8B)
-      print(p9)
+      # print(pmcplot)
 
     dev.off()
 
@@ -192,7 +193,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     Output[["ridgeplot"]] <- ridgeplot
     Output[["Gsea_Plot"]] <- p8A
     Output[["OverlayGsea_Plot"]] <- p8B
-    Output[["p9"]] <- p9
+    # Output[["pmcplot"]] <- pmcplot
 
   return(Output)
 
