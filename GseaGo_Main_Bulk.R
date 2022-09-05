@@ -70,7 +70,7 @@
   }
 
 ##### Current path and new folder setting* #####
-  ProjectName = "TCGA"
+  ProjectName = "GSEA_TCGA"
   Sampletype = "LGG"
 
   ExportAnno2 = "Recur2Prim"
@@ -173,7 +173,7 @@
                                   GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
                                   ThrSet = DEGThr.lt,
                                   TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "sampleID",
-                                  Save.Path = Save.Path, SampleName = ExportName, AnnoName = "")
+                                  Save.Path = Save.Path, ExportName = ExportName, AnnoName = "")
   DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
 
 
@@ -209,12 +209,11 @@
   if(Group_Mode == "GoupByGeneExp"){
      Group1.set <- GeneExp_high.set
      Group2.set <- GeneExp_low.set
-     AnnoName = ""
 
   }else{
     Group1.set <- Anno.df[Anno.df[,GrpCompare_Pheno.lt[["Type"]] ]%in% GrpCompare_Pheno.lt[["GroupPair"]][1],][,1]
     Group2.set <- Anno.df[Anno.df[,GrpCompare_Pheno.lt[["Type"]] ]%in% GrpCompare_Pheno.lt[["GroupPair"]][2],][,1]
-    AnnoName = ExportAnno2
+
   }
 
 
@@ -222,8 +221,8 @@
                    Group1 = Group1.set, Group2 = Group2.set,
                    GroupMode = Group_Mode,
                    TarGeneName = TarGene_name, GeneExpSet = GeneExpSet.lt,
-                   Save.Path = Save.Path, SampleName = ExportName,
-                   AnnoName = AnnoName)
+                   Save.Path = Save.Path, ExportName = ExportName,
+                   AnnoName = "GSEA")
 
 ##### Build files for Metascape official input #####
 
