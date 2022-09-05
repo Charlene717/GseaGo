@@ -36,7 +36,7 @@ FUN_DistrPlot = function(GeneExp.df,
   data <- reshape2::melt(GeneExp.df[TarGeneName,] %>% as.numeric())
 
   ## Set the color
-  Custom.clr <- list(rect="#ecbdfc", line="#994db3",text="#6a3b7a")
+  Custom.clr <- list(rect="#ffd5b5", line="#c95f22",text="#c95f22")
 
   ## Line.Set
   Line1V = GroupSet[["LowerCutoff"]]
