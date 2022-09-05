@@ -2,7 +2,7 @@
 
 FUN_DistrPlot = function(GeneExp.df,
                          TarGeneName = TarGene_name, GroupSet = GeneExpSet.lt,
-                         Save.Path = Save.Path, SampleName = SampleName
+                         Save.Path = Save.Path, ExportName = ExportName
 ){
 
   ##### Load Packages #####
@@ -161,7 +161,7 @@ FUN_DistrPlot = function(GeneExp.df,
 
   #### Export PDF ####
   pdf(
-    file = paste0(Save.Path,"/DensityPlot_",SampleName,"_",TarGeneName,".pdf"),
+    file = paste0(Save.Path,"/DensityPlot_",ExportName,".pdf"),
     width = 10,  height = 8
   )
     print(TGeneDenR.p)
@@ -177,7 +177,7 @@ FUN_DistrPlot = function(GeneExp.df,
   #   labs(title= TarGeneName,
   #        x ="Expression level", y = "Density") -> TGeneDen_SD_Q2.p
   #
-  # topptx(TGeneDen_SD_Q2.p,paste0(Save.Path,"/DensityPlot_",SampleName,"_",TarGeneName,".pptx"))
+  # topptx(TGeneDen_SD_Q2.p,paste0(Save.Path,"/DensityPlot_",ExportName,"_",TarGeneName,".pptx"))
   #
   # rm(TGeneDen_SD_Q2.p)
 
