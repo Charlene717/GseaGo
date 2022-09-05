@@ -85,7 +85,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
                  scale_fill_continuous(low = "#d45772", high = "#3b74bf", guide = guide_colorbar(reverse=TRUE)) +
                  theme_minimal() + ylab(NULL)
 
-    Barplot <- Barplot %>% BeautifyggPlot(LegPos = c(0.9, 0.2), AxisTitleSize=1.7, YtextSize=14)
+    Barplot <- Barplot %>% BeautifyggPlot(LegPos = c(0.9, 0.2), AxisTitleSize=1.7, YtextSize=14,OL_Thick = 1.5)
 
     ## 2.2 Dotplot
     Dotplot <- dotplot(GSEA_Result, showCategory = NumGenesetsPlt, font.size = 8,
@@ -93,7 +93,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
                        color = "p.adjust")+   # option -> c("pvalue", "p.adjust", "qvalue")
                        scale_color_gradient(low = "#d45772", high = "#3b74bf")
 
-    Dotplot <- Dotplot %>% BeautifyggPlot(LegPos = c(0.9, 0.3),AxisTitleSize=1.5,YtextSize = 15)
+    Dotplot <- Dotplot %>% BeautifyggPlot(LegPos = c(0.9, 0.3),AxisTitleSize=1.5,YtextSize = 15,OL_Thick = 1.5)
 
 
     ## 2.3 Gene-Concept Network
