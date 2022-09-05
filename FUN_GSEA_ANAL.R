@@ -19,7 +19,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
                          NumGenesetsPlt = 15,
                          TarGeneName = TarGene_name,
                          ThrSet = DEGThr.lt,
-                         Save.Path = Save.Path, SampleName = SampleName, AnnoName = "C2"
+                         Save.Path = Save.Path, ExportName = ExportName, AnnoName = "C2"
 ){
 
   ##### Load Packages  #####
@@ -205,7 +205,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
 
   ##### Export Result #####
     pdf(
-      file = paste0(Save.Path,"/GSEAResult_",AnnoName,"_",SampleName,"_",TarGeneName,".pdf"),
+      file = paste0(Save.Path,"/GSEAResult","_",ExportName,"_",AnnoName,".pdf"),
       width = 15,  height = 10
     )
 
