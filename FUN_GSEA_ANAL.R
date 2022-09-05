@@ -172,11 +172,18 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
 
     #### Overlay graphics by ID ####
     # gseaplot2_UpB <- gseaplot2(y2, geneSetID = 1:10)
-    gseaplot2_UpB <- gseaplot2(y2, geneSetID = 1:NumGenesetsPlt)
+    gseaplot2_UpB <- gseaplot2(y2, geneSetID = 1:NumGenesetsPlt, pvalue_table=T)
     gseaplot2_UpB
 
-    gseaplot2_DownB <- gseaplot2(y2, geneSetID = (n-NumGenesetsPlt+1):n)
+    gseaplot2_DownB <- gseaplot2(y2, geneSetID = (n-NumGenesetsPlt+1):n, pvalue_table=T)
     gseaplot2_DownB
+
+    ## Modify the function
+    ## https://www.biostars.org/p/9470087/
+    ## trace("gseaplot2", edit = TRUE)
+    ##> pd <- x[geneSetID, c("Description", "pvalue", "p.adjust")] -> pd <- x[geneSetID, c("Description","NES", "pvalue", "p.adjust")]
+
+
 
     #### Use keyword (Overlay graphics) ####
     # try({
