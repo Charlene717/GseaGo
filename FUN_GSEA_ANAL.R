@@ -19,7 +19,8 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
                          NumGenesetsPlt = 15,
                          TarGeneName = TarGene_name,
                          ThrSet = DEGThr.lt,
-                         Save.Path = Save.Path, ExportName = ExportName, AnnoName = "C2"
+                         Save.Path = Save.Path, ExportName = ExportName, AnnoName = "C2",
+                         Keyword = "HALLMARK"                   # Keyword = "breast"
 ){
 
   ##### Load Packages  #####
@@ -184,13 +185,13 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     ##> pd <- x[geneSetID, c("Description", "pvalue", "p.adjust")] -> pd <- x[geneSetID, c("Description","NES", "pvalue", "p.adjust")]
 
 
-
     #### Use keyword (Overlay graphics) ####
-    # try({
-    #   keyword <- "breast"
-    #   ind <- grep(keyword, GSEA_Result$Description, ignore.case = TRUE)
-    #   gseaplot2(GSEA_Result, geneSetID = ind, title = GSEA_Result$Description[ind])
-    # })
+    try({
+      keyword <- Keyword
+
+      ind <- grep(keyword, GSEA_Result$Description, ignore.case = TRUE)
+      gseaplot2_KW <- gseaplot2(GSEA_Result, geneSetID = ind, title = GSEA_Result$Description[ind])
+    })
 
 
     # #### 2.8.2 gsearank ####
@@ -211,16 +212,26 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
 
       print(Barplot)
       print(Dotplot)
-      print(cnetplot)
+      try({print(cnetplot)})
       # print(heatplot)
       print(emapplot)
       print(upsetplot)
       print(ridgeplot)
-      print(gseaplot2_UpA)
-      print(gseaplot2_DownA)
-      print(gseaplot2_UpB)
-      print(gseaplot2_DownB)
+
       # print(pmcplot)
+
+    dev.off()
+
+    pdf(
+      file = paste0(Save.Path,"/GSEAResult","_",ExportName,"_Gseaplot_",AnnoName,".pdf"),
+      width = 20,  height = 20
+    )
+
+    print(gseaplot2_UpA)
+    print(gseaplot2_DownA)
+    print(gseaplot2_UpB)
+    print(gseaplot2_DownB)
+    try({print(gseaplot2_KW)})
 
     dev.off()
 
@@ -230,7 +241,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     Output[["geneList_ranks"]] <- geneList
     Output[["GSEABar_Plot"]] <- Barplot
     Output[["GSEADot_Plot"]] <- Dotplot
-    Output[["cnetplot"]] <- cnetplot
+    try({Output[["cnetplot"]] <- cnetplot})
     # Output[["heatplot"]] <- heatplot
     Output[["emapplot"]] <- emapplot
     Output[["UpSet_Plot"]] <- upsetplot
@@ -239,6 +250,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     Output[["Gseaplot2_DownA"]] <-  gseaplot2_DownA
     Output[["Gseaplot2_UpB"]] <- gseaplot2_UpB
     Output[["Gseaplot2_DownB"]] <-  gseaplot2_DownB
+    try({Output[["gseaplot2_KW"]] <- gseaplot2_KW})
     # Output[["pmcplot"]] <- pmcplot
 
   return(Output)
