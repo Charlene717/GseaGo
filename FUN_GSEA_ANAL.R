@@ -10,10 +10,11 @@
 ## GSEA Chard Liu
 ## Ref: http://rstudio-pubs-static.s3.amazonaws.com/514990_9690f31b5ef7488bb4f0bb6c10ac4da8.html
 
-FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all, pathwayGeneSet = "C2",
+FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
+                         DefaultGeneSet = "C2", Species = "Homo sapiens", # Speices type can check by msigdbr_species()
                          NumGenesetsPlt = 10,
                          TarGeneName = TarGene_name,
-                         ThrSet = DEGThr.lt, Species = "Homo sapiens", # Speices type can check by msigdbr_species()
+                         ThrSet = DEGThr.lt,
                          Save.Path = Save.Path, SampleName = SampleName, AnnoName = "C2"
 ){
 
@@ -34,40 +35,45 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all, pathwayGeneSet 
 
     geneList <- sort(ranks, decreasing = T)
 
-    #### Use online GeneSet ####
-    ## MSigDB_C2
-    library(msigdbr)
-    # msigdbr_species()
-    # m_c2 <- msigdbr(species = Species, category = "C2") %>%
-    #         dplyr::select(gs_name, gene_symbol, entrez_gene)
 
-    #### Transform Customized CMGeneSet ####
-    # CMGeneSet <- data.frame(Geneset = row.names(CMGeneSet),CMGeneSet)
-    Temp <- CMGeneSet[,-2]
-    m_c2 <- Temp %>% pivot_longer(cols=2:ncol(.),names_to = "Temp", values_to = "Gene") %>%
-                     dplyr::select(cols=c(1,3))
+    #### DataSets setting ####
+    if(is.na(CMGeneSet[1,1]) == FALSE){
+      #### Customized GeneSet ####
+      Temp <- CMGeneSet[,-2]
+      LongGeneSet.df <- Temp %>% pivot_longer(cols=2:ncol(.),names_to = "Temp", values_to = "Gene") %>%
+        dplyr::select(cols=c(1,3))
 
-    m_c2 <- m_c2[!m_c2$cols2 == "",]
+      LongGeneSet.df <- LongGeneSet.df[!LongGeneSet.df$cols2 == "",]
 
-    rm(Temp)
+      rm(Temp)
+
+    }else{
+      #### Use online GeneSet ####
+      ## MSigDB_C2
+      library(msigdbr)
+      # msigdbr_species() # Check all species in msigdbr
+      LongGeneSet.df <- msigdbr(species = Species, category = DefaultGeneSet) %>%
+                        dplyr::select(gs_name, gene_symbol, entrez_gene)
+    }
+
+
 
     #### RUN GSEA ####
-    GSEA_Result <- GSEA(geneList, TERM2GENE = m_c2) #       GSEA_Result <- GSEA(geneList, TERM2GENE = m_c2)
+    GSEA_Result <- GSEA(geneList, TERM2GENE = LongGeneSet.df) #       GSEA_Result <- GSEA(geneList, TERM2GENE = LongGeneSet.df)
     # nPerm=1000
     # https://support.bioconductor.org/p/99810/
     # https://bioinformatics.stackexchange.com/questions/149/are-fgsea-and-broad-institute-gsea-equivalent
 
     #### Visualization ####
-    ## 2.1 Barplot
     library(clusterProfiler.dplyr) # devtools::install_github("YuLab-SMU/clusterProfiler.dplyr")
-    y <- mutate(GSEA_Result, ordering = abs(NES)) %>%
-         arrange(desc(ordering))
-
     library(ggstance)
     library(enrichplot)
     library(forcats)
     library(ggplot2)
 
+    ## 2.1 Barplot
+    y <- mutate(GSEA_Result, ordering = abs(NES)) %>%
+         arrange(desc(ordering))
 
     y_bar <- group_by(y, sign(NES)) %>% slice(1:NumGenesetsPlt)
 
