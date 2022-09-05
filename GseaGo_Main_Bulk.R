@@ -96,14 +96,6 @@
   if (!dir.exists(Save.Path)){dir.create(Save.Path)}
 
 
-
-
-
-
-
-
-
-
 ##### Update the genename ####
   # ## Test
   # UpdateSymbolList("SEPT1")
@@ -158,7 +150,7 @@
   ##### Group by gene expression 1: CutOff by total  #####
   Plot.DistrPlot <- FUN_DistrPlot(GeneExp.df,
                                   TarGeneName = TarGene_name, GroupSet = GeneExpSet.lt,
-                                  Save.Path = Save.Path, SampleName = ExportName)
+                                  Save.Path = Save.Path, ExportName = ExportName)
   Plot.DistrPlot_SD_Q <- Plot.DistrPlot[["TGeneDen_SD_Q.p"]]
   Plot.DistrPlot_SD_Q
 
@@ -168,7 +160,7 @@
   source("FUN_Group_GE.R")
   GeneExp_group.set <- FUN_Group_GE(GeneExp.df, Anno.df,
                                     TarGeneName = TarGene_name, GroupSet = GeneExpSet.lt,
-                                    Save.Path = Save.Path, SampleName = ExportName)
+                                    Save.Path = Save.Path, ExportName = ExportName)
   Anno.df <- GeneExp_group.set[["AnnoNew.df"]]
   GeneExp_high.set <- GeneExp_group.set[["GeneExp_high.set"]]
   GeneExp_low.set <- GeneExp_group.set[["GeneExp_low.set"]]
@@ -205,7 +197,7 @@
                                   NumGenesetsPlt = 15,
                                   TarGeneName = TarGene_name,
                                   ThrSet = DEGThr.lt,
-                                  Save.Path = Save.Path, SampleName = ExportName, AnnoName = "Path")
+                                  Save.Path = Save.Path, ExportName = ExportName, AnnoName = "Path")
 
 
   #### Run ORA ####
