@@ -10,6 +10,10 @@
 ## GSEA Chard Liu
 ## Ref: http://rstudio-pubs-static.s3.amazonaws.com/514990_9690f31b5ef7488bb4f0bb6c10ac4da8.html
 
+## Visualization of Functional Enrichment Result
+## Ref: https://bioc.ism.ac.jp/packages/3.7/bioc/vignettes/enrichplot/inst/doc/enrichplot.html
+
+
 FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
                          DefaultGeneSet = "C2", Species = "Homo sapiens", # Speices type can check by msigdbr_species()
                          NumGenesetsPlt = 15,
@@ -78,7 +82,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
 
     Barplot <- ggplot(y_bar, aes(NES, fct_reorder(Description, NES), fill = qvalues), showCategory=(NumGenesetsPlt*2)) +
                  geom_barh(stat='identity') +
-                 scale_fill_continuous(low='#d45772', high='#3b74bf', guide = guide_colorbar(reverse=TRUE)) +
+                 scale_fill_continuous(low = "#d45772", high = "#3b74bf", guide = guide_colorbar(reverse=TRUE)) +
                  theme_minimal() + ylab(NULL)
 
     Barplot <- Barplot %>% BeautifyggPlot(LegPos = c(0.9, 0.2), AxisTitleSize=1.7, YtextSize=14)
@@ -91,16 +95,16 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
 
     Dotplot <- Dotplot %>% BeautifyggPlot(LegPos = c(0.9, 0.3),AxisTitleSize=1.5)
 
-    Dotplot
 
     ## 2.3 Gene-Concept Network
-    # n <- 3
-    p3 <- cnetplot(GSEA_Result, showCategory = (NumGenesetsPlt*2), colorEdge = TRUE, node_label = "category")
-    cowplot::plot_grid(p3, ncol=1, labels=LETTERS[1], rel_widths=c(1))
+    try({
+    cnetplot <- cnetplot(GSEA_Result, showCategory = round(NumGenesetsPlt/2), colorEdge = TRUE, node_label = "category")
+    cowplot::plot_grid(cnetplot, ncol=1, labels=LETTERS[1], rel_widths=c(1))
+    })
 
-    ## 2.4 Heatmap-like functional classification
-
-
+    # ## 2.4 Heatmap-like functional classification
+    # heatplot <- heatplot(GSEA_Result,showCategory = NumGenesetsPlt*2,
+    #                      foldChange=geneList,label_format = 30) + scale_fill_continuous(low='#3b74bf', high='#d45772')
 
     ## 2.5 Enrichment Map
     p5 <- emapplot(pairwise_termsim(y), showCategory = NumGenesetsPlt/2)
@@ -161,8 +165,8 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
 
       print(Barplot)
       print(Dotplot)
-      print(p3)
-      # print(p4)
+      print(cnetplot)
+      # print(heatplot)
       print(p5)
       print(p6)
       print(p7)
@@ -178,8 +182,8 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     Output[["geneList_ranks"]] <- geneList
     Output[["GSEABar_Plot"]] <- Barplot
     Output[["GSEADot_Plot"]] <- Dotplot
-    Output[["p3"]] <- p3
-    # Output[["p4"]] <- p4
+    Output[["cnetplot"]] <- cnetplot
+    # Output[["heatplot"]] <- heatplot
     Output[["p5"]] <- p5
     Output[["UpSet_Plot"]] <- p6
     Output[["p7"]] <- p7
