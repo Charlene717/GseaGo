@@ -4,7 +4,7 @@ FUN_GSEA_ForOFFL = function(GeneExp.df,
                             Group1 = Group1.set, Group2 = Group2.set,
                             GroupMode = Group_Mode,
                             TarGeneName = TarGene_name, GeneExpSet = GeneExpSet.lt,
-                            Save.Path = Save.Path, SampleName = SampleName,
+                            Save.Path = Save.Path, ExportName = ExportName,
                             AnnoName = "AvB"
 ){
 
@@ -35,55 +35,67 @@ FUN_GSEA_ForOFFL = function(GeneExp.df,
 
 
 ##### Export Result #####
-  if(GroupMode == "GoupByGeneExp"){
-    if(GeneExpSet$GeneExpMode == "Customize"){
-      write.table(
-        GeneExp_GSEA.df,
-        file=paste0(Save.Path,"/OFFL_",SampleName,"_",
-                    GeneExpSet$GeneExpMode,"_Up", GeneExpSet$UpCutoff,"_Low_" ,GeneExpSet$LowerCutoff,
-                    TarGeneName,"_",AnnoName,"_collapsed.gct"),
-        quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
-      )
-      write.table(
-        Pheno_sum.df,
-        file=paste0(Save.Path,"/OFFL_",SampleName,"_",
-                    GeneExpSet$GeneExpMode,"_Up", GeneExpSet$UpCutoff,"_Low_" ,GeneExpSet$LowerCutoff,
-                    TarGeneName,"_",AnnoName,".cls"),
-        quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
-      )
+  write.table(
+    GeneExp_GSEA.df,
+    file=paste0(Save.Path,"/OFFL_",ExportName,"_",AnnoName,"_collapsed.gct"),
+    quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
+  )
+  write.table(
+    Pheno_sum.df,
+    file=paste0(Save.Path,"/OFFL_",ExportName,"_",AnnoName,".cls"),
+    quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
+  )
 
-    }else{
-      write.table(
-        GeneExp_GSEA.df,
-        file=paste0(Save.Path,"/OFFL_",SampleName,"_",
-                    GeneExpSet$GeneExpMode,"_",
-                    TarGeneName,"_",AnnoName,"_collapsed.gct"),
-        quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
-      )
-      write.table(
-        Pheno_sum.df,
-        file=paste0(Save.Path,"/OFFL_",SampleName,"_",
-                    GeneExpSet$GeneExpMode,"_",
-                    TarGeneName,"_",AnnoName,".cls"),
-        quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
-      )
 
-    }
-  }else{
-    write.table(
-      GeneExp_GSEA.df,
-      file=paste0(Save.Path,"/OFFL_",SampleName,"_",
-                  AnnoName,"_collapsed.gct"),
-      quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
-    )
-    write.table(
-      Pheno_sum.df,
-      file=paste0(Save.Path,"/OFFL_",SampleName,"_",
-                  AnnoName,".cls"),
-      quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
-    )
-
-  }
+  # if(GroupMode == "GoupByGeneExp"){
+  #   if(GeneExpSet$GeneExpMode == "Customize"){
+  #     write.table(
+  #       GeneExp_GSEA.df,
+  #       file=paste0(Save.Path,"/OFFL_",ExportName,"_",
+  #                   GeneExpSet$GeneExpMode,"_Up", GeneExpSet$UpCutoff,"_Low_" ,GeneExpSet$LowerCutoff,
+  #                   TarGeneName,"_",AnnoName,"_collapsed.gct"),
+  #       quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
+  #     )
+  #     write.table(
+  #       Pheno_sum.df,
+  #       file=paste0(Save.Path,"/OFFL_",ExportName,"_",
+  #                   GeneExpSet$GeneExpMode,"_Up", GeneExpSet$UpCutoff,"_Low_" ,GeneExpSet$LowerCutoff,
+  #                   TarGeneName,"_",AnnoName,".cls"),
+  #       quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
+  #     )
+  #
+  #   }else{
+  #     write.table(
+  #       GeneExp_GSEA.df,
+  #       file=paste0(Save.Path,"/OFFL_",ExportName,"_",
+  #                   GeneExpSet$GeneExpMode,"_",
+  #                   TarGeneName,"_",AnnoName,"_collapsed.gct"),
+  #       quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
+  #     )
+  #     write.table(
+  #       Pheno_sum.df,
+  #       file=paste0(Save.Path,"/OFFL_",ExportName,"_",
+  #                   GeneExpSet$GeneExpMode,"_",
+  #                   TarGeneName,"_",AnnoName,".cls"),
+  #       quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
+  #     )
+  #
+  #   }
+  # }else{
+  #   write.table(
+  #     GeneExp_GSEA.df,
+  #     file=paste0(Save.Path,"/OFFL_",ExportName,"_",
+  #                 AnnoName,"_collapsed.gct"),
+  #     quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
+  #   )
+  #   write.table(
+  #     Pheno_sum.df,
+  #     file=paste0(Save.Path,"/OFFL_",ExportName,"_",
+  #                 AnnoName,".cls"),
+  #     quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
+  #   )
+  #
+  # }
 
 
 }
