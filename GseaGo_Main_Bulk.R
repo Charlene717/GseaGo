@@ -15,6 +15,7 @@
 
 ##### Function setting #####
   ## Call function
+  source("FUN_DistrPlot.R")
   source("FUN_Beautify_ggplot.R")
   source("FUN_Find_Markers.R")
   source("FUN_VolcanoPlot.R")
@@ -142,7 +143,7 @@
   source("FUN_DistrPlot.R")
   ##### Group by gene expression 1: CutOff by total  #####
   Plot.DistrPlot <- FUN_DistrPlot(GeneExp.df,
-                                  TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
+                                  TarGeneName = TarGene_name, GroupSet = GeneExpSet.lt,
                                   Save.Path = Save.Path, SampleName = ExportName)
   Plot.DistrPlot_SD_Q <- Plot.DistrPlot[["TGeneDen_SD_Q.p"]]
   Plot.DistrPlot_SD_Q
