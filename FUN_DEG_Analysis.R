@@ -6,7 +6,7 @@ FUN_DEG_Analysis = function(GeneExp.df, Anno.df,
                             GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
                             ThrSet = DEGThr.lt,
                             TarGeneName = TarGene_name, GroupMode = Mode_Group, SampleID = "sampleID",
-                            Save.Path = Save.Path, SampleName = SampleName, AnnoName = "AvB"
+                            Save.Path = Save.Path, ExportName = ExportName, AnnoName = "AvB"
 ){
 
   ##### Parameter setting* #####
@@ -66,9 +66,9 @@ FUN_DEG_Analysis = function(GeneExp.df, Anno.df,
 
 
   #### Export file ####
-  write.table(DE_Extract.df, file = paste0(Save.Path,"/DEGAnalysis_",SampleName,"_",AnnoName,".tsv"),
+  write.table(DE_Extract.df, file = paste0(Save.Path,"/DEGAnalysis_",ExportName,"_",AnnoName,".tsv"),
               sep="\t", row.names= F, quote = FALSE)
-  write.table(DE_Extract_Flt.df, file = paste0(Save.Path,"/DEGAnalysis_Flt_",SampleName,"_",AnnoName,".tsv"),
+  write.table(DE_Extract_Flt.df, file = paste0(Save.Path,"/DEGAnalysis_Flt_",ExportName,"_",AnnoName,".tsv"),
               sep="\t", row.names= F, quote = FALSE)
 
 
