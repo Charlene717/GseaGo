@@ -122,7 +122,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
           scale_fill_continuous(low = "#d45772", high = "#3b74bf")
     ridgeplot %>% BeautifyggPlot(LegPos = c(1.05, 0.5),YtextSize = 10)
 
-    ## 2.8 gseaplot
+    #### 2.8 gseaplot ####
     y2 <- arrange(GSEA_Result, desc(NES))
 
     # Barplot <- gseaplot(y2, geneSetID = 1, title = y2$Description[1])   # max NES
@@ -130,9 +130,10 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     # Dotplot <- gseaplot(y2, geneSetID = n, title = y2$Description[n])   # min NES
     # cowplot::plot_grid(Barplot, Dotplot, ncol = 1, labels = LETTERS[1:2])
 
-    ## 2.8.1 gseaplot2
+    #### 2.8.1 gseaplot2 ####
     n <- nrow(y2)
 
+    #### Combination chart ####
     ## gseaplot2_Up.lt
     gseaplot2_Up.lt <- list()
     for (i in 1:NumGenesetsPlt) {
@@ -142,22 +143,22 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     rm(i)
 
     library(ggpubr)
-    gseaplot2_UpA <- ggpubr::ggarrange(plotlist = gseaplot2_Up.lt, ncol = ceiling(sqrt(NumGenesetsPlt)), nrow = ceiling(sqrt(NumGenesetsPlt)), labels = LETTERS[1:NumGenesetsPlt])
+    gseaplot2_UpA <- ggpubr::ggarrange(plotlist = gseaplot2_Up.lt, ncol = ceiling(sqrt(NumGenesetsPlt)),
+                                       nrow = ceiling(sqrt(NumGenesetsPlt)), labels = LETTERS[1:NumGenesetsPlt])
     gseaplot2_UpA
 
     ## gseaplot2_Down.lt
     gseaplot2_Down.lt <- list()
     for (i in 0:(NumGenesetsPlt-1)) {
 
-      gseaplot2_Down.lt[[i+1]] <- gseaplot2(y2, geneSetID = n-1, title = y2$Description[n-1] ,color = "#547d99") + scale_color_gradient(low = "#d45772", high = "#3b74bf")
+      gseaplot2_Down.lt[[i+1]] <- gseaplot2(y2, geneSetID = n-i, title = y2$Description[n-i] ,color = "#547d99") + scale_color_gradient(low = "#d45772", high = "#3b74bf")
     }
     rm(i)
 
     library(ggpubr)
-    gseaplot2_DownA <- ggpubr::ggarrange(plotlist = gseaplot2_Down.lt, ncol = ceiling(sqrt(NumGenesetsPlt)), nrow = ceiling(sqrt(NumGenesetsPlt)), labels = LETTERS[1:NumGenesetsPlt])
+    gseaplot2_DownA <- ggpubr::ggarrange(plotlist = gseaplot2_Down.lt, ncol = ceiling(sqrt(NumGenesetsPlt)),
+                                         nrow = ceiling(sqrt(NumGenesetsPlt)), labels = LETTERS[1:NumGenesetsPlt])
     gseaplot2_DownA
-
-
 
     # ## Old version
     # p8_1 <- gseaplot2(y2, geneSetID = 1, title = y2$Description[1] ,color = "#547d99") + scale_color_gradient(low = "#d45772", high = "#3b74bf")   # max NES
@@ -168,22 +169,28 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     #
     #  gseaplot2_UpA <- cowplot::plot_grid(p8_1,p8_1_2, p8_2,p8_2_2, ncol = 2, labels = LETTERS[1:4])
 
-    # ## Use keyword (Overlay graphics)
+
+    #### Overlay graphics by ID ####
+    # gseaplot2_UpB <- gseaplot2(y2, geneSetID = 1:10)
+    gseaplot2_UpB <- gseaplot2(y2, geneSetID = 1:NumGenesetsPlt)
+    gseaplot2_UpB
+
+    gseaplot2_DownB <- gseaplot2(y2, geneSetID = (n-NumGenesetsPlt+1):n)
+    gseaplot2_DownB
+
+    #### Use keyword (Overlay graphics) ####
     # try({
     #   keyword <- "breast"
     #   ind <- grep(keyword, GSEA_Result$Description, ignore.case = TRUE)
     #   gseaplot2(GSEA_Result, geneSetID = ind, title = GSEA_Result$Description[ind])
     # })
 
-    ## Overlay graphics by ID
-    # p8B <- gseaplot2(y2, geneSetID = 1:10)
-    p8B <- gseaplot2(y2, geneSetID = 1:NumGenesetsPlt)
-    p8B
-    # ## 2.8.2 gsearank
+
+    # #### 2.8.2 gsearank ####
     # gsearank(y2, geneSetID = 1, title = y2$Description[1])
 
 
-    # ## 2.9 PubMed trend of enriched terms
+    # #### 2.9 PubMed trend of enriched terms ####
     # terms <- GSEA_Result$Description[1:NumGenesetsPlt]
     # pmcplot <- pmcplot(terms, 2020:2022, proportion=FALSE)
     # rm(terms)
@@ -204,7 +211,8 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
       print(ridgeplot)
       print(gseaplot2_UpA)
       print(gseaplot2_DownA)
-      print(p8B)
+      print(gseaplot2_UpB)
+      print(gseaplot2_DownB)
       # print(pmcplot)
 
     dev.off()
@@ -220,8 +228,10 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     Output[["emapplot"]] <- emapplot
     Output[["UpSet_Plot"]] <- upsetplot
     Output[["ridgeplot"]] <- ridgeplot
-    Output[["Gsea_Plot"]] <-  gseaplot2_UpA
-    Output[["OverlayGsea_Plot"]] <- p8B
+    Output[["Gseaplot2_UpA"]] <-  gseaplot2_UpA
+    Output[["Gseaplot2_DownA"]] <-  gseaplot2_DownA
+    Output[["Gseaplot2_UpB"]] <- gseaplot2_UpB
+    Output[["Gseaplot2_DownB"]] <-  gseaplot2_DownB
     # Output[["pmcplot"]] <- pmcplot
 
   return(Output)
