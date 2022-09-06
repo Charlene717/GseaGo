@@ -34,13 +34,13 @@ UpdateGene <- function(TestGeneName, Species = Specie) {
 GeneExp_Temp.df <- GeneExp.df
 UpGeneName.df <- lapply(row.names(GeneExp_Temp.df), function(x)UpdateGene(x))  %>% unlist() %>% as.data.frame()
 
-Compare.df <- cbind(row.names(GeneExp_Temp.df),UpGeneName.df[,1]) %>% as.data.frame()
-sum(Compare.df[,1] != Compare.df[,2])
+CompareGene.df <- cbind(row.names(GeneExp_Temp.df),UpGeneName.df[,1]) %>% as.data.frame()
+
 
 ## Find Duplicate name
 ## Ref: http://guangzheng.name/2017/10/07/%E5%A6%82%E4%BD%95%E6%9F%A5%E6%89%BE%E6%95%B0%E6%8D%AE%E6%A1%86%E4%B8%AD%E9%87%8D%E5%A4%8D%E7%9A%84%E6%95%B0%E6%8D%AE/
 library(dplyr)
-Compare.df %>% group_by(V2) %>%
+CompareGene.df %>% group_by(V2) %>%
                mutate(index = n()) %>%
                filter(index > 1) %>%
                select(2) %>%
@@ -58,10 +58,19 @@ UpdateGeneDUPE <- function(df,x) {
   return(df[x,1])
 }
 
-UpGeneName2.df <- lapply(1:nrow(Compare.df), function(x)UpdateGeneDUPE(Compare.df,x))  %>% as.data.frame() %>% t
+UpGeneName2.df <- lapply(1:nrow(CompareGene.df), function(x)UpdateGeneDUPE(CompareGene.df,x))  %>% as.data.frame() %>% t
 row.names(GeneExp_Temp.df) <- UpGeneName2.df
 GeneExp.df <- GeneExp_Temp.df
-Compare.df <- cbind(Compare.df, UpGeneName2.df)
+CompareGene.df <- cbind(CompareGene.df, UpGeneName2.df)
+colnames(CompareGene.df) <- c("Ori","UpGeneName","DUPEGene")
+row.names(CompareGene.df) <- seq(1:nrow(CompareGene.df))
+
+CompareGene_Sum.df <- data.frame(
+  A = sum(CompareGene.df[,1] == CompareGene.df[,2]),
+  B = sum(CompareGene.df[,1] != CompareGene.df[,2]),
+  C =sum(CompareGene.df[,2] != CompareGene.df[,3])
+)
+
 
 rm(GeneExp_Temp.df,UpGeneName.df,UpGeneName2.df)
 
