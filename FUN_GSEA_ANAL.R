@@ -22,7 +22,11 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
                          Save.Path = Save.Path, ExportName = ExportName, AnnoName = "C2",
                          Keyword = "HALLMARK",                   # Keyword = "breast"
                          Int_Path = c("REACTOME_G0_AND_EARLY_G1",
-                                      "REACTOME_INITIATION_OF_NUCLEAR_ENVELOPE_NE_REFORMATION")
+                                      "REACTOME_INITIATION_OF_NUCLEAR_ENVELOPE_NE_REFORMATION"),
+                         pAdjustMethod = "BH",  # pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"
+                         nPerm = 100000,
+                         minGSSize = 15, maxGSSize = 500
+
 ){
 
   ##### Load Packages  #####
@@ -69,10 +73,9 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     GSEA_Result <- GSEA(geneList, TERM2GENE = LongGeneSet.df) # GSEA_Result <- GSEA(geneList, TERM2GENE = LongGeneSet.df)
     # GSEA_Result <- GSEA(geneList, TERM2GENE = LongGeneSet.df)
     GSEA_Result <- GSEA(geneList, TERM2GENE = LongGeneSet.df,
-                        pAdjustMethod = "BH",  # pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"
-                        nPerm=100000,
-                        # nPerm=1000,
-                        minGSSize = 15, maxGSSize = 500)
+                        pAdjustMethod = pAdjustMethod,  # pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"
+                        nPerm = nPerm,
+                        minGSSize = minGSSize, maxGSSize = maxGSSize)
 
     # nPerm=1000
     # https://support.bioconductor.org/p/99810/
