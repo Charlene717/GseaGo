@@ -9,25 +9,14 @@ FUN_DEG_Analysis = function(GeneExp.df, Anno.df,
                             Save.Path = Save.Path, ExportName = ExportName, AnnoName = "AvB"
 ){
 
-  ##### Parameter setting* #####
-  # Set the desired organism
-  organism = "org.Dm.eg.db"
+  ##### Load Packages  #####
+  source("FUN_Package_InstLoad.R")
+  Basic.set <- c("tidyverse","ggplot2")
+  BiocManager.set <- c("edgeR","baySeq")
+  Package_InstLoad(Basic.set = Basic.set, BiocManager.set = BiocManager.set)
 
+  #************************************************************************************************************************#
 
-  #### BiocManager installation ####
-  ## Check whether the installation of those packages is required from BiocManager
-  if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-  # BiocManager::install()
-  Package.set <- c(organism,"edgeR","baySeq")
-  for (i in 1:length(Package.set)) {
-    if (!requireNamespace(Package.set[i], quietly = TRUE)){
-      BiocManager::install(Package.set[i])
-    }
-  }
-  ## Load Packages
-  lapply(Package.set, library, character.only = TRUE)
-  rm(Package.set,i)
 
   #### Differential Expression Gene Analysis ####
   library(edgeR)
