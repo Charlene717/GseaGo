@@ -23,24 +23,24 @@ UpdateGene <- function(TestGeneName, Species = "Hs") {
 # TestGene <- "HBII-52-46"
 # TestGene <- UpdateGene(TestGene)
 
-TTT <- GeneExp.df
-TTT3 <- lapply(row.names(TTT), function(x)UpdateGene(x))  %>% unlist() %>% as.data.frame()
+GeneExp_Temp.df <- GeneExp.df
+UpGeneName.df <- lapply(row.names(GeneExp_Temp.df), function(x)UpdateGene(x))  %>% unlist() %>% as.data.frame()
 
-df <- cbind(row.names(TTT),TTT3[,1]) %>% as.data.frame()
-sum(df[,1] != df[,2])
+Compare.df <- cbind(row.names(GeneExp_Temp.df),UpGeneName.df[,1]) %>% as.data.frame()
+sum(Compare.df[,1] != Compare.df[,2])
 
 ## Find Duplicate name
 ## Ref: http://guangzheng.name/2017/10/07/%E5%A6%82%E4%BD%95%E6%9F%A5%E6%89%BE%E6%95%B0%E6%8D%AE%E6%A1%86%E4%B8%AD%E9%87%8D%E5%A4%8D%E7%9A%84%E6%95%B0%E6%8D%AE/
 library(dplyr)
-df %>% group_by(V2) %>%
-       mutate(index = n()) %>%
-       filter(index > 1) %>%
-       select(2) %>%
-       ungroup() %>%
-       unique() %>%
-       unlist() -> Dup.set
+Compare.df %>% group_by(V2) %>%
+               mutate(index = n()) %>%
+               filter(index > 1) %>%
+               select(2) %>%
+               ungroup() %>%
+               unique() %>%
+               unlist() -> Dup.set
 
-
+## Deal with Duplicate name (No change if encounter duplicate names)
 UpdateGeneDUPE <- function(df,x) {
   if( (df[x,2] %in% Dup.set)== TRUE ){
     df[x,1] = df[x,1]
@@ -50,21 +50,12 @@ UpdateGeneDUPE <- function(df,x) {
   return(df[x,1])
 }
 
-df2 <- lapply(1:nrow(df), function(x)UpdateGeneDUPE(df,x))  %>% as.data.frame()
-row.names(TTT) <- df2
+UpGeneName2.df <- lapply(1:nrow(Compare.df), function(x)UpdateGeneDUPE(Compare.df,x))  %>% as.data.frame()
+row.names(GeneExp_Temp.df) <- UpGeneName2.df
+GeneExp.df <- GeneExp_Temp.df
+Compare.df <- cbind(Compare.df, UpGeneName2.df)
 
-
-
-
-## Update the genename ##
-library(limma)
-UpdateGene <- "No"  # UpdateGene <- c("Yes","No")
-if(UpdateGene == "Yes"){
-  ## Error ##  row.names(GeneExp.df) <- alias2Symbol(row.names(GeneExp.df), species = "Hs", expand.symbols = FALSE)
-  row.names(GeneExp.df) <- alias2Symbol(row.names(GeneExp.df), species = "Hs", expand.symbols = FALSE)
-
-}
-
+rm(GeneExp_Temp.df,UpGeneName.df,UpGeneName2.df)
 
 #************************************************************************************************************************#
 # #### Old version 1 ####
