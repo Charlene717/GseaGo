@@ -66,7 +66,14 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
 
 
     #### RUN GSEA ####
-    GSEA_Result <- GSEA(geneList, TERM2GENE = LongGeneSet.df) #       GSEA_Result <- GSEA(geneList, TERM2GENE = LongGeneSet.df)
+    GSEA_Result <- GSEA(geneList, TERM2GENE = LongGeneSet.df) # GSEA_Result <- GSEA(geneList, TERM2GENE = LongGeneSet.df)
+    # GSEA_Result <- GSEA(geneList, TERM2GENE = LongGeneSet.df)
+    GSEA_Result <- GSEA(geneList, TERM2GENE = LongGeneSet.df,
+                        pAdjustMethod = "BH",  # pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"
+                        nPerm=100000,
+                        # nPerm=1000,
+                        minGSSize = 15, maxGSSize = 500)
+
     # nPerm=1000
     # https://support.bioconductor.org/p/99810/
     # https://bioinformatics.stackexchange.com/questions/149/are-fgsea-and-broad-institute-gsea-equivalent
@@ -84,9 +91,9 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     y_bar <- group_by(y, sign(NES)) %>% slice(1:NumGenesetsPlt)
 
     Barplot <- ggplot(y_bar, aes(NES, fct_reorder(Description, NES), fill = qvalues), showCategory=(NumGenesetsPlt*2)) +
-                 geom_barh(stat='identity') +
-                 scale_fill_continuous(low = "#d45772", high = "#3b74bf", guide = guide_colorbar(reverse=TRUE)) +
-                 theme_minimal() + ylab(NULL)
+                      geom_barh(stat='identity') +
+                      scale_fill_continuous(low = "#d45772", high = "#3b74bf", guide = guide_colorbar(reverse=TRUE)) +
+                      theme_minimal() + ylab(NULL)
 
     Barplot <- Barplot %>% BeautifyggPlot(LegPos = c(0.9, 0.2), AxisTitleSize=1.7, YtextSize=14,OL_Thick = 1.5)
 
