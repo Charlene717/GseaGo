@@ -1,30 +1,4 @@
 ##### Update the genename ####
-# #### Test ####
-# UpdateSymbolList("SEPT1")
-# A <- UpdateSymbolList(row.names(GeneExp.df))
-# B <- row.names(GeneExp.df)
-# # sum(c("a","c")==c("a","b"))
-# sum(A==B)
-# summary(A==B)
-#
-## Error: Timeout was reached: [rest.genenames.org] Operation timed out after 10005 milliseconds with 0 bytes received
-
-# ## https://rdrr.io/github/vertesy/Seurat.utils/src/Development/Functions/Seurat.update.gene.symbols.HGNC.R
-# HGNC.EnforceUniquet("SEPT1")
-
-# ## Update the genename ##* Take very long time
-# UpdateGene <- "No"  # UpdateGene <- c("Yes","No")
-# if(UpdateGene == "Yes"){
-#   row.names(GeneExp.df) <- UpdateSymbolList(row.names(GeneExp.df))
-# }
-
-
-# #### Test2 ####
-# ## Ref: http://web.mit.edu/~r/current/arch/i386_linux26/lib/R/library/limma/html/alias2Symbol.html
-# library(limma)
-# alias2Symbol("SEPT1", species = "Hs", expand.symbols = FALSE)
-
-
 ## Ref: http://web.mit.edu/~r/current/arch/i386_linux26/lib/R/library/limma/html/alias2Symbol.html
 library(limma)
 
@@ -84,8 +58,6 @@ row.names(TTT) <- df2
 
 
 
-
-
 ## Update the genename ##
 library(limma)
 UpdateGene <- "No"  # UpdateGene <- c("Yes","No")
@@ -95,6 +67,39 @@ if(UpdateGene == "Yes"){
 
 }
 
+
+#************************************************************************************************************************#
+# #### Old version 1 ####
+#
+# # ## Update the genename ##* Take very long time
+# # UpdateGene <- "No"  # UpdateGene <- c("Yes","No")
+# # if(UpdateGene == "Yes"){
+# #   row.names(GeneExp.df) <- UpdateSymbolList(row.names(GeneExp.df))
+# # }
+#
+#
+# # #### Test ####
+# # UpdateSymbolList("SEPT1")
+# # A <- UpdateSymbolList(row.names(GeneExp.df))
+# # B <- row.names(GeneExp.df)
+# # # sum(c("a","c")==c("a","b"))
+# # sum(A==B)
+# # summary(A==B)
+# #
+# ## Error: Timeout was reached: [rest.genenames.org] Operation timed out after 10005 milliseconds with 0 bytes received
+#
+# # ## https://rdrr.io/github/vertesy/Seurat.utils/src/Development/Functions/Seurat.update.gene.symbols.HGNC.R
+# # HGNC.EnforceUniquet("SEPT1")
+
+#************************************************************************************************************************#
+# #### Test2 ####
+# ## Ref: http://web.mit.edu/~r/current/arch/i386_linux26/lib/R/library/limma/html/alias2Symbol.html
+# library(limma)
+# alias2Symbol("SEPT1", species = "Hs", expand.symbols = FALSE)
+
+
+#************************************************************************************************************************#
+#### Backup ####
 ## https://www.nature.com/articles/s41588-020-0669-3#Sec18
 ## Genenames.org: the HGNC and VGNC resources in 2021
 ## https://academic.oup.com/nar/article/49/D1/D939/5957168
