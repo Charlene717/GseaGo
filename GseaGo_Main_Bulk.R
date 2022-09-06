@@ -101,10 +101,11 @@
 ##### Update the genename ####
   ## Ref: http://web.mit.edu/~r/current/arch/i386_linux26/lib/R/library/limma/html/alias2Symbol.html
   library(limma)
-  UpdateGene <- "No"  # UpdateGene <- c("Yes","No")
+
+  UpdateGene <- "Yes"  # UpdateGene <- c("Yes","No")
+
   if(UpdateGene == "Yes"){
     source("RUN_FUN_UpdateGeneName.R")
-
   }
 
 #************************************************************************************************************************#
