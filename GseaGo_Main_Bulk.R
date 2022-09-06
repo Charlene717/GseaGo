@@ -199,6 +199,32 @@
                                   ThrSet = DEGThr.lt,
                                   Save.Path = Save.Path, ExportName = ExportName, AnnoName = "Path")
 
+  source("FUN_GSEA_ANAL.R")
+  Int_Path.set <- c(# "GRUETZMANN_PANCREATIC_CANCER_UP",
+                    # "HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION",
+                    # "HP_ABNORMALITY_OF_CHROMOSOME_STABILITY",
+                    # "GOBP_POSITIVE_REGULATION_OF_EPITHELIAL_CELL_MIGRATION",
+                    # "NAKAMURA_METASTASIS_MODEL_UP",
+                    # "REACTOME_G0_AND_EARLY_G1",
+                    # "REACTOME_INITIATION_OF_NUCLEAR_ENVELOPE_NE_REFORMATION",
+                    "REACTOME_ACTIVATION_OF_ATR_IN_RESPONSE_TO_REPLICATION_STRESS",
+                    #"REACTOME_SEMA4D_MEDIATED_INHIBITION_OF_CELL_ATTACHMENT_AND_MIGRATION",
+                    "REACTOME_NUCLEAR_PORE_COMPLEX_NPC_DISASSEMBLY",
+                    "HALLMARK_E2F_TARGETS",
+                    "REACTOME_DNA_REPLICATION",
+                    "REACTOME_G2_M_CHECKPOINTS",
+                    "KEGG_OLFACTORY_TRANSDUCTION",
+                    "KEGG_CALCIUM_SIGNALING_PATHWAY"
+  )
+
+  GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, CMGeneSet = Pathway.all,
+                                  DefaultGeneSet = "C2", Species = SpeciesSet, # Speices type can check by msigdbr_species()
+                                  NumGenesetsPlt = 15,
+                                  TarGeneName = TarGene_name,
+                                  ThrSet = DEGThr.lt,
+                                  Save.Path = Save.Path, ExportName = ExportName, AnnoName = "Path",
+                                  Keyword = "HALLMARK",
+                                  Int_Path =  Int_Path.set)
 
   #### Run ORA ####
   ## FUN ORA
