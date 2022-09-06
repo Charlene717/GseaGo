@@ -191,15 +191,6 @@
 
   #### Run GSEA ####
   source("FUN_GSEA_ANAL.R")
-
-  GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, CMGeneSet = Pathway.all,
-                                  DefaultGeneSet = "C2", Species = SpeciesSet, # Speices type can check by msigdbr_species()
-                                  NumGenesetsPlt = 15,
-                                  TarGeneName = TarGene_name,
-                                  ThrSet = DEGThr.lt,
-                                  Save.Path = Save.Path, ExportName = ExportName, AnnoName = "Path")
-
-  source("FUN_GSEA_ANAL.R")
   Int_Path.set <- c(# "GRUETZMANN_PANCREATIC_CANCER_UP",
                     # "HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION",
                     # "HP_ABNORMALITY_OF_CHROMOSOME_STABILITY",
@@ -224,7 +215,10 @@
                                   ThrSet = DEGThr.lt,
                                   Save.Path = Save.Path, ExportName = ExportName, AnnoName = "Path",
                                   Keyword = "HALLMARK",
-                                  Int_Path =  Int_Path.set)
+                                  Int_Path =  Int_Path.set,
+                                  pAdjustMethod = "BH",  # pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"
+                                  nPerm = 100000,
+                                  minGSSize = 15, maxGSSize = 500)
 
   #### Run ORA ####
   ## FUN ORA
