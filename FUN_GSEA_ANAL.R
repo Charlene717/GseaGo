@@ -20,7 +20,9 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
                          TarGeneName = TarGene_name,
                          ThrSet = DEGThr.lt,
                          Save.Path = Save.Path, ExportName = ExportName, AnnoName = "C2",
-                         Keyword = "HALLMARK"                   # Keyword = "breast"
+                         Keyword = "HALLMARK",                   # Keyword = "breast"
+                         Int_Path = c("REACTOME_G0_AND_EARLY_G1",
+                                      "REACTOME_INITIATION_OF_NUCLEAR_ENVELOPE_NE_REFORMATION")
 ){
 
   ##### Load Packages  #####
@@ -139,27 +141,29 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     gseaplot2_Up.lt <- list()
     for (i in 1:NumGenesetsPlt) {
 
-      gseaplot2_Up.lt[[i]] <- gseaplot2(y2, geneSetID = i, title = y2$Description[i] ,color = "#547d99") + scale_color_gradient(low = "#d45772", high = "#3b74bf")
+      gseaplot2_Up.lt[[i]] <- gseaplot2(y2, geneSetID = y2$Description[i] , title = y2$Description[i] ,color = "#547d99") + scale_color_gradient(low = "#d45772", high = "#3b74bf")
     }
     rm(i)
 
     library(ggpubr)
     gseaplot2_UpA <- ggpubr::ggarrange(plotlist = gseaplot2_Up.lt, ncol = ceiling(sqrt(NumGenesetsPlt)),
                                        nrow = ceiling(sqrt(NumGenesetsPlt)), labels = LETTERS[1:NumGenesetsPlt])
-    gseaplot2_UpA
+
 
     ## gseaplot2_Down.lt
     gseaplot2_Down.lt <- list()
-    for (i in 0:(NumGenesetsPlt-1)) {
+    for (i in 1:(NumGenesetsPlt)) {
 
-      gseaplot2_Down.lt[[i+1]] <- gseaplot2(y2, geneSetID = n-i, title = y2$Description[n-i] ,color = "#547d99") + scale_color_gradient(low = "#d45772", high = "#3b74bf")
+      gseaplot2_Down.lt[[i]] <- gseaplot2(y2, geneSetID = y2$Description[(n-NumGenesetsPlt+i)],
+                                            title = y2$Description[(n-NumGenesetsPlt+i)] ,color = "#547d99") +
+                                  scale_color_gradient(low = "#d45772", high = "#3b74bf")
     }
     rm(i)
 
     library(ggpubr)
     gseaplot2_DownA <- ggpubr::ggarrange(plotlist = gseaplot2_Down.lt, ncol = ceiling(sqrt(NumGenesetsPlt)),
                                          nrow = ceiling(sqrt(NumGenesetsPlt)), labels = LETTERS[1:NumGenesetsPlt])
-    gseaplot2_DownA
+
 
     # ## Old version
     # p8_1 <- gseaplot2(y2, geneSetID = 1, title = y2$Description[1] ,color = "#547d99") + scale_color_gradient(low = "#d45772", high = "#3b74bf")   # max NES
@@ -173,11 +177,11 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
 
     #### Overlay graphics by ID ####
     # gseaplot2_UpB <- gseaplot2(y2, geneSetID = 1:10)
-    gseaplot2_UpB <- gseaplot2(y2, geneSetID = 1:NumGenesetsPlt, pvalue_table=T)
-    gseaplot2_UpB
+    gseaplot2_UpB <- gseaplot2(y2, geneSetID = y2$Description[1:NumGenesetsPlt], pvalue_table=T)
 
-    gseaplot2_DownB <- gseaplot2(y2, geneSetID = (n-NumGenesetsPlt+1):n, pvalue_table=T)
-    gseaplot2_DownB
+
+    gseaplot2_DownB <- gseaplot2(y2, geneSetID = y2$Description[(n-NumGenesetsPlt+1):n], pvalue_table=T)
+
 
     ## Modify the function
     ## https://www.biostars.org/p/9470087/
@@ -190,7 +194,14 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
       keyword <- Keyword
 
       ind <- grep(keyword, GSEA_Result$Description, ignore.case = TRUE)
-      gseaplot2_KW <- gseaplot2(GSEA_Result, geneSetID = ind, title = GSEA_Result$Description[ind])
+      gseaplot2_KW <- gseaplot2(GSEA_Result, geneSetID = ind,
+                                title = GSEA_Result$Description[ind])
+    })
+
+    #### Use Int_Path.set (Overlay graphics) ####
+    try({
+      gseaplot2_IntPath <- gseaplot2(GSEA_Result, geneSetID = Int_Path,
+                                     title = GSEA_Result$Description[Int_Path])
     })
 
 
@@ -227,11 +238,12 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
       width = 20,  height = 20
     )
 
-    print(gseaplot2_UpA)
-    print(gseaplot2_DownA)
-    print(gseaplot2_UpB)
-    print(gseaplot2_DownB)
-    try({print(gseaplot2_KW)})
+      print(gseaplot2_UpA)
+      print(gseaplot2_DownA)
+      print(gseaplot2_UpB)
+      print(gseaplot2_DownB)
+      try({print(gseaplot2_KW)})
+      try({print(gseaplot2_IntPath)})
 
     dev.off()
 
@@ -251,6 +263,8 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     Output[["Gseaplot2_UpB"]] <- gseaplot2_UpB
     Output[["Gseaplot2_DownB"]] <-  gseaplot2_DownB
     try({Output[["gseaplot2_KW"]] <- gseaplot2_KW})
+    try({Output[["gseaplot2_IntPath"]] <- gseaplot2_IntPath})
+
     # Output[["pmcplot"]] <- pmcplot
 
   return(Output)
