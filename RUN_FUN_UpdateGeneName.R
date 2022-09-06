@@ -4,7 +4,15 @@ if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 if (!requireNamespace("limma", quietly = TRUE)) BiocManager::install("limma")
 library(limma)
 
-UpdateGene <- function(TestGeneName, Species = "Hs") {
+if(SpeciesSet == "Homo sapiens"){
+  Specie = "Hs"
+}else if(SpeciesSet == "Mus musculus"){
+  Specie = "Mm"
+}else{
+  Specie = "Hs"
+}
+
+UpdateGene <- function(TestGeneName, Species = Specie) {
   UpdateGeneName <- alias2Symbol(TestGeneName, species = Species, expand.symbols = FALSE)
   if( length(UpdateGeneName) == 0 ){
     TestGeneName <- TestGeneName
