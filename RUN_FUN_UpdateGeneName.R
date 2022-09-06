@@ -58,7 +58,7 @@ UpdateGeneDUPE <- function(df,x) {
   return(df[x,1])
 }
 
-UpGeneName2.df <- lapply(1:nrow(Compare.df), function(x)UpdateGeneDUPE(Compare.df,x))  %>% as.data.frame()
+UpGeneName2.df <- lapply(1:nrow(Compare.df), function(x)UpdateGeneDUPE(Compare.df,x))  %>% as.data.frame() %>% t
 row.names(GeneExp_Temp.df) <- UpGeneName2.df
 GeneExp.df <- GeneExp_Temp.df
 Compare.df <- cbind(Compare.df, UpGeneName2.df)
