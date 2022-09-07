@@ -39,9 +39,6 @@ UpdateGene <- function(TestGeneName, Species = Specie) {
 # sum(t(Pathway.all_Up)==Pathway.all_Temp[1,-1:-2])
 
 
-
-
-####  ####
 Pathway.all_Temp <- Pathway.all
 ## For test ## Pathway.all_Temp <- Pathway.all[1:5,]
 
@@ -95,6 +92,7 @@ Pathway.all_Temp <- tibble(V = Pathway.all_Temp2) %>%
 NoChangeNum = sum(Pathway.all[,-1:-2] == Pathway.all_Temp[,-1:-2])
 ChangeNum = sum(Pathway.all[,-1:-2] != Pathway.all_Temp[,-1:-2])
 
+Pathway.all_Ori <- Pathway.all
 Pathway.all <- Pathway.all_Temp
 
 rm(Pathway.all_Temp,Pathway.all_Temp2)
@@ -112,41 +110,3 @@ rm(Pathway.all_Temp,Pathway.all_Temp2)
 
 
 
-#************************************************************************************************************************#
-# #### Old version 1 ####
-#
-# # ## Update the genename ##* Take very long time
-# # UpdateGene <- "No"  # UpdateGene <- c("Yes","No")
-# # if(UpdateGene == "Yes"){
-# #   row.names(Pathway.all) <- UpdateSymbolList(row.names(Pathway.all))
-# # }
-#
-#
-# # #### Test ####
-# # UpdateSymbolList("SEPT1")
-# # A <- UpdateSymbolList(row.names(Pathway.all))
-# # B <- row.names(Pathway.all)
-# # # sum(c("a","c")==c("a","b"))
-# # sum(A==B)
-# # summary(A==B)
-# #
-# ## Error: Timeout was reached: [rest.genenames.org] Operation timed out after 10005 milliseconds with 0 bytes received
-#
-# # ## https://rdrr.io/github/vertesy/Seurat.utils/src/Development/Functions/Seurat.update.gene.symbols.HGNC.R
-# # HGNC.EnforceUniquet("SEPT1")
-
-#************************************************************************************************************************#
-# #### Test2 ####
-# ## Ref: http://web.mit.edu/~r/current/arch/i386_linux26/lib/R/library/limma/html/alias2Symbol.html
-# library(limma)
-# alias2Symbol("SEPT1", species = "Hs", expand.symbols = FALSE)
-
-
-#************************************************************************************************************************#
-#### Backup ####
-## https://www.nature.com/articles/s41588-020-0669-3#Sec18
-## Genenames.org: the HGNC and VGNC resources in 2021
-## https://academic.oup.com/nar/article/49/D1/D939/5957168
-
-# HGNC
-# https://www.genenames.org/
