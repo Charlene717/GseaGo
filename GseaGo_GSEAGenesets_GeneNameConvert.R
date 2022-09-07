@@ -12,6 +12,7 @@ Pathway.all <- read.delim2(paste0(getwd(),"/GSEA_Geneset/GSEA_Geneset_Pathway_3D
                            col.names = 1:max(count.fields(paste0(getwd(),"/GSEA_Geneset/GSEA_Geneset_Pathway_3Database_WithoutFilter.txt"))),
                            header = F,sep = "\t")
 
+
 # Convert Human gene to mouse
 Pathway.all.MM = as.data.frame(matrix(nrow=nrow(Pathway.all),ncol=ncol(Pathway.all)*1.5))
 for (i in 1:nrow(Pathway.all)) {
@@ -26,6 +27,7 @@ for (i in 1:nrow(Pathway.all)) {
 Pathway.all.MM <- data.frame(Pathway.all[,1:2],Pathway.all.MM)
 colnames(Pathway.all.MM) <- seq(1:ncol(Pathway.all.MM))
 Pathway.all.MM[is.na(Pathway.all.MM)] <- ""
+Pathway.all.MM[Pathway.all.MM == 0] <- ""
 
 #### Save RData ####
 save.image(paste0(Save.Path,"/09_0_GSEA_Analysis(Geneset_Prepare).RData"))
