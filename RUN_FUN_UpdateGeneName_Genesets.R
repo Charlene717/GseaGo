@@ -79,7 +79,8 @@ for (i in 1:nrow(Pathway.all_Temp)) {
   rm(UpGeneName.df,UpGeneName2.df)
 
 }
-
+NoChangeNum = sum(Pathway.all[,-1:-2] == Pathway.all_Temp[,-1:-2])
+ChangeNum = sum(Pathway.all[,-1:-2] != Pathway.all_Temp[,-1:-2])
 
 Pathway.all <- Pathway.all_Temp
 rm(Pathway.all_Temp)
