@@ -38,18 +38,15 @@
   }
   rm(new_1,i)
 
-  # #### Alternate ####
-  #   ## Remove duplicated
-  #     merge_1.df <- merge_1.df[!duplicated(merge_1.df[,2]), ]
-  #
-  #   ## Remove NA
-  #     # Ref: https://www.itranslater.com/qa/details/2097979270629950464
-  #     merge_1.df <- merge_1.df[rowSums(is.na(merge_1.df))<length(merge_1.df),]
-  #     merge_1.df <- merge_1.df[,colSums(is.na(merge_1.df))<nrow(merge_1.df)]
-  #     # Ref: https://www.delftstack.com/zh-tw/howto/r/replace-na-with-0-in-r/
-       merge_1.df[is.na(merge_1.df)] <- ""
+  #### Clean up df ####
+  ## Remove duplicated
+    merge_1.df <- merge_1.df[!duplicated(merge_1.df[,2]), ]
 
-  ##### Export Result WithoutFilter #####
+  # ## Remove NA (Have set in the write.table)
+  # # Ref: https://www.delftstack.com/zh-tw/howto/r/replace-na-with-0-in-r/
+  #   merge_1.df[is.na(merge_1.df)] <- ""
+
+  ##### Export Result of Combine #####
   ## Note ## Need to remove the quote
     write.table(merge_1.df,paste0(OutputFolder,"/",InputFolder,'_WithoutFilter.txt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
