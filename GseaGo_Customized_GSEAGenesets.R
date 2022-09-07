@@ -13,7 +13,7 @@
 
 
 ##### Current path and new folder setting* #####
-  InputFolder = "GSEA_Geneset_Pathway_3Database"
+  InputFolder = "Customized_GSEAGenesets_Pathway3D"
   OutputFolder <- paste0(InputFolder,"_",Sys.Date(),"_CF") ## Generate output folder automatically
   dir.create(OutputFolder)
 
@@ -52,9 +52,9 @@
   ##### Export Result WithoutFilter #####
   ## Note ## Need to remove the quote
     write.table(merge_1.df,paste0(OutputFolder,"/",InputFolder,'_WithoutFilter.txt'),
-                row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
+                row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
     write.table(merge_1.df,paste0(OutputFolder,"/",InputFolder,'_WithoutFilter.gmt'),
-                row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
+                row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
 ##### Filter by Keywords* #####
   ## EMT
