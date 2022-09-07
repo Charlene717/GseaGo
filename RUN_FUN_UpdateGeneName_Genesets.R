@@ -29,50 +29,73 @@ UpdateGene <- function(TestGeneName, Species = Specie) {
 # ## Test UpdateGene function
 # TestGene <- "SEPT1"
 # TestGene <- "HBII-52-46"
+# TestGene <- "ALG13"
 # TestGene <- UpdateGene(TestGene)
+#
 
-GeneExp_Temp.df <- GeneExp.df
-UpGeneName.df <- lapply(row.names(GeneExp_Temp.df), function(x)UpdateGene(x))  %>% unlist() %>% as.data.frame()
+# #### Test #####
+# Pathway.all_Temp <- Pathway.all
+# Pathway.all_Up <- lapply(Pathway.all_Temp[1,-1:-2], function(x)UpdateGene(x))  %>% unlist() %>% as.data.frame()
+# sum(t(Pathway.all_Up)==Pathway.all_Temp[1,-1:-2])
 
-CompareGene.df <- cbind(row.names(GeneExp_Temp.df),UpGeneName.df[,1]) %>% as.data.frame()
 
 
-## Find Duplicate name
-## Ref: http://guangzheng.name/2017/10/07/%E5%A6%82%E4%BD%95%E6%9F%A5%E6%89%BE%E6%95%B0%E6%8D%AE%E6%A1%86%E4%B8%AD%E9%87%8D%E5%A4%8D%E7%9A%84%E6%95%B0%E6%8D%AE/
-library(dplyr)
-CompareGene.df %>% group_by(V2) %>%
-               mutate(index = n()) %>%
-               filter(index > 1) %>%
-               select(2) %>%
-               ungroup() %>%
-               unique() %>%
-               unlist() -> Dup.set
 
-## Deal with Duplicate name (No change if encounter duplicate names)
-UpdateGeneDUPE <- function(df,x) {
-  if( (df[x,2] %in% Dup.set)== TRUE ){
-    df[x,1] = df[x,1]
-  }else{
-    df[x,1] = df[x,2]
+####  ####
+Pathway.all_Temp <- Pathway.all
+
+for (i in 1:nrow(Pathway.all_Temp)) {
+  UpGeneName.df <- lapply(Pathway.all_Temp[i,-1:-2], function(x)UpdateGene(x))  %>% unlist() %>% as.data.frame()
+
+  CompareGene.df <- rbind(Pathway.all_Temp[i,-1:-2],UpGeneName.df[,1]) %>% t() %>% as.data.frame()
+  colnames(CompareGene.df) <- c("V1","V2")
+
+
+  ## Find Duplicate name
+  ## Ref: http://guangzheng.name/2017/10/07/%E5%A6%82%E4%BD%95%E6%9F%A5%E6%89%BE%E6%95%B0%E6%8D%AE%E6%A1%86%E4%B8%AD%E9%87%8D%E5%A4%8D%E7%9A%84%E6%95%B0%E6%8D%AE/
+  library(dplyr)
+  CompareGene.df %>% group_by(V2) %>%
+    mutate(index = n()) %>%
+    filter(index > 1) %>%
+    select(2) %>%
+    ungroup() %>%
+    unique() %>%
+    unlist() -> Dup.set
+
+  ## Deal with Duplicate name (No change if encounter duplicate names)
+  UpdateGeneDUPE <- function(df,x) {
+    if( (df[x,2] %in% Dup.set)== TRUE ){
+      df[x,1] = df[x,1]
+    }else{
+      df[x,1] = df[x,2]
+    }
+    return(df[x,1])
   }
-  return(df[x,1])
+
+  UpGeneName2.df <- lapply(1:nrow(CompareGene.df), function(x)UpdateGeneDUPE(CompareGene.df,x))  %>% as.data.frame() %>% t
+  # row.names(Pathway.all_Temp) <- UpGeneName2.df
+  Pathway.all_Temp[i,-1:-2] <- UpGeneName2.df
+
+  rm(UpGeneName.df,UpGeneName2.df)
+
 }
 
-UpGeneName2.df <- lapply(1:nrow(CompareGene.df), function(x)UpdateGeneDUPE(CompareGene.df,x))  %>% as.data.frame() %>% t
-row.names(GeneExp_Temp.df) <- UpGeneName2.df
-GeneExp.df <- GeneExp_Temp.df
-CompareGene.df <- cbind(CompareGene.df, UpGeneName2.df)
-colnames(CompareGene.df) <- c("Ori","UpGeneName","DUPEGene")
-row.names(CompareGene.df) <- seq(1:nrow(CompareGene.df))
 
-CompareGene_Sum.df <- data.frame(
-  A = sum(CompareGene.df[,1] == CompareGene.df[,2]),
-  B = sum(CompareGene.df[,1] != CompareGene.df[,2]),
-  C =sum(CompareGene.df[,2] != CompareGene.df[,3])
-)
+Pathway.all <- Pathway.all_Temp
+rm(Pathway.all_Temp)
+
+# CompareGene.df <- cbind(CompareGene.df, UpGeneName2.df)
+# colnames(CompareGene.df) <- c("Ori","UpGeneName","DUPEGene")
+# row.names(CompareGene.df) <- seq(1:nrow(CompareGene.df))
+#
+# CompareGene_Sum.df <- data.frame(
+#   A = sum(CompareGene.df[,1] == CompareGene.df[,2]),
+#   B = sum(CompareGene.df[,1] != CompareGene.df[,2]),
+#   C =sum(CompareGene.df[,2] != CompareGene.df[,3])
+# )
 
 
-rm(GeneExp_Temp.df,UpGeneName.df,UpGeneName2.df)
+
 
 #************************************************************************************************************************#
 # #### Old version 1 ####
@@ -80,14 +103,14 @@ rm(GeneExp_Temp.df,UpGeneName.df,UpGeneName2.df)
 # # ## Update the genename ##* Take very long time
 # # UpdateGene <- "No"  # UpdateGene <- c("Yes","No")
 # # if(UpdateGene == "Yes"){
-# #   row.names(GeneExp.df) <- UpdateSymbolList(row.names(GeneExp.df))
+# #   row.names(Pathway.all) <- UpdateSymbolList(row.names(Pathway.all))
 # # }
 #
 #
 # # #### Test ####
 # # UpdateSymbolList("SEPT1")
-# # A <- UpdateSymbolList(row.names(GeneExp.df))
-# # B <- row.names(GeneExp.df)
+# # A <- UpdateSymbolList(row.names(Pathway.all))
+# # B <- row.names(Pathway.all)
 # # # sum(c("a","c")==c("a","b"))
 # # sum(A==B)
 # # summary(A==B)
