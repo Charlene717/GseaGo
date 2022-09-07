@@ -17,6 +17,9 @@
   OutputFolder <- paste0(InputFolder,"_",Sys.Date(),"_CF") ## Generate output folder automatically
   dir.create(OutputFolder)
 
+  ExpFilName <- "ComB" # Combine
+
+
 ##### Import files & Combine df #####
   # target.dir <- list.dirs(InputFolder)[-1]
   list.files <- list.files(InputFolder,full.names = T)
@@ -26,8 +29,8 @@
     if(i==1){
       # Deal with different number of columns
       merge.df <- read.delim2(list.files[1],
-                             col.names = 1:max(count.fields(list.files[1])),
-                             header = F,sep = "\t")
+                              col.names = 1:max(count.fields(list.files[1])),
+                              header = F,sep = "\t")
     }else{
     new_1 <- read.delim2(paste0(list.files[i]),
                          col.names = 1:max(count.fields(list.files[i])),
@@ -48,13 +51,13 @@
 
   ##### Export Result of Combine #####
   ## Note ## Need to remove the quote
-    write.table(merge.df,paste0(OutputFolder,"/",InputFolder,'_WithoutFilter.txt'),
+    write.table(merge.df,paste0(OutputFolder,"/",InputFolder,ExpFilName ,'.txt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
-    write.table(merge.df,paste0(OutputFolder,"/",InputFolder,'_WithoutFilter.gmt'),
+    write.table(merge.df,paste0(OutputFolder,"/",InputFolder,ExpFilName ,'.gmt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
 ##### Filter by Keywords* #####
-  ExpFilName <- "EMT" # Export file name
+  ExpFilName_KW <- "EMT" # Export file name
   Keyword.lt <- list("EMT", c("trans","epithelial"))
   # Keyword.lt <- list("EMT", c("trans"))
 
