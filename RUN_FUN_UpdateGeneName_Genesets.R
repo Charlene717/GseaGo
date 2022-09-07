@@ -42,6 +42,8 @@ UpdateGene <- function(TestGeneName, Species = Specie) {
 Pathway.all_Temp <- Pathway.all
 ## For test ## Pathway.all_Temp <- Pathway.all[1:5,]
 
+
+#### UpGeneNameChM: Update gene name and deal with Duplicate
 # for (i in 1:nrow(Pathway.all_Temp)) {
 UpGeneNameChM <- function(Pathway.all_Temp,i) {
   UpGeneName.df <- lapply(Pathway.all_Temp[i,-1:-2], function(x)UpdateGene(x))  %>% unlist() %>% as.data.frame()
@@ -97,15 +99,6 @@ Pathway.all <- Pathway.all_Temp
 
 rm(Pathway.all_Temp,Pathway.all_Temp2)
 
-# CompareGene.df <- cbind(CompareGene.df, UpGeneName2.df)
-# colnames(CompareGene.df) <- c("Ori","UpGeneName","DUPEGene")
-# row.names(CompareGene.df) <- seq(1:nrow(CompareGene.df))
-#
-# CompareGene_Sum.df <- data.frame(
-#   A = sum(CompareGene.df[,1] == CompareGene.df[,2]),
-#   B = sum(CompareGene.df[,1] != CompareGene.df[,2]),
-#   C =sum(CompareGene.df[,2] != CompareGene.df[,3])
-# )
 
 
 
