@@ -58,35 +58,38 @@
   Keyword.lt <- list("EMT", c("trans","epithelial"))
   # Keyword.lt <- list("EMT", c("trans"))
 
-
   ## Filter and combine
     for(i in 1:length(Keyword.lt)){
       if(length(Keyword.lt[[i]])==1){
         merge_FLT_Temp.df <- merge.df[grepl(Keyword.lt[[i]],merge.df[,1], ignore.case=TRUE),]
+      }else if(length(Keyword.lt[[i]])==2){
+        merge_FLT_Temp.df <- merge.df[grepl(Keyword.lt[[i]][1],merge.df[,1], ignore.case=TRUE)
+                                  & grepl(Keyword.lt[[i]][2],merge.df[,1], ignore.case=TRUE),]
       }else{
-
+        merge_FLT_Temp.df <- merge.df[grepl(Keyword.lt[[i]][1],merge.df[,1], ignore.case=TRUE)
+                                      & grepl(Keyword.lt[[i]][2],merge.df[,1], ignore.case=TRUE),]
+        print(paste0("In",i,": Only the first 2 elements will be used"))
       }
 
       if(i==1){
         merge_FLT.df <- merge_FLT_Temp.df
 
       }else{
-
         merge_FLT.df <- smartbind(merge_FLT.df,merge_FLT_Temp.df)
 
       }
     }
     rm(i,merge_FLT_Temp.df)
 
-
-  # merge_FLT1.df <- merge.df[grepl("EMT",merge.df[,1], ignore.case=TRUE),]
-  # merge_FLT2.df <- merge.df[grepl("trans",merge.df[,1], ignore.case=TRUE)
-  #                               & grepl("epithelial",merge.df[,1], ignore.case=TRUE),]
-  # merge_FLT.df <- smartbind(merge_FLT1.df,merge_FLT2.df)
-  #
-  # rm(merge_FLT1.df,merge_FLT2.df)
+    #### Clean up df ####
+    ## Remove duplicated
+    merge_FLT.df <- merge_FLT.df[!duplicated(merge_FLT.df[,2]), ]
 
 
+  ## Intersect all
+  ## Ref: https://stackoverflow.com/questions/8817533/loop-of-a-loop-in-r
+  ## Add conditions to a logical vector with a loop [r]
+  ## https://stackoverflow.com/questions/40994881/add-conditions-to-a-logical-vector-with-a-loop-r
 
 
 
