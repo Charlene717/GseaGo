@@ -96,6 +96,7 @@
     write.table(merge_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',ExpFilName,'_',ExpFilName_KW ,'.gmt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
+  ### (pending) How to add conditions to a logical vector with a loop [r]
   ## Intersect all
   ## Ref: https://stackoverflow.com/questions/8817533/loop-of-a-loop-in-r
   ## Add conditions to a logical vector with a loop [r]
@@ -103,46 +104,6 @@
 
 
 
-
-
-
-##### Filter multiple terms individually in different genesets  #####
-    Filter.set <- c("Methyl","Zinc","AKT")
-    SaveEach <- TRUE
-
-
-    for (i in 1:length(Filter.set)) {
-      if(i==1){
-        merge_F.df <- merge.df[grepl(Filter.set[i],merge.df[,1], ignore.case=TRUE),]
-        merge_AllIndex2.df <- merge_F.df
-      }else{
-        merge_F.df <- merge.df[grepl(Filter.set[i],merge.df[,1], ignore.case=TRUE),]
-        merge_AllIndex2.df <- smartbind(merge_AllIndex2.df,merge_F.df)
-      }
-
-      # SaveEach
-      if(SaveEach==TRUE){
-        write.table(merge_F.df,
-                    paste0(OutputFolder,"/",InputFolder,'_',Filter.set[i],'.gmt'),
-                    row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
-      }
-
-      rm(merge_F.df)
-    }
-
-      ## Remove duplicated
-      merge_AllIndex2.df <- merge_AllIndex2.df[!duplicated(merge_AllIndex2.df[,2]), ]
-
-      ##### Export files WithFilter #####
-      ## All index
-      write.table(merge_AllIndex2.df,
-                  paste0(OutputFolder,"/",InputFolder,'_AllIndex2.gmt'),
-                  row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
-      write.table(merge_AllIndex2.df,
-                  paste0(OutputFolder,"/",InputFolder,'_AllIndex2.txt'),
-                  row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
-
-##### Filter multiple terms individually or combined in different genesets  #####
 
 
 #################################################################################
