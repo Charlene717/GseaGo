@@ -4,7 +4,7 @@
 
 ##### Load Packages  #####
   #library(dplyr)
-  #library(plyr) #merge_1.df<- rbind.fill(merge_1.df,new_1)
+  #library(plyr) #merge.df<- rbind.fill(merge.df,new_1)
 
   if(!require("tidyverse")) install.packages("tidyverse")
   library(tidyverse)
@@ -25,14 +25,14 @@
   for(i in 1:Nfiles){
     if(i==1){
       # Deal with different number of columns
-      merge_1.df <- read.delim2(list.files[1],
+      merge.df <- read.delim2(list.files[1],
                              col.names = 1:max(count.fields(list.files[1])),
                              header = F,sep = "\t")
     }else{
     new_1 <- read.delim2(paste0(list.files[i]),
                          col.names = 1:max(count.fields(list.files[i])),
                          header = F,sep = "\t")
-    merge_1.df <- smartbind(merge_1.df,new_1)
+    merge.df <- smartbind(merge.df,new_1)
     }
 
   }
@@ -40,66 +40,104 @@
 
   #### Clean up df ####
   ## Remove duplicated
-    merge_1.df <- merge_1.df[!duplicated(merge_1.df[,2]), ]
+    merge.df <- merge.df[!duplicated(merge.df[,2]), ]
 
   # ## Remove NA (Have set in the write.table)
   # # Ref: https://www.delftstack.com/zh-tw/howto/r/replace-na-with-0-in-r/
-  #   merge_1.df[is.na(merge_1.df)] <- ""
+  #   merge.df[is.na(merge.df)] <- ""
 
   ##### Export Result of Combine #####
   ## Note ## Need to remove the quote
-    write.table(merge_1.df,paste0(OutputFolder,"/",InputFolder,'_WithoutFilter.txt'),
+    write.table(merge.df,paste0(OutputFolder,"/",InputFolder,'_WithoutFilter.txt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
-    write.table(merge_1.df,paste0(OutputFolder,"/",InputFolder,'_WithoutFilter.gmt'),
+    write.table(merge.df,paste0(OutputFolder,"/",InputFolder,'_WithoutFilter.gmt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
 ##### Filter by Keywords* #####
-  ## EMT
-  merge_1_EMT1.df <- merge_1.df[grepl("EMT",merge_1.df[,1], ignore.case=TRUE),]
-  merge_1_EMT2.df <- merge_1.df[grepl("trans",merge_1.df[,1], ignore.case=TRUE)
-                                        & grepl("epithelial",merge_1.df[,1], ignore.case=TRUE),]
-  merge_1_EMT.df <- smartbind(merge_1_EMT1.df,merge_1_EMT2.df)
+  ExpFilName <- "EMT" # Export file name
+  Keyword.lt <- list("EMT", c("trans","epithelial"))
+  # Keyword.lt <- list("EMT", c("trans"))
 
-  rm(merge_1_EMT1.df,merge_1_EMT2.df)
+
+  ## Filter and combine
+    for(i in 1:length(Keyword.lt)){
+      if(length(Keyword.lt[[i]])==1){
+        merge_FLT_Temp.df <- merge.df[grepl(Keyword.lt[[i]],merge.df[,1], ignore.case=TRUE),]
+      }else{
+
+      }
+
+      if(i==1){
+        merge_FLT.df <- merge_FLT_Temp.df
+
+      }else{
+
+        merge_FLT.df <- smartbind(merge_FLT.df,merge_FLT_Temp.df)
+
+      }
+    }
+    rm(i,merge_FLT_Temp.df)
+
+
+  # merge_FLT1.df <- merge.df[grepl("EMT",merge.df[,1], ignore.case=TRUE),]
+  # merge_FLT2.df <- merge.df[grepl("trans",merge.df[,1], ignore.case=TRUE)
+  #                               & grepl("epithelial",merge.df[,1], ignore.case=TRUE),]
+  # merge_FLT.df <- smartbind(merge_FLT1.df,merge_FLT2.df)
+  #
+  # rm(merge_FLT1.df,merge_FLT2.df)
+
+
+
+
+
+
+
+  ## EMT
+  merge_EMT1.df <- merge.df[grepl("EMT",merge.df[,1], ignore.case=TRUE),]
+  merge_EMT2.df <- merge.df[grepl("trans",merge.df[,1], ignore.case=TRUE)
+                                        & grepl("epithelial",merge.df[,1], ignore.case=TRUE),]
+  merge_EMT.df <- smartbind(merge_EMT1.df,merge_EMT2.df)
+
+  rm(merge_EMT1.df,merge_EMT2.df)
 
   ## DNA Repair
-  merge_1_DNARepair.df <- merge_1.df[grepl("DNA",merge_1.df[,1], ignore.case=TRUE)
-                               & grepl("Repair",merge_1.df[,1], ignore.case=TRUE),]
+  merge_DNARepair.df <- merge.df[grepl("DNA",merge.df[,1], ignore.case=TRUE)
+                               & grepl("Repair",merge.df[,1], ignore.case=TRUE),]
 
   ## Zinc
-  merge_1_Zinc.df <- merge_1.df[grepl("Zinc",merge_1.df[,1], ignore.case=TRUE),]
+  merge_Zinc.df <- merge.df[grepl("Zinc",merge.df[,1], ignore.case=TRUE),]
 
   ## Methyl
-  merge_1_Methyl.df <- merge_1.df[grepl("Methyl",merge_1.df[,1], ignore.case=TRUE),]
+  merge_Methyl.df <- merge.df[grepl("Methyl",merge.df[,1], ignore.case=TRUE),]
 
   ## Combine all index
-  merge_1_AllIndex.df <- smartbind(merge_1_EMT.df,merge_1_Zinc.df,merge_1_DNARepair.df,merge_1_Methyl.df)
-  merge_1_AllIndex.df <- merge_1_AllIndex.df[!duplicated(merge_1_AllIndex.df[,2]), ]
+  merge_AllIndex.df <- smartbind(merge_EMT.df,merge_Zinc.df,merge_DNARepair.df,merge_Methyl.df)
+  merge_AllIndex.df <- merge_AllIndex.df[!duplicated(merge_AllIndex.df[,2]), ]
 
   ##### Export files WithFilter #####
     ## Note ## Need to remove the quote
     ## EMT
-    write.table(merge_1_EMT.df,
+    write.table(merge_EMT.df,
                 paste0(OutputFolder,"/",InputFolder,'_EMT.gmt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
     ## Zinc
-    write.table(merge_1_Zinc.df,
+    write.table(merge_Zinc.df,
                 paste0(OutputFolder,"/",InputFolder,'_Zinc.gmt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
     ## DNA Repair
-    write.table(merge_1_DNARepair.df,
+    write.table(merge_DNARepair.df,
                 paste0(OutputFolder,"/",InputFolder,'_DNARepair.gmt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
     ## Methyl
-    write.table(merge_1_Methyl.df,
+    write.table(merge_Methyl.df,
                 paste0(OutputFolder,"/",InputFolder,'_Methyl.gmt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
 
     ## All index
-    write.table(merge_1_AllIndex.df,
+    write.table(merge_AllIndex.df,
                 paste0(OutputFolder,"/",InputFolder,'_AllIndex.gmt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
-    write.table(merge_1_AllIndex.df,
+    write.table(merge_AllIndex.df,
                 paste0(OutputFolder,"/",InputFolder,'_AllIndex.txt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
 
@@ -110,32 +148,32 @@
 
     for (i in 1:length(Filter.set)) {
       if(i==1){
-        merge_1_F.df <- merge_1.df[grepl(Filter.set[i],merge_1.df[,1], ignore.case=TRUE),]
-        merge_1_AllIndex2.df <- merge_1_F.df
+        merge_F.df <- merge.df[grepl(Filter.set[i],merge.df[,1], ignore.case=TRUE),]
+        merge_AllIndex2.df <- merge_F.df
       }else{
-        merge_1_F.df <- merge_1.df[grepl(Filter.set[i],merge_1.df[,1], ignore.case=TRUE),]
-        merge_1_AllIndex2.df <- smartbind(merge_1_AllIndex2.df,merge_1_F.df)
+        merge_F.df <- merge.df[grepl(Filter.set[i],merge.df[,1], ignore.case=TRUE),]
+        merge_AllIndex2.df <- smartbind(merge_AllIndex2.df,merge_F.df)
       }
 
       # SaveEach
       if(SaveEach==TRUE){
-        write.table(merge_1_F.df,
+        write.table(merge_F.df,
                     paste0(OutputFolder,"/",InputFolder,'_',Filter.set[i],'.gmt'),
                     row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
       }
 
-      rm(merge_1_F.df)
+      rm(merge_F.df)
     }
 
       ## Remove duplicated
-      merge_1_AllIndex2.df <- merge_1_AllIndex2.df[!duplicated(merge_1_AllIndex2.df[,2]), ]
+      merge_AllIndex2.df <- merge_AllIndex2.df[!duplicated(merge_AllIndex2.df[,2]), ]
 
       ##### Export files WithFilter #####
       ## All index
-      write.table(merge_1_AllIndex2.df,
+      write.table(merge_AllIndex2.df,
                   paste0(OutputFolder,"/",InputFolder,'_AllIndex2.gmt'),
                   row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
-      write.table(merge_1_AllIndex2.df,
+      write.table(merge_AllIndex2.df,
                   paste0(OutputFolder,"/",InputFolder,'_AllIndex2.txt'),
                   row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
 
