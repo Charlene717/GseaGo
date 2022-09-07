@@ -105,54 +105,6 @@
 
 
 
-  ## EMT
-  merge_EMT1.df <- merge.df[grepl("EMT",merge.df[,1], ignore.case=TRUE),]
-  merge_EMT2.df <- merge.df[grepl("trans",merge.df[,1], ignore.case=TRUE)
-                                        & grepl("epithelial",merge.df[,1], ignore.case=TRUE),]
-  merge_EMT.df <- smartbind(merge_EMT1.df,merge_EMT2.df)
-
-  rm(merge_EMT1.df,merge_EMT2.df)
-
-  ## DNA Repair
-  merge_DNARepair.df <- merge.df[grepl("DNA",merge.df[,1], ignore.case=TRUE)
-                               & grepl("Repair",merge.df[,1], ignore.case=TRUE),]
-
-  ## Zinc
-  merge_Zinc.df <- merge.df[grepl("Zinc",merge.df[,1], ignore.case=TRUE),]
-
-  ## Methyl
-  merge_Methyl.df <- merge.df[grepl("Methyl",merge.df[,1], ignore.case=TRUE),]
-
-  ## Combine all index
-  merge_AllIndex.df <- smartbind(merge_EMT.df,merge_Zinc.df,merge_DNARepair.df,merge_Methyl.df)
-  merge_AllIndex.df <- merge_AllIndex.df[!duplicated(merge_AllIndex.df[,2]), ]
-
-  ##### Export files WithFilter #####
-    ## Note ## Need to remove the quote
-    ## EMT
-    write.table(merge_EMT.df,
-                paste0(OutputFolder,"/",InputFolder,'_EMT.gmt'),
-                row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
-    ## Zinc
-    write.table(merge_Zinc.df,
-                paste0(OutputFolder,"/",InputFolder,'_Zinc.gmt'),
-                row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
-    ## DNA Repair
-    write.table(merge_DNARepair.df,
-                paste0(OutputFolder,"/",InputFolder,'_DNARepair.gmt'),
-                row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
-    ## Methyl
-    write.table(merge_Methyl.df,
-                paste0(OutputFolder,"/",InputFolder,'_Methyl.gmt'),
-                row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
-
-    ## All index
-    write.table(merge_AllIndex.df,
-                paste0(OutputFolder,"/",InputFolder,'_AllIndex.gmt'),
-                row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
-    write.table(merge_AllIndex.df,
-                paste0(OutputFolder,"/",InputFolder,'_AllIndex.txt'),
-                row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t')
 
 ##### Filter multiple terms individually in different genesets  #####
     Filter.set <- c("Methyl","Zinc","AKT")
