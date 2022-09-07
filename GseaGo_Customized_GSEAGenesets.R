@@ -84,17 +84,17 @@
     }
     rm(i,merge_FLT_Temp.df)
 
-    #### Clean up df ####
-    ## Remove duplicated
-    merge_FLT.df <- merge_FLT.df[!duplicated(merge_FLT.df[,2]), ]
+  #### Clean up df ####
+  ## Remove duplicated
+  merge_FLT.df <- merge_FLT.df[!duplicated(merge_FLT.df[,2]), ]
 
 
-    ##### Export Result #####
-    ## Note ## Need to remove the quote
-    write.table(merge_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',ExpFilName,'_',ExpFilName_KW ,'.txt'),
-                row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
-    write.table(merge_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',ExpFilName,'_',ExpFilName_KW ,'.gmt'),
-                row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
+  ##### Export Result #####
+  ## Note ## Need to remove the quote
+  write.table(merge_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',ExpFilName,'_',ExpFilName_KW ,'.txt'),
+              row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
+  write.table(merge_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',ExpFilName,'_',ExpFilName_KW ,'.gmt'),
+              row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
   ### (pending) How to add conditions to a logical vector with a loop [r]
   ## Intersect all
@@ -102,8 +102,27 @@
   ## Add conditions to a logical vector with a loop [r]
   ## https://stackoverflow.com/questions/40994881/add-conditions-to-a-logical-vector-with-a-loop-r
 
+##### Choose specific Genesets* #####
+  ExpFilName_SPEC = "SPEC" # Export file name
 
+  Int_Path.set <- c(
+    "REACTOME_ACTIVATION_OF_ATR_IN_RESPONSE_TO_REPLICATION_STRESS",
+    "REACTOME_NUCLEAR_PORE_COMPLEX_NPC_DISASSEMBLY",
+    "HALLMARK_E2F_TARGETS",
+    "REACTOME_DNA_REPLICATION",
+    "REACTOME_G2_M_CHECKPOINTS",
+    "KEGG_OLFACTORY_TRANSDUCTION",
+    "KEGG_CALCIUM_SIGNALING_PATHWAY"
+  )
 
+  merge_SPEC.df <- merge.df[merge.df[,1] %in% Int_Path.set,]
+
+  ##### Export Result #####
+  ## Note ## Need to remove the quote
+  write.table(merge_SPEC.df, paste0(OutputFolder,"/",InputFolder,'_',ExpFilName,'_',ExpFilName_SPEC ,'.txt'),
+              row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
+  write.table(merge_SPEC.df, paste0(OutputFolder,"/",InputFolder,'_',ExpFilName,'_',ExpFilName_SPEC ,'.gmt'),
+              row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
 
 #################################################################################
