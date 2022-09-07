@@ -13,11 +13,11 @@
 
 
 ##### Current path and new folder setting* #####
-  InputFolder = "Customized_GSEAGenesets_Pathway3D"
+  InputFolder = "Customized_GSEAGenesets_Pathway3D_Hm"
   OutputFolder <- paste0(InputFolder,"_",Sys.Date(),"_CF") ## Generate output folder automatically
   dir.create(OutputFolder)
 
-  ExpFilName <- "3DPathway" #"ComB" # Combine
+  ExpFilName <- "ComB" #"ComB" # Combine
 
 
 ##### Import files & Combine df #####
