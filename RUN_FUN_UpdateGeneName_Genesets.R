@@ -43,8 +43,10 @@ UpdateGene <- function(TestGeneName, Species = Specie) {
 
 ####  ####
 Pathway.all_Temp <- Pathway.all
+## For test ## Pathway.all_Temp <- Pathway.all[1:5,]
 
-for (i in 1:nrow(Pathway.all_Temp)) {
+# for (i in 1:nrow(Pathway.all_Temp)) {
+UpGeneNameChM <- function(Pathway.all_Temp,i) {
   UpGeneName.df <- lapply(Pathway.all_Temp[i,-1:-2], function(x)UpdateGene(x))  %>% unlist() %>% as.data.frame()
 
   CompareGene.df <- rbind(Pathway.all_Temp[i,-1:-2],UpGeneName.df[,1]) %>% t() %>% as.data.frame()
@@ -77,13 +79,25 @@ for (i in 1:nrow(Pathway.all_Temp)) {
   Pathway.all_Temp[i,-1:-2] <- UpGeneName2.df
 
   rm(UpGeneName.df,UpGeneName2.df)
-
+  return(Pathway.all_Temp[i,])
 }
+
+# }
+
+Pathway.all_Temp2 <- lapply(1:nrow(Pathway.all_Temp), function(i)UpGeneNameChM(Pathway.all_Temp,i))
+
+## How to convert a list consisting of vector of different lengths to a usable data frame in R?
+## https://stackoverflow.com/questions/15201305/how-to-convert-a-list-consisting-of-vector-of-different-lengths-to-a-usable-data
+Pathway.all_Temp <- tibble(V = Pathway.all_Temp2) %>%
+                    unnest_wider(V, names_sep = "")
+
+
 NoChangeNum = sum(Pathway.all[,-1:-2] == Pathway.all_Temp[,-1:-2])
 ChangeNum = sum(Pathway.all[,-1:-2] != Pathway.all_Temp[,-1:-2])
 
 Pathway.all <- Pathway.all_Temp
-rm(Pathway.all_Temp)
+
+rm(Pathway.all_Temp,Pathway.all_Temp2)
 
 # CompareGene.df <- cbind(CompareGene.df, UpGeneName2.df)
 # colnames(CompareGene.df) <- c("Ori","UpGeneName","DUPEGene")
