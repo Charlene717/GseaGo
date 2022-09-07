@@ -17,7 +17,7 @@
   OutputFolder <- paste0(InputFolder,"_",Sys.Date(),"_CF") ## Generate output folder automatically
   dir.create(OutputFolder)
 
-  ExpFilName <- "ComB" # Combine
+  ExpFilName <- "3DPathway" #"ComB" # Combine
 
 
 ##### Import files & Combine df #####
@@ -51,9 +51,9 @@
 
   ##### Export Result of Combine #####
   ## Note ## Need to remove the quote
-    write.table(merge.df,paste0(OutputFolder,"/",InputFolder,ExpFilName ,'.txt'),
+    write.table(merge.df,paste0(OutputFolder,"/",InputFolder,'_',ExpFilName ,'.txt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
-    write.table(merge.df,paste0(OutputFolder,"/",InputFolder,ExpFilName ,'.gmt'),
+    write.table(merge.df,paste0(OutputFolder,"/",InputFolder,'_',ExpFilName ,'.gmt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
 ##### Filter by Keywords* #####
@@ -88,6 +88,13 @@
     ## Remove duplicated
     merge_FLT.df <- merge_FLT.df[!duplicated(merge_FLT.df[,2]), ]
 
+
+    ##### Export Result #####
+    ## Note ## Need to remove the quote
+    write.table(merge_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',ExpFilName,'_',ExpFilName_KW ,'.txt'),
+                row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
+    write.table(merge_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',ExpFilName,'_',ExpFilName_KW ,'.gmt'),
+                row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
   ## Intersect all
   ## Ref: https://stackoverflow.com/questions/8817533/loop-of-a-loop-in-r
