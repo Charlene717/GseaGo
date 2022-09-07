@@ -100,6 +100,74 @@ Pathway.all <- Pathway.all_Temp
 rm(Pathway.all_Temp,Pathway.all_Temp2)
 
 
+#**********************************************************************************************************************************#
+#**********************************************************************************************************************************#
+##### Keep Duplicate #####
+#**********************************************************************************************************************************#
+#**********************************************************************************************************************************#
 
+##### Update the genename ####
+## Ref: http://web.mit.edu/~r/current/arch/i386_linux26/lib/R/library/limma/html/alias2Symbol.html
+if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+if (!requireNamespace("limma", quietly = TRUE)) BiocManager::install("limma")
+library(limma)
+
+if(SpeciesSet == "Homo sapiens"){
+  Specie = "Hs"
+}else if(SpeciesSet == "Mus musculus"){
+  Specie = "Mm"
+}else{
+  Specie = "Hs"
+}
+
+UpdateGene <- function(TestGeneName, Species = Specie) {
+  UpdateGeneName <- alias2Symbol(TestGeneName, species = Species, expand.symbols = FALSE)
+  if( length(UpdateGeneName) == 0 ){
+    TestGeneName <- TestGeneName
+  }else{
+    TestGeneName <- UpdateGeneName
+  }
+
+  if(length(TestGeneName) > 1){
+    TestGeneName <- TestGeneName[1]
+  }
+  return(TestGeneName)
+}
+
+Pathway.all_Temp <- Pathway.all
+## For test ## Pathway.all_Temp <- Pathway.all[1:5,]
+
+
+# for (i in 1:nrow(Pathway.all_Temp)) {
+UpGeneNameChM <- function(Pathway.all_Temp,i) {
+  UpGeneName.df <- lapply(Pathway.all_Temp[i,-1:-2], function(x)UpdateGene(x))  %>% unlist() %>% as.data.frame()
+
+  CompareGene.df <- rbind(Pathway.all_Temp[i,-1:-2],UpGeneName.df[,1]) %>% t() %>% as.data.frame()
+  colnames(CompareGene.df) <- c("V1","V2")
+
+
+  Pathway.all_Temp[i,-1:-2] <- CompareGene.df[,2]
+
+  rm(UpGeneName.df)
+  return(Pathway.all_Temp[i,])
+}
+
+# }
+
+Pathway.all_Temp2 <- lapply(1:nrow(Pathway.all_Temp), function(i)UpGeneNameChM(Pathway.all_Temp,i))
+
+## How to convert a list consisting of vector of different lengths to a usable data frame in R?
+## https://stackoverflow.com/questions/15201305/how-to-convert-a-list-consisting-of-vector-of-different-lengths-to-a-usable-data
+Pathway.all_Temp <- tibble(V = Pathway.all_Temp2) %>%
+  unnest_wider(V, names_sep = "")
+
+
+NoChangeNum = sum(Pathway.all[,-1:-2] == Pathway.all_Temp[,-1:-2])
+ChangeNum = sum(Pathway.all[,-1:-2] != Pathway.all_Temp[,-1:-2])
+
+Pathway.all_Ori <- Pathway.all
+Pathway.all_Dup <- Pathway.all_Temp
+
+rm(Pathway.all_Temp,Pathway.all_Temp2)
 
 
