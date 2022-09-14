@@ -123,7 +123,7 @@
   ProjectName = "CC10X"
   Sampletype = "PBMC"
 
-  ExportAnno2 = "EO_Mac3"
+  ExportAnno2 = "EO_Neu"
   if(Group_Mode == "GoupByGeneExp"){
     ExportAnno = paste0(TarGene_name,"_",GeneExpSet.lt$GeneExpMode,"_",ExportAnno2)
 
@@ -182,7 +182,7 @@
   GeneExp.df <- GeneExp.df[,colnames(GeneExp.df) %in% Anno.df[,1] ]
 
   ## Select Pheno row2
-  PhenoRowKeep.set <- list(col="celltype" ,row=c("Mac3"))
+  PhenoRowKeep.set <- list(col="celltype" ,row=c("Neu"))
   Anno.df <- Anno.df[Anno.df[,PhenoRowKeep.set[["col"]]] %in% PhenoRowKeep.set[["row"]], ]
 
   GeneExp.df <- GeneExp.df[,colnames(GeneExp.df) %in% Anno.df[,1] ]
