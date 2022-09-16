@@ -42,14 +42,6 @@
   # Sys.setlocale(category = "LC_ALL", locale = "UTF-8")
 
 
-##### Function setting #####
-  ## Call function
-  source("FUN_Beautify_ggplot.R")
-  source("FUN_Find_Markers.R")
-  source("FUN_VolcanoPlot.R")
-  source("FUN_ggPlot_vline.R")
-  source("FUN_GSEA_ANAL.R")
-  source("FUN_DistrPlot.R")
 
 ##### Load RData* #####
   # load("D:/Dropbox/##_GitHub/##_PHH_Lab/PDAC_Cachexia_10X/2022-08-13_PBMC_Main/06_Cell_type_annotation.RData")
@@ -67,6 +59,15 @@
 
   ## Clean up data (Delete other type)
 
+
+##### Function setting #####
+  ## Call function
+  source("FUN_Beautify_ggplot.R")
+  source("FUN_Find_Markers.R")
+  source("FUN_VolcanoPlot.R")
+  source("FUN_ggPlot_vline.R")
+  source("FUN_GSEA_ANAL.R")
+  source("FUN_DistrPlot.R")
 
 ##### Import setting and Import #####
   ## Import GSEA gene sets
