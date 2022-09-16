@@ -42,13 +42,20 @@
   # Sys.setlocale(category = "LC_ALL", locale = "UTF-8")
 
 
-
+##### Function setting #####
+  ## Call function
+  source("FUN_Beautify_ggplot.R")
+  source("FUN_Find_Markers.R")
+  source("FUN_VolcanoPlot.R")
+  source("FUN_ggPlot_vline.R")
+  source("FUN_GSEA_ANAL.R")
+  source("FUN_DistrPlot.R")
 
 ##### Load RData* #####
-  # load("D:/Dropbox/##_GitHub/##_CAESAR/MagicDisc/2022-06-06_CC_PBMC/06_Cell_type_annotation.RData")
-  load("D:/Dropbox/##_GitHub/##_PHH_Lab/PDAC_Cachexia_10X/2022-08-13_PBMC_Main/06_Cell_type_annotation.RData")
+  # load("D:/Dropbox/##_GitHub/##_PHH_Lab/PDAC_Cachexia_10X/2022-08-13_PBMC_Main/06_Cell_type_annotation.RData")
+  load("D:/Dropbox/##_GitHub/##_PHH_Lab/PDAC_Cachexia_10X/2022-09-09_PBMC_Main/06_Cell_type_annotation.RData")
 
-  # Clean up
+  # Clean up Object
   scRNA.SeuObj <- PBMC.combined
   rm(list=setdiff(ls(), "scRNA.SeuObj"))
 
@@ -61,39 +68,12 @@
   ## Clean up data (Delete other type)
 
 
-##### Function setting #####
-  ## Call function
-  source("FUN_Beautify_ggplot.R")
-  source("FUN_Find_Markers.R")
-  source("FUN_VolcanoPlot.R")
-  source("FUN_GSEA_LargeGeneSet.R")
-  source("FUN_GSEA_ggplot.R")
-  source("FUN_ggPlot_vline.R")
-
-##### Import setting and Import* #####
-  ## File setting*
-  # InFOLName_GE <- "Input_TCGA"  # Input Folder Name
-  # SampleName <- "Xena_TCGA_LGG_GE"
-  # SamplePhenoName <- "TCGA.LGG.sampleMap_LGG_clinicalMatrix"
-  #
-  # ## Import genetic data file
-  # GeneExp.df <- read.table(paste0(InFOLName_GE,"/",SampleName), header=T, row.names = 1, sep="\t")
-  # colnames(GeneExp.df) <-  gsub("\\.", "-", colnames(GeneExp.df))
-  #
-  #
-  # Anno.df <- read.table(paste0(InFOLName_GE,"/",SamplePhenoName), header=T, row.names = 1, sep="\t")
-
-  GeneExp.df <- scRNA.SeuObj@assays[["RNA"]]@counts %>% as.data.frame()
-  Anno.df <- scRNA.SeuObj@meta.data
-  Anno.df <- data.frame(ID=row.names(Anno.df), Anno.df)
-  row.names(Anno.df) <- Anno.df[,1]
+##### Import setting and Import #####
   ## Import GSEA gene sets
   # InputGSEA <- "GSEA_Geneset_Pathway_3Database_WithoutFilter.txt"
-  # InputGSEA <- "m5_go_bp_v0_3_symbols.gmt"
-  # InputGSEA <- "m2.all.v0.3.symbols.gmt"
+  # InputGSEA <- "m5_go_bp_v0_3_symbols.gmt"  # InputGSEA <- "m2.all.v0.3.symbols.gmt"
 
   InputGSEA <- "m5_go_bp_v0_3_symbols.gmt"
-
   InFOLName_GSEA <- "Input_Genesets"
   Pathway.all <- read.delim2(paste0(getwd(),"/",InFOLName_GSEA,"/",InputGSEA),
                              col.names = 1:max(count.fields(paste0(getwd(),"/",InFOLName_GSEA,"/",InputGSEA))),
@@ -114,10 +94,7 @@
     AnnoSet.lt <- list(GroupType = "sample_type", GroupCompare = c("Primary Tumor","Recurrent Tumor") )
   }
 
-
-
   Thr.lt <- list(LogFC = c("logFC",1), pVal = c("PValue",0.05) )
-
 
 ##### Current path and new folder setting* #####
   ProjectName = "CC10X"
@@ -165,6 +142,12 @@
 
 #************************************************************************************************************************#
 ##### Data preprocess setting #####
+  ## Extract data from scRNA.SeuObj
+  GeneExp.df <- scRNA.SeuObj@assays[["RNA"]]@counts %>% as.data.frame()
+  Anno.df <- scRNA.SeuObj@meta.data
+  Anno.df <- data.frame(ID=row.names(Anno.df), Anno.df)
+  row.names(Anno.df) <- Anno.df[,1]
+
   ## Select Pheno column
   Anno_Ori.df <- Anno.df
   colnames(Anno.df)
@@ -200,8 +183,8 @@
   source("FUN_DistrPlot.R")
   ##### Group by gene expression 1: CutOff by total  #####
   Plot.DistrPlot <- FUN_DistrPlot(GeneExp.df,
-                                  TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
-                                  Save.Path = Save.Path, SampleName = ExportName)
+                                  TarGeneName = TarGene_name, GroupSet = GeneExpSet.lt,
+                                  Save.Path = Save.Path, ExportName = ExportName)
   Plot.DistrPlot_SD_Q <- Plot.DistrPlot[["TGeneDen_SD_Q.p"]]
   Plot.DistrPlot_SD_Q
 
@@ -212,7 +195,7 @@
   ##### Group by gene expression 1: CutOff by total  #####
   GeneExp_group.set <- FUN_Group_GE(GeneExp.df, Anno.df,
                                     TarGeneName = TarGene_name, GroupSet = GeneExpSet.lt,
-                                    Save.Path = Save.Path, SampleName = ExportName)
+                                    Save.Path = Save.Path, ExportName = ExportName)
   Anno.df <- GeneExp_group.set[["AnnoNew.df"]]
   GeneExp_high.set <- GeneExp_group.set[["GeneExp_high.set"]]
   GeneExp_low.set <- GeneExp_group.set[["GeneExp_low.set"]]
@@ -228,33 +211,21 @@
   #### Run DEG ####
   source("FUN_DEG_Analysis.R")
   DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
-                                  GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
-                                  ThrSet = Thr.lt,
-                                  TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "ID",
-                                  Save.Path = Save.Path, SampleName = ExportName, AnnoName = "AvB")
+                              GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
+                              ThrSet = Thr.lt,
+                              TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "ID",
+                              Save.Path = Save.Path, ExportName = ExportName, AnnoName = "AvB")
   DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
-
-
-    # #### Test: DEG by GeneExp group ####
-    # AnnoSet.lt <- list(GroupType = TarGene_name, GroupCompare = c("High","Low") )
-    # source("FUN_DEG_Analysis.R")
-    # DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
-    #                                 GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
-    #                                 ThrSet = Thr.lt,
-    #                                 TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "X_INTEGRATION",
-    #                                 Save.Path = Save.Path, SampleName = SampleName, AnnoName = "AvB")
-    # DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
-
 
 
   #### Run GSEA ####
   source("FUN_GSEA_ANAL.R")
 
-  GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, pathwayGeneSet = Pathway.all,
+  GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, CMGeneSet = Pathway.all,
                                   NumGenesetsPlt=15,
-                                  TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt,
+                                  TarGeneName = TarGene_name,
                                   ThrSet = Thr.lt, Species = "Homo sapiens", # Speices type can check by msigdbr_species()
-                                  Save.Path = Save.Path, SampleName = ExportName, AnnoName = "Path")
+                                  Save.Path = Save.Path, ExportName = ExportName, AnnoName = "Path")
 
   #### Run ORA ####
   ## FUN ORA
