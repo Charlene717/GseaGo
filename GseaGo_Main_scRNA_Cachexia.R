@@ -144,7 +144,9 @@
 #************************************************************************************************************************#
 ##### Data preprocess setting #####
   ## Extract data from scRNA.SeuObj
-  GeneExp.df <- scRNA.SeuObj@assays[["RNA"]]@counts %>% as.data.frame()
+  ## Old version (Without normalizaiton) ## GeneExp.df <- scRNA.SeuObj@assays[["RNA"]]@counts %>% as.data.frame()
+  GeneExp.df <- GetAssayData(scRNA.SeuObj, assay = "RNA", slot = "data") %>% as.data.frame() # normalized data matrix
+
   Anno.df <- scRNA.SeuObj@meta.data
   Anno.df <- data.frame(ID=row.names(Anno.df), Anno.df)
   row.names(Anno.df) <- Anno.df[,1]
