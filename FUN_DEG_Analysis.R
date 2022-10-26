@@ -13,7 +13,7 @@ FUN_DEG_Analysis = function(GeneExp.df, Anno.df,
   source("FUN_Package_InstLoad.R")
   Basic.set <- c("tidyverse","ggplot2")
   BiocManager.set <- c("edgeR","baySeq")
-  Package_InstLoad(Basic.set = Basic.set, BiocManager.set = BiocManager.set)
+  FUN_Package_InstLoad(Basic.set = Basic.set, BiocManager.set = BiocManager.set)
 
   #************************************************************************************************************************#
 
@@ -32,7 +32,7 @@ FUN_DEG_Analysis = function(GeneExp.df, Anno.df,
   Anno_Ints.df <- left_join(matrix_Ints_ID.df, Anno_Ints.df)
 
   DGE_Ints.lt <- DGEList(counts=matrix_Ints.df, group=Anno_Ints.df[,GroupType], lib.size=rep(1000,ncol(matrix_Ints.df)))
-  DE_Extract.lt <- exactTest(DGE_Ints.lt, dispersion=0.2)
+  DE_Extract.lt <- exactTest(DGE_Ints.lt,pair = GroupCompare, dispersion=0.2)
   DE_Extract.df <- topTags(DE_Extract.lt,n = nrow(matrix_Ints.df)) %>%
                            as.data.frame() %>%
                            data.frame(Gene=row.names(.),.)
