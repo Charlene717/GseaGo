@@ -36,10 +36,11 @@
 
   Anno.df <- read.table(paste0(InFOLName_GE,"/",SamplePhenoName), header=T, sep="\t")
   Anno_Ori.df <- Anno.df
-  Anno.df <- left_join(data.frame("sampleID"=colnames(GeneExp.df)),
-                       Anno.df)
   row.names(Anno.df) <- Anno.df[,1]
 
+  ## Reorder the Anno.df
+  Anno.df <- left_join(data.frame("sampleID"=colnames(GeneExp.df)),
+                       Anno.df)
 
   ## Import GSEA gene sets
   InFOLName_Genesets <- "Input_Genesets"
@@ -224,6 +225,7 @@
                    AnnoName = "GSEA")
 
 ##### Build files for Metascape official input #####
+
 
 
 
