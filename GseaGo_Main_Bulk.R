@@ -23,7 +23,7 @@
   source("FUN_GSEA_ggplot.R")
   source("FUN_ggPlot_vline.R")
 
-##### Import setting and Import* #####
+##### Import setting* #####
   ## File setting*
   InFOLName_GE <- "Input_TCGA"  # Input Folder Name
   SampleName <- "Xena_TCGA_LGG_GE"
@@ -98,7 +98,7 @@
   ## Create new folder
   if (!dir.exists(Save.Path)){dir.create(Save.Path)}
 
-
+#************************************************************************************************************************#
 ##### Update the genename ####
   ## Ref: http://web.mit.edu/~r/current/arch/i386_linux26/lib/R/library/limma/html/alias2Symbol.html
   library(limma)
@@ -110,7 +110,7 @@
   }
 
 #************************************************************************************************************************#
-##### Data preprocess setting #####
+##### Data preprocess #####
   ## Select Pheno column
   colnames(Anno.df)
 
@@ -131,7 +131,7 @@
 
 
 #************************************************************************************************************************#
-##### Visualization #####
+##### Visualization for Exploratory Data Analysis(EDA) #####
   source("FUN_DistrPlot.R")
   ##### Group by gene expression 1: CutOff by total  #####
   Plot.DistrPlot <- FUN_DistrPlot(GeneExp.df,
