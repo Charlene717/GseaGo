@@ -25,8 +25,8 @@ memory.limit(150000)
   Anno.df <- data.frame(Gene=row.names(Anno.df),Anno.df)
   write.table(Anno.df,paste0(InFOLName_GE,"/",SamplePhenoName,".tsv"), col.names =T, row.names = F, sep="\t", quote = F)
 
-
-  GeneExpS.df <- GeneExp.df[1:1000,]
+  ## Create small dataset for test
+  GeneExpS.df <- GeneExp.df[,sample(ncol(GeneExp.df),100)]
   write.table(GeneExpS.df,paste0(InFOLName_GE,"/",SampleName,"_S.tsv"), col.names =T, row.names = F, sep="\t", quote = F)
 
 
