@@ -18,14 +18,14 @@
   #library(plyr) #merge.df<- rbind.fill(merge.df,new_1)
 
 ##### Current path and new folder setting* #####
-  OutputFileName <- "Test"  #   OutputFileName <- "ComB" #"ComB" # Combine
-  InputFolder = "Input_Genesets/Cust_GSEAGenesets"
-  OutputFolder <- paste0(InputFolder,"/Cust_",Sys.Date(),"_", OutputFileName)
+  OutputFileName <- "ComB"
+  InputFolder = "Cust_GSEA_Genesets_Test"
+  OutputFolder <- paste0("Input_Genesets/", InputFolder, "_", OutputFileName)
   dir.create(OutputFolder) ## Generate output folder
 
 ##### Import files & Combine df #####
-  # target.dir <- list.dirs(InputFolder)[-1]
-  list.files <- list.files(InputFolder,full.names = T)
+  # target.dir <- list.dirs( paste0("Input_Genesets/", InputFolder) )[-1]
+  list.files <- list.files(paste0("Input_Genesets/", InputFolder),full.names = T)
   Nfiles = length(list.files)
 
   for(i in 1:Nfiles){
