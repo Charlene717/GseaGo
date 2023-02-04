@@ -9,22 +9,19 @@
   memory.limit(150000)
 
 ##### Load Packages  #####
-  #library(dplyr)
-  #library(plyr) #merge.df<- rbind.fill(merge.df,new_1)
-
   if(!require("tidyverse")) install.packages("tidyverse")
   library(tidyverse)
   if(!require("gtools")) install.packages("gtools")
   library(gtools)
 
+  #library(dplyr)
+  #library(plyr) #merge.df<- rbind.fill(merge.df,new_1)
 
 ##### Current path and new folder setting* #####
-  InputFolder = "Customized_GSEAGenesets_Pathway3D_Hm"
-  OutputFolder <- paste0(InputFolder,"_",Sys.Date(),"_CF") ## Generate output folder automatically
-  dir.create(OutputFolder)
-
-  ExpFilName <- "ComB" #"ComB" # Combine
-
+  OutputFileName <- "Test"  #   OutputFileName <- "ComB" #"ComB" # Combine
+  InputFolder = "Input_Genesets/Cust_GSEAGenesets"
+  OutputFolder <- paste0(InputFolder,"/Cust_",Sys.Date(),"_", OutputFileName)
+  dir.create(OutputFolder) ## Generate output folder
 
 ##### Import files & Combine df #####
   # target.dir <- list.dirs(InputFolder)[-1]
@@ -57,13 +54,13 @@
 
   ##### Export Result of Combine #####
   ## Note ## Need to remove the quote
-    write.table(merge.df,paste0(OutputFolder,"/",InputFolder,'_',ExpFilName ,'.txt'),
+    write.table(merge.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName ,'.txt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
-    write.table(merge.df,paste0(OutputFolder,"/",InputFolder,'_',ExpFilName ,'.gmt'),
+    write.table(merge.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName ,'.gmt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
 ##### Filter by Keywords* #####
-  ExpFilName_KW <- "EMT" # Export file name
+  OutputFileName_KW <- "EMT" # Export file name
   Keyword.lt <- list("EMT", c("trans","epithelial"))
   # Keyword.lt <- list("EMT", c("trans"))
 
@@ -97,9 +94,9 @@
 
   ##### Export Result #####
   ## Note ## Need to remove the quote
-  write.table(merge_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',ExpFilName,'_',ExpFilName_KW ,'.txt'),
+  write.table(merge_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_KW ,'.txt'),
               row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
-  write.table(merge_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',ExpFilName,'_',ExpFilName_KW ,'.gmt'),
+  write.table(merge_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_KW ,'.gmt'),
               row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
   ### (pending) How to add conditions to a logical vector with a loop [r]
@@ -109,7 +106,7 @@
   ## https://stackoverflow.com/questions/40994881/add-conditions-to-a-logical-vector-with-a-loop-r
 
 ##### Choose specific Genesets* #####
-  ExpFilName_SPEC = "SPEC" # Export file name
+  OutputFileName_SPEC = "SPEC" # Export file name
 
   Int_Path.set <- c(
     "REACTOME_ACTIVATION_OF_ATR_IN_RESPONSE_TO_REPLICATION_STRESS",
@@ -125,9 +122,9 @@
 
   ##### Export Result #####
   ## Note ## Need to remove the quote
-  write.table(merge_SPEC.df, paste0(OutputFolder,"/",InputFolder,'_',ExpFilName,'_',ExpFilName_SPEC ,'.txt'),
+  write.table(merge_SPEC.df, paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_SPEC ,'.txt'),
               row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
-  write.table(merge_SPEC.df, paste0(OutputFolder,"/",InputFolder,'_',ExpFilName,'_',ExpFilName_SPEC ,'.gmt'),
+  write.table(merge_SPEC.df, paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_SPEC ,'.gmt'),
               row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
 
