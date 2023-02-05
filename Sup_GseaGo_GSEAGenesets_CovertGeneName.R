@@ -71,68 +71,65 @@
   #                            col.names = 1:max(count.fields(paste0(getwd(),"/GSEA_Geneset/GSEA_Geneset_Pathway_3Database_WithoutFilter.txt"))),
   #                            header = F,sep = "\t")
 
+  Pathway.all <- merge.df
 
-  ## 有新版更好的作法
+  ##### Converting the Human gene name to Mouse gene name #####
+  # #  Need to be optimized
+  # # (Method1) bind the different length of column (Cannot use rbind)
+  # # (Method2) Save the data as list first and than use do.call() to unlist to have dataframe
+  #
+  # ## (Ori method)
+  # Pathway.all.MM = as.data.frame(matrix(nrow=nrow(Pathway.all),ncol=ncol(Pathway.all)*2))
+  # for (i in 1:nrow(Pathway.all)) {
+  #   #Pathway.all[,i] <- data.frame(colnames(Pathway.all)[i]=Pathway.all[,i]) %>% HSsymbol2MMsymbol(.,colnames(Pathway.all)[i])
+  #   PathwayN <- data.frame(Pathway.all[i,3:ncol(Pathway.all)]) %>% t()
+  #   colnames(PathwayN)="Temp"
+  #   PathwayN <- HSsymbol2MMsymbol(PathwayN,"Temp")
+  #   Pathway.all.MM[i,1:length(unique(PathwayN$MM.symbol))] <- unique(PathwayN$MM.symbol)
+  # }
+  #
+  # Pathway.all.MM <- data.frame(Pathway.all[,1:2],Pathway.all.MM)
+  # colnames(Pathway.all.MM) <- seq(1:ncol(Pathway.all.MM))
+  #
+  # rm(PathwayN)
+  #
+  # # assign(paste0("marrow_sub_DucT2_TOP2ACenter_T", i),marrow_sub_DucT2_TOP2ACenter_Tn)
+  # # assign(colnames(Pathway.all)[i],Pathway.all[,i])
 
-  # Convert Human gene to mouse
-  Pathway.all.MM = as.data.frame(matrix(nrow=nrow(Pathway.all),ncol=ncol(Pathway.all)*1.5))
+  ## (Method1)
+  # Refer # https://stackoverflow.com/questions/3699405/how-to-cbind-or-rbind-different-lengths-vectors-without-repeating-the-elements-o
+  # How to cbind or rbind different lengths vectors without repeating the elements of the shorter vectors?
+  ## Modify by Charlene: Can use in MultRow
+  bind_diff <- function(x, y){
+    if(ncol(x) > ncol(y)){
+      len_diff <- ncol(x) - ncol(y)
+      y <- data.frame(y, rep(NA, len_diff) %>% t() %>% as.data.frame())
+      colnames(x) <- seq(1:ncol(x))
+      colnames(y) <- seq(1:ncol(y))
+    }else if(ncol(x) < ncol(y)){
+      len_diff <- ncol(y) - ncol(x)
+      x <- data.frame(x, rep(NA, len_diff) %>% t() %>% as.data.frame())
+      colnames(x) <- seq(1:ncol(x))
+      colnames(y) <- seq(1:ncol(y))
+    }
+    rbind(x, y)
+  }
+
+  ## Converting
   for (i in 1:nrow(Pathway.all)) {
-    #Pathway.all[,i] <- data.frame(colnames(Pathway.all)[i]=Pathway.all[,i]) %>% HSsymbol2MMsymbol(.,colnames(Pathway.all)[i])
-    PathwayN <- data.frame(Pathway.all[i,3:ncol(Pathway.all)]) %>% t()
-    colnames(PathwayN)="Test"
-    PathwayN <- HSsymbol2MMsymbol(PathwayN,"Test")
-    Pathway.all.MM[i,1:length(unique(PathwayN$MM.symbol))] <- unique(PathwayN$MM.symbol)
-
+    PathwayN <- data.frame(Pathway.all[i,3:ncol(Pathway.all)]) %>% t()  %>% as.data.frame()
+    colnames(PathwayN)="Temp"
+    PathwayN <- HSsymbol2MMsymbol(PathwayN,"Temp")
+    PathwayN <- PathwayN[!PathwayN$MM.symbol  == 0,]
+    PathwayN <- PathwayN[!is.na(PathwayN$MM.symbol),]
+    if(i==1){
+      Pathway.all.MM <- unique(PathwayN$MM.symbol) %>% t()  %>% as.data.frame()
+    }else{
+      Pathway.all.MM <- bind_diff(Pathway.all.MM,unique(PathwayN$MM.symbol) %>% t()  %>% as.data.frame())
+      # Pathway.all.MM[i,1:length(unique(PathwayN$MM.symbol))] <- unique(PathwayN$MM.symbol)
+    }
   }
 
   Pathway.all.MM <- data.frame(Pathway.all[,1:2],Pathway.all.MM)
   colnames(Pathway.all.MM) <- seq(1:ncol(Pathway.all.MM))
-  Pathway.all.MM[is.na(Pathway.all.MM)] <- ""
-  Pathway.all.MM[Pathway.all.MM == 0] <- ""
-
-  #### Save RData ####
-  save.image(paste0(Save.Path,"/09_0_GSEA_Analysis(Geneset_Prepare).RData"))
-
-
-
-  #
-  # ##### Other #####
-  #
-  # ## Function setting
-  #
-  # ## Call function
-  # filePath <- ""
-  # # Import R files in the same folder
-  # getFilePath <- function(fileName) {
-  #   # Absolute path of project folder
-  #   # path <- setwd("~")
-  #   path <- setwd(getwd())
-  #   # Combine strings without gaps
-  #   # <<- Assigning values to global variable
-  #   filePath <<- paste0(path ,"/" , fileName)
-  #   # Load file
-  #   sourceObj <- source(filePath)
-  #   return(sourceObj)
-  # }
-  # getFilePath("HSsymbol2MMsymbol.R")
-  #
-  # ## Geneset from GSEA
-  # H.all <- read.delim(paste0(PathName,"/h.all.v7.4.symbols.gmt"),header = F)
-  #
-  # H.all.list <- list()
-  # for (i in c(1:length(H.all[,1]))) {
-  #   H.all.list.ori <- as.data.frame(t(H.all[i,3:length(H.all[i,])]))
-  #   colnames(H.all.list.ori)[[1]] <- c("Gene")
-  #   H.all.list.ori <- HSsymbol2MMsymbol(H.all.list.ori,"Gene")
-  #
-  #   # Delete NA(or 0)
-  #   H.all.list.ori <- H.all.list.ori[H.all.list.ori$MM.symbol!=0,]
-  #
-  #   H.all.list.ori <- unique(H.all.list.ori$MM.symbol)
-  #   H.all.list[[i]] <- as.character(H.all.list.ori)
-  #
-  #   rm(H.all.list.ori)
-  #   names(H.all.list)[[i]] <- H.all[i,1]
-  # }
-  #
-  #
+  #Pathway.all.MM[Pathway.all.MM==0] <-NA
