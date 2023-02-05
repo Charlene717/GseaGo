@@ -60,7 +60,7 @@
 
 ##### Filter by Keywords* #####
   OutputFileName_KW <- "EMT" # Export file name
-  Keyword.lt <- list("EMT", c("trans","epithelial"))
+  Keyword.lt <- list("EMT",c("trans","epithelial"), c("trans","epithelial","GOBP"))
   # Keyword.lt <- list("EMT", c("trans"))
 
   ## Filter and combine
@@ -70,10 +70,15 @@
       }else if(length(Keyword.lt[[i]])==2){
         merge_FLT_Temp.df <- merge.df[grepl(Keyword.lt[[i]][1],merge.df[,1], ignore.case=TRUE)
                                   & grepl(Keyword.lt[[i]][2],merge.df[,1], ignore.case=TRUE),]
+      }else if(length(Keyword.lt[[i]])==3){
+        merge_FLT_Temp.df <- merge.df[grepl(Keyword.lt[[i]][1],merge.df[,1], ignore.case=TRUE)
+                                      & grepl(Keyword.lt[[i]][2],merge.df[,1], ignore.case=TRUE)
+                                      & grepl(Keyword.lt[[i]][3],merge.df[,1], ignore.case=TRUE),]
       }else{
         merge_FLT_Temp.df <- merge.df[grepl(Keyword.lt[[i]][1],merge.df[,1], ignore.case=TRUE)
-                                      & grepl(Keyword.lt[[i]][2],merge.df[,1], ignore.case=TRUE),]
-        print(paste0("In",i,": Only the first 2 elements will be used"))   ## 可以嘗試用條件式+迴圈的方式 ##整體改成用Apply寫
+                                      & grepl(Keyword.lt[[i]][2],merge.df[,1], ignore.case=TRUE)
+                                      & grepl(Keyword.lt[[i]][3],merge.df[,1], ignore.case=TRUE),]
+        print(paste0("In",i,": Only the first 3 elements will be used"))   ## 可以嘗試用條件式+迴圈的方式 ##整體改成用Apply寫
       }
 
       if(i==1){
