@@ -74,7 +74,7 @@
       }else{
         merge_FLT_Temp.df <- merge.df[grepl(Keyword.lt[[i]][1],merge.df[,1], ignore.case=TRUE)
                                       & grepl(Keyword.lt[[i]][2],merge.df[,1], ignore.case=TRUE),]
-        print(paste0("In",i,": Only the first 2 elements will be used"))
+        print(paste0("In",i,": Only the first 2 elements will be used"))   ## 可以嘗試用迴圈的方式 ##整體改成用Apply寫
       }
 
       if(i==1){
@@ -140,6 +140,8 @@
   #                            col.names = 1:max(count.fields(paste0(getwd(),"/GSEA_Geneset/GSEA_Geneset_Pathway_3Database_WithoutFilter.txt"))),
   #                            header = F,sep = "\t")
 
+
+  ## 有新版更好的作法
 
   # Convert Human gene to mouse
   Pathway.all.MM = as.data.frame(matrix(nrow=nrow(Pathway.all),ncol=ncol(Pathway.all)*1.5))
