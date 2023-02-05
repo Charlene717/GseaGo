@@ -26,6 +26,8 @@
 ##### Import files & Combine df #####
   # target.dir <- list.dirs( paste0("Input_Genesets/", InputFolder) )[-1]
   list.files <- list.files(paste0("Input_Genesets/", InputFolder),full.names = T)
+  list.files <- str_subset(list.files, pattern = "\\.gmt$")
+
   Nfiles = length(list.files)
 
   for(i in 1:Nfiles){
