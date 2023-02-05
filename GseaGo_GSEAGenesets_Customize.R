@@ -1,8 +1,5 @@
 ## MSigDB Collections from GSEA
-## Human
 ## http://www.gsea-msigdb.org/gsea/msigdb/collections.jsp
-## Mouse
-## https://www.gsea-msigdb.org/gsea/msigdb/mouse_geneset_resources.jsp
 
 ##### Presetting ######
   rm(list = ls()) # Clean variable
