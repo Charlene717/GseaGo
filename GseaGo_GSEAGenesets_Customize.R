@@ -11,6 +11,7 @@
   if(!require("gtools")) install.packages("gtools")
   library(gtools)
 
+
 ##### Current path and new folder setting* #####
   OutputFileName <- "ComB"
   InputFolder = "Cust_GSEA_Genesets_Test"
@@ -48,7 +49,10 @@
   # # Ref: https://www.delftstack.com/zh-tw/howto/r/replace-na-with-0-in-r/
   #   merge.df[is.na(merge.df)] <- ""
 
-  ##### Export Result of Combine #####
+##### Update gene name ####
+
+
+##### Export Result of Combine #####
   ## Note ## Need to remove the quote
     # write.table(merge.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName ,'.txt'),
     #             row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
@@ -58,7 +62,6 @@
 ##### Filter by Keywords* #####
   OutputFileName_KW <- "EMT" # Export file name
   Keyword.lt <- list("EMT",c("trans","epithelial"), c("trans","epithelial","GOBP"))
-  # Keyword.lt <- list("EMT", c("trans"))
 
   ## Filter and combine
     for(i in 1:length(Keyword.lt)){
@@ -127,10 +130,10 @@
 
   ##### Export Result #####
   ## Note ## Need to remove the quote
-  write.table(merge_SPEC.df, paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_SPEC ,'.txt'),
-              row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
-  write.table(merge_SPEC.df, paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_SPEC ,'.gmt'),
-              row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
+    # write.table(merge_SPEC.df, paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_SPEC ,'.txt'),
+    #             row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
+    write.table(merge_SPEC.df, paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_SPEC ,'.gmt'),
+                row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
 
 #################################################################################
