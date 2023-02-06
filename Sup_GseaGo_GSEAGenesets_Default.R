@@ -13,16 +13,8 @@
   # if(!require("XML")) install.packages("XML")
   # library(XML)
 
-##### Condition setting* #####
-
-
-
-
 ##### Current path and new folder setting* #####
   OutputFileName <- "Default"
-  InputFolder = "Gsea_Genesets_Hs"
-  OutputFolder <- paste0("Input_Genesets/", InputFolder, "_", OutputFileName)
-  dir.create(OutputFolder) ## Generate output folder
 
 ##### Import files & Combine df #####
   #### Import XML file of GSEA GeneSet ####
@@ -33,36 +25,50 @@
   GSEAGeneSet_Hs_XML.df <- read.delim2(paste0("Input_Genesets/Gsea_Genesets_Hs/msigdb_v2022.1.Hs.txt"),sep = "\t")
   GSEAGeneSet_Mm_XML.df <- read.delim2(paste0("Input_Genesets/Gsea_Genesets_Mm/msigdb_v2022.1.Mm.txt"),sep = "\t")
 
-  ## Import Customization
+  ## Clean up the data
+
+
+
+
+  #### Import gmt file of GSEA GeneSet ####
+  InputFolder = "Gsea_Genesets_Hs"
+
   # target.dir <- list.dirs( paste0("Input_Genesets/", InputFolder) )[-1]
   list.files <- list.files(paste0("Input_Genesets/", InputFolder),full.names = T)
   list.files <- str_subset(list.files, pattern = "\\.symbols.gmt$")
 
-  Nfiles = length(list.files)
+  FUN_ImportGmt <- function(list.files) {
 
-  for(i in 1:Nfiles){
-    if(i==1){
-      # Deal with different number of columns
-      merge.df <- read.delim2(list.files[1],
-                              col.names = 1:max(count.fields(list.files[1])),
-                              header = F,sep = "\t")
-    }else{
-    new_1 <- read.delim2(paste0(list.files[i]),
-                         col.names = 1:max(count.fields(list.files[i])),
-                         header = F,sep = "\t")
-    merge.df <- smartbind(merge.df,new_1)
+    Nfiles = length(list.files)
+
+    for(i in 1:Nfiles){
+      if(i==1){
+        # Deal with different number of columns
+        merge.df <- read.delim2(list.files[1],
+                                col.names = 1:max(count.fields(list.files[1])),
+                                header = F,sep = "\t")
+      }else{
+        new_1 <- read.delim2(paste0(list.files[i]),
+                             col.names = 1:max(count.fields(list.files[i])),
+                             header = F,sep = "\t")
+        merge.df <- smartbind(merge.df,new_1)
+      }
+
     }
+    rm(new_1,i)
 
-  }
-  rm(new_1,i)
-
-  #### Clean up df ####
-  ## Remove duplicated
+    #### Clean up df ####
+    ## Remove duplicated
     merge.df <- merge.df[!duplicated(merge.df[,2]), ]
 
-  # ## Remove NA (Have set in the write.table)
-  # # Ref: https://www.delftstack.com/zh-tw/howto/r/replace-na-with-0-in-r/
-  #   merge.df[is.na(merge.df)] <- ""
+    # ## Remove NA (Have set in the write.table)
+    # # Ref: https://www.delftstack.com/zh-tw/howto/r/replace-na-with-0-in-r/
+    #   merge.df[is.na(merge.df)] <- ""
+
+  }
+
+
+
 
 ##### Update gene name ####
 
@@ -72,7 +78,7 @@
 
 
 #### Save RData ####
-  save.image(paste0("Input_Genesets/", InputFolder,".RData"))
+  save.image(paste0("Input_Genesets/Genesets_", OutputFileName,".RData"))
 
 #################################################################################
 
