@@ -11,9 +11,6 @@
   if(!require("gtools")) install.packages("gtools")
   library(gtools)
 
-  #library(dplyr)
-  #library(plyr) #merge.df<- rbind.fill(merge.df,new_1)
-
 ##### Current path and new folder setting* #####
   OutputFileName <- "ComB"
   InputFolder = "Cust_GSEA_Genesets_Test"
@@ -53,8 +50,8 @@
 
   ##### Export Result of Combine #####
   ## Note ## Need to remove the quote
-    write.table(merge.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName ,'.txt'),
-                row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
+    # write.table(merge.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName ,'.txt'),
+    #             row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
     write.table(merge.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName ,'.gmt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
@@ -98,16 +95,20 @@
 
   ##### Export Result #####
   ## Note ## Need to remove the quote
-  write.table(merge_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_KW ,'.txt'),
-              row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
-  write.table(merge_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_KW ,'.gmt'),
-              row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
+    # write.table(merge_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_KW ,'.txt'),
+    #             row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
+    write.table(merge_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_KW ,'.gmt'),
+                row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
   ### (pending) How to add conditions to a logical vector with a loop [r]
   ## Intersect all
   ## Ref: https://stackoverflow.com/questions/8817533/loop-of-a-loop-in-r
   ## Add conditions to a logical vector with a loop [r]
   ## https://stackoverflow.com/questions/40994881/add-conditions-to-a-logical-vector-with-a-loop-r
+
+
+#################################################################################################################################
+
 
 ##### Choose specific Genesets* #####
   OutputFileName_SPEC = "SPEC" # Export file name
