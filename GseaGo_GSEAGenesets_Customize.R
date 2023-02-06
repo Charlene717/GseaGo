@@ -10,8 +10,8 @@
   library(tidyverse)
   if(!require("gtools")) install.packages("gtools")
   library(gtools)
-  if(!require("XML")) install.packages("XML")
-  library(XML)
+  # if(!require("XML")) install.packages("XML")
+  # library(XML)
 
 ##### Condition setting* #####
   SpeciesSet = "Homo sapiens"
@@ -38,9 +38,14 @@
 
 ##### Import files & Combine df #####
   ## Import all from GSEA GeneSet
-  # Ref: https://www.educative.io/answers/how-to-read-xml-files-in-r
-  GSEAGeneSet.df <- xmlToDataFrame(paste0("Input_Genesets/Gsea_Genesets_Hs/msigdb_v2022.1.Hs.xml"))
-  GSEAGeneSet.df <- read.delim2(paste0("Input_Genesets/Gsea_Genesets_Hs/msigdb_v2022.1.Hs.xml"),sep = "\t")
+  # # Ref: https://www.educative.io/answers/how-to-read-xml-files-in-r
+  # GSEAGeneSet.df <- xmlToDataFrame(paste0("Input_Genesets/Gsea_Genesets_Hs/msigdb_v2022.1.Hs.xml"))
+  # GSEAGeneSet.df <- read.delim2(paste0("Input_Genesets/Gsea_Genesets_Hs/msigdb_v2022.1.Hs.xml"),sep = "\t")
+
+  if(!require("msig")) install.packages("msig")
+  library(msig)
+  # Ref: chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://cran.r-project.org/web/packages/msig/msig.pdf
+  TTT <- msig_download(version)
 
   ## Import Customization
   # target.dir <- list.dirs( paste0("Input_Genesets/", InputFolder) )[-1]
