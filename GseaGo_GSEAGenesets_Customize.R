@@ -10,6 +10,8 @@
   library(tidyverse)
   if(!require("gtools")) install.packages("gtools")
   library(gtools)
+  if(!require("XML")) install.packages("XML")
+  library(XML)
 
 ##### Condition setting* #####
   SpeciesSet = "Homo sapiens"
@@ -35,6 +37,7 @@
   dir.create(OutputFolder) ## Generate output folder
 
 ##### Import files & Combine df #####
+  ## Import Customization
   # target.dir <- list.dirs( paste0("Input_Genesets/", InputFolder) )[-1]
   list.files <- list.files(paste0("Input_Genesets/", InputFolder),full.names = T)
   list.files <- str_subset(list.files, pattern = "\\.gmt$")
@@ -156,4 +159,5 @@
 
   ## XML檔設定
   ## 加入其他篩選條件
+  ## Geneset by 自己的實驗或線上數據(文字型,matrix型)
 
