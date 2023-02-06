@@ -11,6 +11,22 @@
   if(!require("gtools")) install.packages("gtools")
   library(gtools)
 
+##### Condition setting* #####
+  SpeciesSet = "Homo sapiens"
+  LoadGenesetBy = "Default" # "Default","Customize"
+  UpdateGeneNameSet = TRUE # FALSE
+
+  FiterSet = TRUE # FALSE
+  FiterSet_KW.lt = list("EMT",c("trans","epithelial"), c("trans","epithelial","GOBP")) # "Default"
+  OutputFileName_KW <- "EMT" # Export file name of key word(KY)
+
+  FiterSet_CTGY <- "C2"  # "Default"
+  OutputFileName_CTGY <- "C2" # Export file name of Category(CTGY)
+
+
+## -[] Add setting record
+
+
 
 ##### Current path and new folder setting* #####
   OutputFileName <- "ComB"
