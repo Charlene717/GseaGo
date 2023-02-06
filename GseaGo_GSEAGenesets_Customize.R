@@ -41,11 +41,7 @@
   # # Ref: https://www.educative.io/answers/how-to-read-xml-files-in-r
   # GSEAGeneSet.df <- xmlToDataFrame(paste0("Input_Genesets/Gsea_Genesets_Hs/msigdb_v2022.1.Hs.xml"))
   # GSEAGeneSet.df <- read.delim2(paste0("Input_Genesets/Gsea_Genesets_Hs/msigdb_v2022.1.Hs.xml"),sep = "\t")
-
-  # Ref: https://stephenturner.github.io/msigdf/vignettes/msigdf
-  if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
-  if(!require("msigdf")) BiocManager::install("msigdf")
-  library(msigdf)
+  GSEAGeneSet.df <- read.delim2(paste0("Input_Genesets/Gsea_Genesets_Hs/msigdb_v2022.1.Hs.txt"),sep = "\t")
 
   ## Import Customization
   # target.dir <- list.dirs( paste0("Input_Genesets/", InputFolder) )[-1]
