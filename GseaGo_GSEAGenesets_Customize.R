@@ -13,7 +13,7 @@
 
 ##### Condition setting* #####
   Set_Species = "Hs" #"Hs","Mm" # Homo sapiens(HS);"Mus musculus"(Mm)
-  Set_LoadGeneBy = "Default" # "Default","Customize"
+  Set_LoadGeneBy = c("Default","symb") # c("Default","symb"),c("Default","entrez"),"Customize"
   Set_UpdateGeneName = TRUE # FALSE
 
   OutputFileName_KW <- "EMT" # Export file name of key word(KY)
@@ -37,6 +37,30 @@
 ##### Import files & Combine df #####
   ## Import default RData
   load(paste0("Input_Genesets/Genesets_Default.RData"))
+
+  ## clean up objects
+  if(Set_Species == "Hs"){
+    rm(list = str_subset(objects(), pattern = "_Mm_"))
+  }else if(Set_Species == "Mm"){
+    rm(list = str_subset(objects(), pattern = "_Hs_"))
+  }else{
+    print("Please Set Species in Hs or Mm")
+  }
+
+  if(Set_LoadGeneBy[1] == "Default" && Set_LoadGeneBy[2] =="symb"){
+    rm(list = str_subset(objects(), pattern = "_entrez_"))
+  }else if(Set_LoadGeneBy[1] == "Default" && Set_LoadGeneBy[2] == "entrez"){
+    rm(list = str_subset(objects(), pattern = "_symb_"))
+  }else if(Set_LoadGeneBy[1] == "Customize"){
+    rm(list = str_subset(objects(), pattern = "_entrez_"))
+    rm(list = str_subset(objects(), pattern = "_symb_"))
+  }
+
+  assign("GSEAGeneSet_MetaData.df", get(str_subset(objects(), pattern = "_XML.df")))
+  rm(list = str_subset(objects(), pattern = "_XML.df"))
+
+  assign("GSEAGeneSet.df", get(str_subset(objects(), pattern = "_gmt.df")))
+  rm(list = str_subset(objects(), pattern = "_gmt.df"))
 
 
 
