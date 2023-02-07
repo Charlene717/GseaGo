@@ -100,13 +100,11 @@
 
 #### Save RData ####
   rm(FUN_ImportGmt)
+  save.image(paste0("Input_Genesets/Genesets_", OutputFileName,"_All.RData"))
+
+  rm(GSEAGeneSet_Hs_XML_All.df,GSEAGeneSet_Mm_XML_All.df)
   save.image(paste0("Input_Genesets/Genesets_", OutputFileName,".RData"))
 
-#################################################################################
-
-  ## XML檔設定
-  ## 加入其他篩選條件
-  ## Geneset by 自己的實驗或線上數據(文字型,matrix型)
 
 
 
