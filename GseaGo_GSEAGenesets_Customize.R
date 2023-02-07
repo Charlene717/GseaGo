@@ -29,7 +29,8 @@
 
 
 ##### Current path and new folder setting* #####
-  Output_FileName <- "ComB"
+  Output_FileName_Desc <- "ComB"
+  Output_FileName <- paste0(Output_FileName_Desc,"_",Set_Species)
 
   if(Set_LoadGeneBy[1] == "Customize"){
     InputFolder = "Cust_GSEA_Genesets_Test"
@@ -39,7 +40,7 @@
 
   }
 
-  OutputFolder <- paste0("Input_Genesets/", InputFolder,"_",Set_Species, "_", Output_FileName)
+  OutputFolder <- paste0("Input_Genesets/", InputFolder,"_", Output_FileName)
   dir.create(OutputFolder) ## Generate output folder
 
 ##### Import files & Combine df #####
@@ -194,7 +195,7 @@
 
 
 #### Save RData ####
-  save.image(paste0(OutputFolder,"/",InputFolder,'_',Set_Species, "_", Output_FileName,".RData"))
+  save.image(paste0(OutputFolder,"/",InputFolder,'_', Output_FileName,".RData"))
 
 #################################################################################
   #### TO-do list ####
