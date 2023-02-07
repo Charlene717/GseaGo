@@ -30,12 +30,21 @@
 
 ##### Current path and new folder setting* #####
   OutputFileName <- "ComB"
-  InputFolder = "Cust_GSEA_Genesets_Test"
+
+  InputFolder
+  if(Set_LoadGeneBy[1] == "Customize"){
+    InputFolder = "Cust_GSEA_Genesets_Test"
+
+  }else if(Set_LoadGeneBy[1] == "Default"){
+    InputFolder = "Input_Genesets"
+
+  }
+
   OutputFolder <- paste0("Input_Genesets/", InputFolder, "_", OutputFileName)
   dir.create(OutputFolder) ## Generate output folder
 
 ##### Import files & Combine df #####
-  ## Import default RData
+  #### Import default RData ####
   load(paste0("Input_Genesets/Genesets_Default.RData"))
 
   ## clean up objects
@@ -62,31 +71,34 @@
   if(Set_LoadGeneBy[1] == "Default"){
     assign("GSEAGeneSet.df", get(str_subset(objects(), pattern = "_gmt.df")))
     rm(list = str_subset(objects(), pattern = "_gmt.df"))
-  }
 
+  }else if(Set_LoadGeneBy[1] == "Customize"){
+    #### Import Customization ####
+    # target.dir <- list.dirs( paste0("Input_Genesets/", InputFolder) )[-1]
+    FilesList.set <- list.files(paste0("Input_Genesets/", InputFolder),full.names = T) %>%
+                     str_subset(., pattern = "\\.gmt$")
 
-  ## Import Customization
-  # target.dir <- list.dirs( paste0("Input_Genesets/", InputFolder) )[-1]
-  FilesList.set <- list.files(paste0("Input_Genesets/", InputFolder),full.names = T) %>%
-    str_subset(., pattern = "\\.gmt$")
+    Nfiles = length(FilesList.set)
 
-  Nfiles = length(FilesList.set)
+    for(i in 1:Nfiles){
+      if(i==1){
+        # Deal with different number of columns
+        GSEAGeneSet.df <- read.delim2(FilesList.set[1],
+                                      col.names = 1:max(count.fields(FilesList.set[1])),
+                                      header = F,sep = "\t")
+      }else{
+        new_1 <- read.delim2(paste0(FilesList.set[i]),
+                             col.names = 1:max(count.fields(FilesList.set[i])),
+                             header = F,sep = "\t")
+        GSEAGeneSet.df <- smartbind(GSEAGeneSet.df,new_1)
+      }
 
-  for(i in 1:Nfiles){
-    if(i==1){
-      # Deal with different number of columns
-      GSEAGeneSet.df <- read.delim2(FilesList.set[1],
-                              col.names = 1:max(count.fields(FilesList.set[1])),
-                              header = F,sep = "\t")
-    }else{
-    new_1 <- read.delim2(paste0(FilesList.set[i]),
-                         col.names = 1:max(count.fields(FilesList.set[i])),
-                         header = F,sep = "\t")
-    GSEAGeneSet.df <- smartbind(GSEAGeneSet.df,new_1)
     }
-
+    rm(new_1,i)
   }
-  rm(new_1,i)
+
+
+
 
   #### Clean up df ####
   ## Remove duplicated
