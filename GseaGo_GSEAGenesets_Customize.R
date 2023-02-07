@@ -40,20 +40,20 @@
 
   ## Import Customization
   # target.dir <- list.dirs( paste0("Input_Genesets/", InputFolder) )[-1]
-  list.files <- list.files(paste0("Input_Genesets/", InputFolder),full.names = T)
-  list.files <- str_subset(list.files, pattern = "\\.gmt$")
+  FilesList.set <- list.files(paste0("Input_Genesets/", InputFolder),full.names = T)
+  FilesList.set <- str_subset(FilesList.set, pattern = "\\.gmt$")
 
-  Nfiles = length(list.files)
+  Nfiles = length(FilesList.set)
 
   for(i in 1:Nfiles){
     if(i==1){
       # Deal with different number of columns
-      merge.df <- read.delim2(list.files[1],
-                              col.names = 1:max(count.fields(list.files[1])),
+      merge.df <- read.delim2(FilesList.set[1],
+                              col.names = 1:max(count.fields(FilesList.set[1])),
                               header = F,sep = "\t")
     }else{
-    new_1 <- read.delim2(paste0(list.files[i]),
-                         col.names = 1:max(count.fields(list.files[i])),
+    new_1 <- read.delim2(paste0(FilesList.set[i]),
+                         col.names = 1:max(count.fields(FilesList.set[i])),
                          header = F,sep = "\t")
     merge.df <- smartbind(merge.df,new_1)
     }

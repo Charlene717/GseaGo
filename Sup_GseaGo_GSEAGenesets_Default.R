@@ -33,19 +33,19 @@
 
   #### Import gmt file of GSEA GeneSet ####
   # Function for read and combine multiple files
-  FUN_ImportGmt <- function(FilesList.set) {
+  FUN_ImportGmt <- function(Files_List.set) {
 
-    Nfiles = length(FilesList.set)
+    Nfiles = length(Files_List.set)
 
     for(i in 1:Nfiles){
       if(i==1){
         # Deal with different number of columns
-        merge.df <- read.delim2(FilesList.set[1],
-                                col.names = 1:max(count.fields(FilesList.set[1])),
+        merge.df <- read.delim2(Files_List.set[1],
+                                col.names = 1:max(count.fields(Files_List.set[1])),
                                 header = F,sep = "\t")
       }else{
-        new_1 <- read.delim2(paste0(FilesList.set[i]),
-                             col.names = 1:max(count.fields(FilesList.set[i])),
+        new_1 <- read.delim2(paste0(Files_List.set[i]),
+                             col.names = 1:max(count.fields(Files_List.set[i])),
                              header = F,sep = "\t")
         merge.df <- smartbind(merge.df,new_1)
       }
