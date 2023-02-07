@@ -4,14 +4,10 @@
 
 ##### Load Packages #####
   source("FUN_Package_InstLoad.R")
-  Basic.set <- c("tidyverse","ggplot2","Seurat","SeuratData","patchwork","plyr","eoffice","DT")
+  PKG_Basic.set <- c("tidyverse","ggplot2","Seurat","SeuratData","patchwork","plyr","eoffice","DT")
+  PKG_BiocManager.set <- c("clusterProfiler","enrichplot","pathview","limma")
 
-  BiocManager.set <- c("clusterProfiler","enrichplot","pathview","limma")
-  ## Set the desired organism
-  # organism = "org.Hs.eg.db" ## c("org.Hs.eg.db","org.Mm.eg.db","org.Dm.eg.db")
-  # c(organism,"fgsea")
-
-  Package_InstLoad(Basic.set = Basic.set, BiocManager.set = BiocManager.set)
+  FUN_Package_InstLoad(Basic.set = PKG_Basic.set, BiocManager.set = PKG_BiocManager.set)
 
 ##### Function setting #####
   ## Call function
@@ -25,16 +21,16 @@
 
 ##### Import setting* #####
   ## File setting*
-  InFOLName_GE <- "Input_TCGA"  # Input Folder Name
-  SampleName <- "Xena_TCGA_LGG_GE"
-  SamplePhenoName <- "TCGA.LGG.sampleMap_LGG_clinicalMatrix"
+  ImportPath_FOL <- "Input_TCGA"  # Input Folder Name
+  Import_GE <- "Xena_TCGA_LGG_GE"
+  Import_Anno <- "TCGA.LGG.sampleMap_LGG_clinicalMatrix"
 
   ## Import genetic data file
-  GeneExp.df <- read.table(paste0(InFOLName_GE,"/",SampleName), header=T, row.names = 1, sep="\t")
+  GeneExp.df <- read.table(paste0(ImportPath_FOL,"/",Import_GE), header=T, row.names = 1, sep="\t")
   colnames(GeneExp.df) <-  gsub("\\.", "-", colnames(GeneExp.df))
   GeneExp_Ori.df <- GeneExp.df
 
-  Anno.df <- read.table(paste0(InFOLName_GE,"/",SamplePhenoName), header=T, sep="\t")
+  Anno.df <- read.table(paste0(ImportPath_FOL,"/",Import_Anno), header=T, sep="\t")
   Anno_Ori.df <- Anno.df
   row.names(Anno.df) <- Anno.df[,1]
 
@@ -43,10 +39,10 @@
                        Anno.df)
 
   ## Import GSEA gene sets
-  InFOLName_Genesets <- "Input_Genesets"
-  InputGSEA <- "GSEA_Geneset_Pathway_3Database_WithoutFilter.txt"
-  Pathway.all <- read.delim2(paste0(getwd(),"/",InFOLName_Genesets,"/",InputGSEA),
-                             col.names = 1:max(count.fields(paste0(getwd(),"/",InFOLName_Genesets,"/",InputGSEA))),
+  ImportPath_Genesets_FOL <- "Input_Genesets"
+  Input_GSEAGeneset <- "GSEA_Geneset_Pathway_3Database_WithoutFilter.txt"
+  Pathway.all <- read.delim2(paste0(getwd(),"/",ImportPath_Genesets_FOL,"/",Input_GSEAGeneset),
+                             col.names = 1:max(count.fields(paste0(getwd(),"/",ImportPath_Genesets_FOL,"/",Input_GSEAGeneset))),
                              header = F,sep = "\t")
 
 ##### Conditions setting* #####
@@ -170,7 +166,7 @@
     #                                 GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
     #                                 ThrSet = DEGThr.lt,
     #                                 TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "sampleID",
-    #                                 Save.Path = Save.Path, SampleName = SampleName, AnnoName = "AvB")
+    #                                 Save.Path = Save.Path, Import_GE = Import_GE, AnnoName = "AvB")
     # DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
 
 
