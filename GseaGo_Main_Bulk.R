@@ -39,11 +39,16 @@
                        Anno.df)
 
   ## Import GSEA gene sets
-  ImportPath_Genesets_FOL <- "Input_Genesets"
-  Input_GSEAGeneset <- "GSEA_Geneset_Pathway_3Database_WithoutFilter.txt"
-  Pathway.all <- read.delim2(paste0(getwd(),"/",ImportPath_Genesets_FOL,"/",Input_GSEAGeneset),
-                             col.names = 1:max(count.fields(paste0(getwd(),"/",ImportPath_Genesets_FOL,"/",Input_GSEAGeneset))),
+  ImportPath_Genesets_FOL <- "Input_Genesets/Gsea_Genesets_Hs"
+  Input_GSEAGeneSet <- "msigdb.v2022.1.Hs.symbols.gmt"
+  Input_GSEAGeneSet_MetaData <- "msigdb_v2022.1.Hs.txt"
+
+  GSEAGeneset.df <- read.delim2(paste0(getwd(),"/",ImportPath_Genesets_FOL,"/",Input_GSEAGeneSet),
+                             col.names = 1:max(count.fields(paste0(getwd(),"/",ImportPath_Genesets_FOL,"/",Input_GSEAGeneSet))),
                              header = F,sep = "\t")
+  GSEAGeneSet_MetaData.df <- read.delim2(paste0(getwd(),"/",ImportPath_Genesets_FOL,"/",Input_GSEAGeneSet_MetaData),sep = "\t")
+
+  GSEAGeneSet_MetaData.df <- GSEAGeneSet_MetaData.df[,c("STANDARD_NAME","SYSTEMATIC_NAME","CATEGORY_CODE","DESCRIPTION_BRIEF","DESCRIPTION_FULL")]
 
 ##### Conditions setting* #####
   SpeciesSet = "Homo sapiens"
@@ -184,7 +189,7 @@
                     "KEGG_CALCIUM_SIGNALING_PATHWAY"
   )
 
-  GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, CMGeneSet = Pathway.all,
+  GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, CMGeneSet = GSEAGeneset.df,
                                   DefaultGeneSet = "C2", Species = SpeciesSet, # Speices type can check by msigdbr_species()
                                   NumGenesetsPlt = 15,
                                   TarGeneName = TarGene_name,
