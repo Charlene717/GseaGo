@@ -186,10 +186,9 @@
   save.image(paste0("Input_Genesets/", InputFolder,".RData"))
 
 #################################################################################
-
-  ## XML檔設定
+  #### TO-do list ####
   ## 加入其他篩選條件
-  ## Geneset by 自己的實驗或線上數據(文字型,matrix型)
+  ## 創建Geneset by 自己的實驗或線上數據(文字型,matrix型)
   ## 內文文字篩選
 
 
