@@ -12,16 +12,16 @@
   library(gtools)
 
 ##### Condition setting* #####
-  SpeciesSet = "Homo sapiens"
-  LoadGenesetBy = "Default" # "Default","Customize"
-  UpdateGeneNameSet = TRUE # FALSE
+  Set_Species = "Hs" #"Hs","Mm" # Homo sapiens(HS);"Mus musculus"(Mm)
+  Set_LoadGeneBy = "Default" # "Default","Customize"
+  Set_UpdateGeneName = TRUE # FALSE
 
-  FiterSet = TRUE # FALSE
-  FiterSet_KW.lt = list("EMT",c("trans","epithelial"), c("trans","epithelial","GOBP")) # "Default"
   OutputFileName_KW <- "EMT" # Export file name of key word(KY)
+  Set_Fiter = TRUE # FALSE
+  Set_Fiter_KW.lt = list("EMT",c("trans","epithelial"), c("trans","epithelial","GOBP")) # "Default"
 
-  FiterSet_CTGY <- "C2"  # "Default"
   OutputFileName_CTGY <- "C2" # Export file name of Category(CTGY)
+  Set_Fiter_CTGY <- "C2"  # "Default"
 
 
 ## -[] Add setting record
@@ -38,10 +38,12 @@
   ## Import default RData
   load(paste0("Input_Genesets/Genesets_Default.RData"))
 
+
+
   ## Import Customization
   # target.dir <- list.dirs( paste0("Input_Genesets/", InputFolder) )[-1]
-  FilesList.set <- list.files(paste0("Input_Genesets/", InputFolder),full.names = T)
-  FilesList.set <- str_subset(FilesList.set, pattern = "\\.gmt$")
+  FilesList.set <- list.files(paste0("Input_Genesets/", InputFolder),full.names = T) %>%
+    str_subset(., pattern = "\\.gmt$")
 
   Nfiles = length(FilesList.set)
 
@@ -65,8 +67,7 @@
   ## Remove duplicated
     merge.df <- merge.df[!duplicated(merge.df[,2]), ]
 
-  # ## Remove NA (Have set in the write.table)
-  # # Ref: https://www.delftstack.com/zh-tw/howto/r/replace-na-with-0-in-r/
+  # ## Remove NA (Have set in the write.table) # Ref: https://www.delftstack.com/zh-tw/howto/r/replace-na-with-0-in-r/
   #   merge.df[is.na(merge.df)] <- ""
 
 ##### Update gene name ####
@@ -83,7 +84,6 @@
   OutputFileName_KW <- "EMT" # Export file name
   Keyword.lt <- list("EMT",c("trans","epithelial"), c("trans","epithelial","GOBP"))
 
-  ## Filter and combine
     for(i in 1:length(Keyword.lt)){
       if(length(Keyword.lt[[i]])==1){
         merge_FLT_Temp.df <- merge.df[grepl(Keyword.lt[[i]],merge.df[,1], ignore.case=TRUE),]
