@@ -22,11 +22,12 @@
   # GSEAGeneSet.df <- xmlToDataFrame(paste0("Input_Genesets/Gsea_Genesets_Hs/msigdb_v2022.1.Hs.xml"))
   # GSEAGeneSet.df <- read.delim2(paste0("Input_Genesets/Gsea_Genesets_Hs/msigdb_v2022.1.Hs.xml"),sep = "\t")
   #
-  GSEAGeneSet_Hs_XML.df <- read.delim2(paste0("Input_Genesets/Gsea_Genesets_Hs/msigdb_v2022.1.Hs.txt"),sep = "\t")
-  GSEAGeneSet_Mm_XML.df <- read.delim2(paste0("Input_Genesets/Gsea_Genesets_Mm/msigdb_v2022.1.Mm.txt"),sep = "\t")
+  GSEAGeneSet_Hs_XML_All.df <- read.delim2(paste0("Input_Genesets/Gsea_Genesets_Hs/msigdb_v2022.1.Hs.txt"),sep = "\t")
+  GSEAGeneSet_Mm_XML_All.df <- read.delim2(paste0("Input_Genesets/Gsea_Genesets_Mm/msigdb_v2022.1.Mm.txt"),sep = "\t")
 
   ## Clean up the data
-
+  GSEAGeneSet_Hs_XML.df <- GSEAGeneSet_Hs_XML_All.df[,c("STANDARD_NAME","SYSTEMATIC_NAME","CATEGORY_CODE","DESCRIPTION_BRIEF","DESCRIPTION_FULL")]
+  GSEAGeneSet_Mm_XML.df <- GSEAGeneSet_Mm_XML_All.df[,c("STANDARD_NAME","SYSTEMATIC_NAME","CATEGORY_CODE","DESCRIPTION_BRIEF","DESCRIPTION_FULL")]
 
 
 
@@ -98,6 +99,7 @@
 
 
 #### Save RData ####
+  rm(FUN_ImportGmt)
   save.image(paste0("Input_Genesets/Genesets_", OutputFileName,".RData"))
 
 #################################################################################
