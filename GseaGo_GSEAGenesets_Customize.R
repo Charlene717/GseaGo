@@ -59,9 +59,10 @@
   assign("GSEAGeneSet_MetaData.df", get(str_subset(objects(), pattern = "_XML.df")))
   rm(list = str_subset(objects(), pattern = "_XML.df"))
 
-  assign("GSEAGeneSet.df", get(str_subset(objects(), pattern = "_gmt.df")))
-  rm(list = str_subset(objects(), pattern = "_gmt.df"))
-
+  if(Set_LoadGeneBy[1] == "Default"){
+    assign("GSEAGeneSet.df", get(str_subset(objects(), pattern = "_gmt.df")))
+    rm(list = str_subset(objects(), pattern = "_gmt.df"))
+  }
 
 
   ## Import Customization
@@ -74,14 +75,14 @@
   for(i in 1:Nfiles){
     if(i==1){
       # Deal with different number of columns
-      merge.df <- read.delim2(FilesList.set[1],
+      GSEAGeneSet.df <- read.delim2(FilesList.set[1],
                               col.names = 1:max(count.fields(FilesList.set[1])),
                               header = F,sep = "\t")
     }else{
     new_1 <- read.delim2(paste0(FilesList.set[i]),
                          col.names = 1:max(count.fields(FilesList.set[i])),
                          header = F,sep = "\t")
-    merge.df <- smartbind(merge.df,new_1)
+    GSEAGeneSet.df <- smartbind(GSEAGeneSet.df,new_1)
     }
 
   }
@@ -89,19 +90,19 @@
 
   #### Clean up df ####
   ## Remove duplicated
-    merge.df <- merge.df[!duplicated(merge.df[,2]), ]
+    GSEAGeneSet.df <- GSEAGeneSet.df[!duplicated(GSEAGeneSet.df[,2]), ]
 
   # ## Remove NA (Have set in the write.table) # Ref: https://www.delftstack.com/zh-tw/howto/r/replace-na-with-0-in-r/
-  #   merge.df[is.na(merge.df)] <- ""
+  #   GSEAGeneSet.df[is.na(GSEAGeneSet.df)] <- ""
 
 ##### Update gene name ####
 
 
 ##### Export Result of Combine #####
   ## Note ## Need to remove the quote
-    # write.table(merge.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName ,'.txt'),
+    # write.table(GSEAGeneSet.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName ,'.txt'),
     #             row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
-    write.table(merge.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName ,'.gmt'),
+    write.table(GSEAGeneSet.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName ,'.gmt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
 ##### Filter by Keywords* #####
@@ -110,41 +111,41 @@
 
     for(i in 1:length(Keyword.lt)){
       if(length(Keyword.lt[[i]])==1){
-        merge_FLT_Temp.df <- merge.df[grepl(Keyword.lt[[i]],merge.df[,1], ignore.case=TRUE),]
+        GSEAGeneSet_FLT_Temp.df <- GSEAGeneSet.df[grepl(Keyword.lt[[i]],GSEAGeneSet.df[,1], ignore.case=TRUE),]
       }else if(length(Keyword.lt[[i]])==2){
-        merge_FLT_Temp.df <- merge.df[grepl(Keyword.lt[[i]][1],merge.df[,1], ignore.case=TRUE)
-                                  & grepl(Keyword.lt[[i]][2],merge.df[,1], ignore.case=TRUE),]
+        GSEAGeneSet_FLT_Temp.df <- GSEAGeneSet.df[grepl(Keyword.lt[[i]][1],GSEAGeneSet.df[,1], ignore.case=TRUE)
+                                  & grepl(Keyword.lt[[i]][2],GSEAGeneSet.df[,1], ignore.case=TRUE),]
       }else if(length(Keyword.lt[[i]])==3){
-        merge_FLT_Temp.df <- merge.df[grepl(Keyword.lt[[i]][1],merge.df[,1], ignore.case=TRUE)
-                                      & grepl(Keyword.lt[[i]][2],merge.df[,1], ignore.case=TRUE)
-                                      & grepl(Keyword.lt[[i]][3],merge.df[,1], ignore.case=TRUE),]
+        GSEAGeneSet_FLT_Temp.df <- GSEAGeneSet.df[grepl(Keyword.lt[[i]][1],GSEAGeneSet.df[,1], ignore.case=TRUE)
+                                      & grepl(Keyword.lt[[i]][2],GSEAGeneSet.df[,1], ignore.case=TRUE)
+                                      & grepl(Keyword.lt[[i]][3],GSEAGeneSet.df[,1], ignore.case=TRUE),]
       }else{
-        merge_FLT_Temp.df <- merge.df[grepl(Keyword.lt[[i]][1],merge.df[,1], ignore.case=TRUE)
-                                      & grepl(Keyword.lt[[i]][2],merge.df[,1], ignore.case=TRUE)
-                                      & grepl(Keyword.lt[[i]][3],merge.df[,1], ignore.case=TRUE),]
+        GSEAGeneSet_FLT_Temp.df <- GSEAGeneSet.df[grepl(Keyword.lt[[i]][1],GSEAGeneSet.df[,1], ignore.case=TRUE)
+                                      & grepl(Keyword.lt[[i]][2],GSEAGeneSet.df[,1], ignore.case=TRUE)
+                                      & grepl(Keyword.lt[[i]][3],GSEAGeneSet.df[,1], ignore.case=TRUE),]
         print(paste0("In",i,": Only the first 3 elements will be used"))   ## 可以嘗試用條件式+迴圈的方式 ##整體改成用Apply寫
       }
 
       if(i==1){
-        merge_FLT.df <- merge_FLT_Temp.df
+        GSEAGeneSet_FLT.df <- GSEAGeneSet_FLT_Temp.df
 
       }else{
-        merge_FLT.df <- smartbind(merge_FLT.df,merge_FLT_Temp.df)
+        GSEAGeneSet_FLT.df <- smartbind(GSEAGeneSet_FLT.df,GSEAGeneSet_FLT_Temp.df)
 
       }
     }
-    rm(i,merge_FLT_Temp.df)
+    rm(i,GSEAGeneSet_FLT_Temp.df)
 
   #### Clean up df ####
   ## Remove duplicated
-  merge_FLT.df <- merge_FLT.df[!duplicated(merge_FLT.df[,2]), ]
+  GSEAGeneSet_FLT.df <- GSEAGeneSet_FLT.df[!duplicated(GSEAGeneSet_FLT.df[,2]), ]
 
 
   ##### Export Result #####
   ## Note ## Need to remove the quote
-    # write.table(merge_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_KW ,'.txt'),
+    # write.table(GSEAGeneSet_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_KW ,'.txt'),
     #             row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
-    write.table(merge_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_KW ,'.gmt'),
+    write.table(GSEAGeneSet_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_KW ,'.gmt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
   ### (pending) How to add conditions to a logical vector with a loop [r]
@@ -170,13 +171,13 @@
     "KEGG_CALCIUM_SIGNALING_PATHWAY"
   )
 
-  merge_SPEC.df <- merge.df[merge.df[,1] %in% Int_Path.set,]
+  GSEAGeneSet_SPEC.df <- GSEAGeneSet.df[GSEAGeneSet.df[,1] %in% Int_Path.set,]
 
   ##### Export Result #####
   ## Note ## Need to remove the quote
-    # write.table(merge_SPEC.df, paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_SPEC ,'.txt'),
+    # write.table(GSEAGeneSet_SPEC.df, paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_SPEC ,'.txt'),
     #             row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
-    write.table(merge_SPEC.df, paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_SPEC ,'.gmt'),
+    write.table(GSEAGeneSet_SPEC.df, paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_SPEC ,'.gmt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
 
