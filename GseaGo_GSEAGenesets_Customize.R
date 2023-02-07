@@ -40,8 +40,8 @@
 
   ## Import Customization
   # target.dir <- list.dirs( paste0("Input_Genesets/", InputFolder) )[-1]
-  FilesList.set <- list.files(paste0("Input_Genesets/", InputFolder),full.names = T)
-  FilesList.set <- str_subset(FilesList.set, pattern = "\\.gmt$")
+  FilesList.set <- list.files(paste0("Input_Genesets/", InputFolder),full.names = T) %>%
+    str_subset(., pattern = "\\.gmt$")
 
   Nfiles = length(FilesList.set)
 
@@ -65,8 +65,7 @@
   ## Remove duplicated
     merge.df <- merge.df[!duplicated(merge.df[,2]), ]
 
-  # ## Remove NA (Have set in the write.table)
-  # # Ref: https://www.delftstack.com/zh-tw/howto/r/replace-na-with-0-in-r/
+  # ## Remove NA (Have set in the write.table) # Ref: https://www.delftstack.com/zh-tw/howto/r/replace-na-with-0-in-r/
   #   merge.df[is.na(merge.df)] <- ""
 
 ##### Update gene name ####
