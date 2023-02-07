@@ -16,11 +16,11 @@
   Set_LoadGeneBy = c("Default","symb") # c("Default","symb"),c("Default","entrez"),"Customize"
   Set_UpdateGeneName = TRUE # FALSE
 
-  OutputFileName_KW <- "EMT" # Export file name of key word(KY)
+  Output_FileName_KW <- "EMT" # Export file name of key word(KY)
   Set_Fiter = TRUE # FALSE
   Set_Fiter_KW.lt = list("EMT",c("trans","epithelial"), c("trans","epithelial","GOBP")) # "Default"
 
-  OutputFileName_CTGY <- "C2" # Export file name of Category(CTGY)
+  Output_FileName_CTGY <- "C2" # Export file name of Category(CTGY)
   Set_Fiter_CTGY <- "C2"  # "Default"
 
 
@@ -29,13 +29,21 @@
 
 
 ##### Current path and new folder setting* #####
-  OutputFileName <- "ComB"
-  InputFolder = "Cust_GSEA_Genesets_Test"
-  OutputFolder <- paste0("Input_Genesets/", InputFolder, "_", OutputFileName)
+  Output_FileName <- "ComB"
+
+  if(Set_LoadGeneBy[1] == "Customize"){
+    InputFolder = "Cust_GSEA_Genesets_Test"
+
+  }else if(Set_LoadGeneBy[1] == "Default"){
+    InputFolder = "Input_Genesets"
+
+  }
+
+  OutputFolder <- paste0("Input_Genesets/", InputFolder,"_",Set_Species, "_", Output_FileName)
   dir.create(OutputFolder) ## Generate output folder
 
 ##### Import files & Combine df #####
-  ## Import default RData
+  #### Import default RData ####
   load(paste0("Input_Genesets/Genesets_Default.RData"))
 
   ## clean up objects
@@ -62,31 +70,34 @@
   if(Set_LoadGeneBy[1] == "Default"){
     assign("GSEAGeneSet.df", get(str_subset(objects(), pattern = "_gmt.df")))
     rm(list = str_subset(objects(), pattern = "_gmt.df"))
-  }
 
+  }else if(Set_LoadGeneBy[1] == "Customize"){
+    #### Import Customization ####
+    # target.dir <- list.dirs( paste0("Input_Genesets/", InputFolder) )[-1]
+    FilesList.set <- list.files(paste0("Input_Genesets/", InputFolder),full.names = T) %>%
+                     str_subset(., pattern = "\\.gmt$")
 
-  ## Import Customization
-  # target.dir <- list.dirs( paste0("Input_Genesets/", InputFolder) )[-1]
-  FilesList.set <- list.files(paste0("Input_Genesets/", InputFolder),full.names = T) %>%
-    str_subset(., pattern = "\\.gmt$")
+    Nfiles = length(FilesList.set)
 
-  Nfiles = length(FilesList.set)
+    for(i in 1:Nfiles){
+      if(i==1){
+        # Deal with different number of columns
+        GSEAGeneSet.df <- read.delim2(FilesList.set[1],
+                                      col.names = 1:max(count.fields(FilesList.set[1])),
+                                      header = F,sep = "\t")
+      }else{
+        new_1 <- read.delim2(paste0(FilesList.set[i]),
+                             col.names = 1:max(count.fields(FilesList.set[i])),
+                             header = F,sep = "\t")
+        GSEAGeneSet.df <- smartbind(GSEAGeneSet.df,new_1)
+      }
 
-  for(i in 1:Nfiles){
-    if(i==1){
-      # Deal with different number of columns
-      GSEAGeneSet.df <- read.delim2(FilesList.set[1],
-                              col.names = 1:max(count.fields(FilesList.set[1])),
-                              header = F,sep = "\t")
-    }else{
-    new_1 <- read.delim2(paste0(FilesList.set[i]),
-                         col.names = 1:max(count.fields(FilesList.set[i])),
-                         header = F,sep = "\t")
-    GSEAGeneSet.df <- smartbind(GSEAGeneSet.df,new_1)
     }
-
+    rm(new_1,i)
   }
-  rm(new_1,i)
+
+
+
 
   #### Clean up df ####
   ## Remove duplicated
@@ -100,13 +111,13 @@
 
 ##### Export Result of Combine #####
   ## Note ## Need to remove the quote
-    # write.table(GSEAGeneSet.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName ,'.txt'),
+    # write.table(GSEAGeneSet.df,paste0(OutputFolder,"/",InputFolder,'_',Output_FileName ,'.txt'),
     #             row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
-    write.table(GSEAGeneSet.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName ,'.gmt'),
+    write.table(GSEAGeneSet.df,paste0(OutputFolder,"/",InputFolder,'_',Output_FileName ,'.gmt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
 ##### Filter by Keywords* #####
-  OutputFileName_KW <- "EMT" # Export file name
+  Output_FileName_KW <- "EMT" # Export file name
   Keyword.lt <- list("EMT",c("trans","epithelial"), c("trans","epithelial","GOBP"))
 
     for(i in 1:length(Keyword.lt)){
@@ -143,9 +154,9 @@
 
   ##### Export Result #####
   ## Note ## Need to remove the quote
-    # write.table(GSEAGeneSet_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_KW ,'.txt'),
+    # write.table(GSEAGeneSet_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',Output_FileName,'_',Output_FileName_KW ,'.txt'),
     #             row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
-    write.table(GSEAGeneSet_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_KW ,'.gmt'),
+    write.table(GSEAGeneSet_FLT.df,paste0(OutputFolder,"/",InputFolder,'_',Output_FileName,'_',Output_FileName_KW ,'.gmt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
   ### (pending) How to add conditions to a logical vector with a loop [r]
@@ -159,7 +170,7 @@
 
 
 ##### Choose specific Genesets* #####
-  OutputFileName_SPEC = "SPEC" # Export file name
+  Output_FileName_SPEC = "SPEC" # Export file name
 
   Int_Path.set <- c(
     "REACTOME_ACTIVATION_OF_ATR_IN_RESPONSE_TO_REPLICATION_STRESS",
@@ -175,15 +186,15 @@
 
   ##### Export Result #####
   ## Note ## Need to remove the quote
-    # write.table(GSEAGeneSet_SPEC.df, paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_SPEC ,'.txt'),
+    # write.table(GSEAGeneSet_SPEC.df, paste0(OutputFolder,"/",InputFolder,'_',Output_FileName,'_',Output_FileName_SPEC ,'.txt'),
     #             row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
-    write.table(GSEAGeneSet_SPEC.df, paste0(OutputFolder,"/",InputFolder,'_',OutputFileName,'_',OutputFileName_SPEC ,'.gmt'),
+    write.table(GSEAGeneSet_SPEC.df, paste0(OutputFolder,"/",InputFolder,'_',Output_FileName,'_',Output_FileName_SPEC ,'.gmt'),
                 row.names = FALSE,col.names= FALSE,quote = FALSE, sep = '\t', na="")
 
 
 
 #### Save RData ####
-  save.image(paste0("Input_Genesets/", InputFolder,".RData"))
+  save.image(paste0(OutputFolder,"/",InputFolder,'_',Set_Species, "_", Output_FileName,".RData"))
 
 #################################################################################
   #### TO-do list ####
