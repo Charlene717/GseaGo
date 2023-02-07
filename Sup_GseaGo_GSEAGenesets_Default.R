@@ -31,12 +31,7 @@
 
 
   #### Import gmt file of GSEA GeneSet ####
-  InputFolder = "Gsea_Genesets_Hs"
-
-  # target.dir <- list.dirs( paste0("Input_Genesets/", InputFolder) )[-1]
-  list.files <- list.files(paste0("Input_Genesets/", InputFolder),full.names = T)
-  list.files <- str_subset(list.files, pattern = "\\.symbols.gmt$")
-
+  # Function for read and combine multiple files
   FUN_ImportGmt <- function(list.files) {
 
     Nfiles = length(list.files)
@@ -55,18 +50,30 @@
       }
 
     }
-    rm(new_1,i)
 
     #### Clean up df ####
     ## Remove duplicated
     merge.df <- merge.df[!duplicated(merge.df[,2]), ]
-
-    # ## Remove NA (Have set in the write.table)
-    # # Ref: https://www.delftstack.com/zh-tw/howto/r/replace-na-with-0-in-r/
+    # ## Remove NA (Have set in the write.table) # Ref: https://www.delftstack.com/zh-tw/howto/r/replace-na-with-0-in-r/
     #   merge.df[is.na(merge.df)] <- ""
+
+    return(merge.df)
 
   }
 
+  # read gmt file of Hm.symbols
+  InputFolder = "Gsea_Genesets_Hs"
+  # target.dir <- list.dirs( paste0("Input_Genesets/", InputFolder) )[-1]
+  list.files <- list.files(paste0("Input_Genesets/", InputFolder),full.names = T)
+  list.files <- str_subset(list.files, pattern = "\\.symbols.gmt$")
+
+  GSEAGeneSet_Hs_symb_gm.df <- FUN_ImportGmt(list.files)
+
+  # read gmt file of Hm.entrez
+  list.files <- list.files(paste0("Input_Genesets/", "Gsea_Genesets_Hs"),full.names = T) %>%
+                str_subset(., pattern = "\\.entrez.gmt$")
+
+  GSEAGeneSet_Hs_entrez_gmt.df <- FUN_ImportGmt(list.files)
 
 
 ##### Update gene name ####
