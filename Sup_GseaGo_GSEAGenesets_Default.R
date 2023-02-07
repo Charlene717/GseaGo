@@ -32,19 +32,19 @@
 
   #### Import gmt file of GSEA GeneSet ####
   # Function for read and combine multiple files
-  FUN_ImportGmt <- function(list.files) {
+  FUN_ImportGmt <- function(FilesList.set) {
 
-    Nfiles = length(list.files)
+    Nfiles = length(FilesList.set)
 
     for(i in 1:Nfiles){
       if(i==1){
         # Deal with different number of columns
-        merge.df <- read.delim2(list.files[1],
-                                col.names = 1:max(count.fields(list.files[1])),
+        merge.df <- read.delim2(FilesList.set[1],
+                                col.names = 1:max(count.fields(FilesList.set[1])),
                                 header = F,sep = "\t")
       }else{
-        new_1 <- read.delim2(paste0(list.files[i]),
-                             col.names = 1:max(count.fields(list.files[i])),
+        new_1 <- read.delim2(paste0(FilesList.set[i]),
+                             col.names = 1:max(count.fields(FilesList.set[i])),
                              header = F,sep = "\t")
         merge.df <- smartbind(merge.df,new_1)
       }
@@ -64,16 +64,16 @@
   # read gmt file of Hm.symbols
   InputFolder = "Gsea_Genesets_Hs"
   # target.dir <- list.dirs( paste0("Input_Genesets/", InputFolder) )[-1]
-  list.files <- list.files(paste0("Input_Genesets/", InputFolder),full.names = T)
-  list.files <- str_subset(list.files, pattern = "\\.symbols.gmt$")
+  FilesList.set <- list.files(paste0("Input_Genesets/", InputFolder),full.names = T)
+  FilesList.set <- str_subset(FilesList.set, pattern = "\\.symbols.gmt$")
 
-  GSEAGeneSet_Hs_symb_gm.df <- FUN_ImportGmt(list.files)
+  GSEAGeneSet_Hs_symb_gm.df <- FUN_ImportGmt(FilesList.set)
 
   # read gmt file of Hm.entrez
-  list.files <- list.files(paste0("Input_Genesets/", "Gsea_Genesets_Hs"),full.names = T) %>%
+  FilesList.set <- list.files(paste0("Input_Genesets/", "Gsea_Genesets_Hs"),full.names = T) %>%
                 str_subset(., pattern = "\\.entrez.gmt$")
 
-  GSEAGeneSet_Hs_entrez_gmt.df <- FUN_ImportGmt(list.files)
+  GSEAGeneSet_Hs_entrez_gmt.df <- FUN_ImportGmt(FilesList.set)
 
 
 ##### Update gene name ####
