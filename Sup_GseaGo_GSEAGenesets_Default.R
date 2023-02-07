@@ -70,7 +70,7 @@
   FilesList.set <- list.files(paste0("Input_Genesets/", "Gsea_Genesets_Hs"),full.names = T) %>%
     str_subset(., pattern = "\\.symbols.gmt$")
 
-  GSEAGeneSet_Hs_symb_gm.df <- FUN_ImportGmt(FilesList.set)
+  GSEAGeneSet_Hs_symb_gmt.df <- FUN_ImportGmt(FilesList.set)
 
   ## read gmt file of Hs.entrez
   FilesList.set <- list.files(paste0("Input_Genesets/", "Gsea_Genesets_Hs"),full.names = T) %>%
