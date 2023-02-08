@@ -51,11 +51,27 @@
   GSEAGeneSet_MetaData.df <- GSEAGeneSet_MetaData.df[,c("STANDARD_NAME","SYSTEMATIC_NAME","CATEGORY_CODE","DESCRIPTION_BRIEF","DESCRIPTION_FULL")]
 
 ##### Conditions setting* #####
-  Set_Species = "Homo sapiens"
+
+  Set_TarGene <-  list(TarGene_name = "TP53",
+                       GeneExpMode = "Mean", # c("Mean","Mean1SD","Mean2SD","Mean3SD","Median","Quartile","Customize"))
+                       UpCutoff = 1, LowerCutoff = 1)
+
+
+  Set_Species <- "Homo sapiens"
+  Set_GroupMode <- "GoupByPheno"  # "GoupByPheno", "GoupByGeneExp"
+
+  if(Set_GroupMode == "GoupByPheno"){
+    Set_GroupCond <-  list(Type = "sample_type",
+                           GroupPair = c("Primary Tumor","Recurrent Tumor"))
+  }else if(Set_GroupMode == "GoupByGeneExp"){
+    Set_GroupCond <- Set_TarGene
+  }else{
+    print("Please set Set_GroupMode by GoupByPheno or GoupByGeneExp")
+  }
+
+
 
   DEGThr.lt <- list(LogFC = c("logFC",1), pVal = c("PValue",0.05) )
-
-  Set_GroupMode <- "GoupByPheno"   # c("GoupByPheno","GoupByGeneExp")
 
   ## GoupByGeneExp Setting
   TarGene_name <- "TP53"
