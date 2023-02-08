@@ -46,8 +46,8 @@
   GSEAGeneset.df <- read.delim2(paste0(getwd(),"/",ImportPath_Genesets_FOL,"/",Input_GSEAGeneSet),
                              col.names = 1:max(count.fields(paste0(getwd(),"/",ImportPath_Genesets_FOL,"/",Input_GSEAGeneSet))),
                              header = F,sep = "\t")
-  GSEAGeneSet_MetaData.df <- read.delim2(paste0(getwd(),"/",ImportPath_Genesets_FOL,"/",Input_GSEAGeneSet_MetaData),sep = "\t")
 
+  GSEAGeneSet_MetaData.df <- read.delim2(paste0(getwd(),"/",ImportPath_Genesets_FOL,"/",Input_GSEAGeneSet_MetaData),sep = "\t")
   GSEAGeneSet_MetaData.df <- GSEAGeneSet_MetaData.df[,c("STANDARD_NAME","SYSTEMATIC_NAME","CATEGORY_CODE","DESCRIPTION_BRIEF","DESCRIPTION_FULL")]
 
 ##### Conditions setting* #####
@@ -98,6 +98,8 @@
   Save.Path = paste0(getwd(),"/",Version)
   ## Create new folder
   if (!dir.exists(Save.Path)){dir.create(Save.Path)}
+
+  ## -[] Add setting record
 
 #************************************************************************************************************************#
 ##### Update the genename ####
