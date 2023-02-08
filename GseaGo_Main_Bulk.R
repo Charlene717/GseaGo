@@ -19,18 +19,18 @@
   source("FUN_GSEA_ggplot.R")
   source("FUN_ggPlot_vline.R")
 
-##### Import setting* #####
+##### SetImport setting* #####
   ## File setting*
-  ImportPath_FOL <- "Input_TCGA"  # Input Folder Name
-  Import_GE <- "Xena_TCGA_LGG_GE"
-  Import_Anno <- "TCGA.LGG.sampleMap_LGG_clinicalMatrix"
+  SetImportPath_FOL <- "Input_TCGA"  # Input Folder Name
+  SetImport_GE <- "Xena_TCGA_LGG_GE"
+  SetImport_Anno <- "TCGA.LGG.sampleMap_LGG_clinicalMatrix"
 
-  ## Import genetic data file
-  GeneExp.df <- read.table(paste0(ImportPath_FOL,"/",Import_GE), header=T, row.names = 1, sep="\t")
+  ## SetImport genetic data file
+  GeneExp.df <- read.table(paste0(SetImportPath_FOL,"/",SetImport_GE), header=T, row.names = 1, sep="\t")
   colnames(GeneExp.df) <-  gsub("\\.", "-", colnames(GeneExp.df))
   GeneExp_Ori.df <- GeneExp.df
 
-  Anno.df <- read.table(paste0(ImportPath_FOL,"/",Import_Anno), header=T, sep="\t")
+  Anno.df <- read.table(paste0(SetImportPath_FOL,"/",SetImport_Anno), header=T, sep="\t")
   Anno_Ori.df <- Anno.df
   row.names(Anno.df) <- Anno.df[,1]
 
@@ -38,23 +38,24 @@
   Anno.df <- left_join(data.frame("sampleID"=colnames(GeneExp.df)),
                        Anno.df)
 
-  ## Import GSEA gene sets
-  ImportPath_Genesets_FOL <- "Input_Genesets/Gsea_Genesets_Hs"
-  Input_GSEAGeneSet <- "msigdb.v2022.1.Hs.symbols.gmt"
-  Input_GSEAGeneSet_MetaData <- "msigdb_v2022.1.Hs.txt"
+  ## SetImport GSEA gene sets
+  SetImportPath_Genesets_FOL <- "Input_Genesets/Gsea_Genesets_Hs"
+  SetImport_GSEAGeneSet <- "msigdb.v2022.1.Hs.symbols.gmt"
+  SetImport_GSEAGeneSet_MetaData <- "msigdb_v2022.1.Hs.txt"
 
-  GSEAGeneset.df <- read.delim2(paste0(getwd(),"/",ImportPath_Genesets_FOL,"/",Input_GSEAGeneSet),
-                             col.names = 1:max(count.fields(paste0(getwd(),"/",ImportPath_Genesets_FOL,"/",Input_GSEAGeneSet))),
+  GSEAGeneset.df <- read.delim2(paste0(getwd(),"/",SetImportPath_Genesets_FOL,"/",SetImport_GSEAGeneSet),
+                             col.names = 1:max(count.fields(paste0(getwd(),"/",SetImportPath_Genesets_FOL,"/",SetImport_GSEAGeneSet))),
                              header = F,sep = "\t")
 
-  GSEAGeneSet_MetaData.df <- read.delim2(paste0(getwd(),"/",ImportPath_Genesets_FOL,"/",Input_GSEAGeneSet_MetaData),sep = "\t")
+  GSEAGeneSet_MetaData.df <- read.delim2(paste0(getwd(),"/",SetImportPath_Genesets_FOL,"/",SetImport_GSEAGeneSet_MetaData),sep = "\t")
   GSEAGeneSet_MetaData.df <- GSEAGeneSet_MetaData.df[,c("STANDARD_NAME","SYSTEMATIC_NAME","CATEGORY_CODE","DESCRIPTION_BRIEF","DESCRIPTION_FULL")]
 
 ##### Conditions setting* #####
-  SpeciesSet = "Homo sapiens"
+  Set_Species = "Homo sapiens"
+
   DEGThr.lt <- list(LogFC = c("logFC",1), pVal = c("PValue",0.05) )
 
-  Group_Mode <- "GoupByPheno"   # c("GoupByPheno","GoupByGeneExp")
+  Set_GroupMode <- "GoupByPheno"   # c("GoupByPheno","GoupByGeneExp")
 
   ## GoupByGeneExp Setting
   TarGene_name <- "TP53"
@@ -64,7 +65,7 @@
   ## GoupByPheno Setting
   GrpCompare_Pheno.lt <- list(Type = "sample_type", GroupPair = c("Primary Tumor","Recurrent Tumor"))
 
-  if(Group_Mode == "GoupByGeneExp"){
+  if(Set_GroupMode == "GoupByGeneExp"){
     ## Group by GeneExp
     AnnoSet.lt <- list(GroupType = TarGene_name, GroupCompare = c("High","Low") )   ## DEG by GeneExp group
   }else{
@@ -79,16 +80,16 @@
 
   ExportAnno2 = "Recur2Prim"
 
-  if(Group_Mode == "GoupByGeneExp"){
+  if(Set_GroupMode == "GoupByGeneExp"){
     if(GeneExpSet.lt$GeneExpMode == "Customize"){
-      ExportAnno = paste0(Group_Mode,"_",TarGene_name,"_",GeneExpSet.lt$GeneExpMode,"_Up", GeneExpSet.lt$UpCutoff,
+      ExportAnno = paste0(Set_GroupMode,"_",TarGene_name,"_",GeneExpSet.lt$GeneExpMode,"_Up", GeneExpSet.lt$UpCutoff,
                           "_Low_" ,GeneExpSet.lt$LowerCutoff,"_",ExportAnno2)
     }else{
-      ExportAnno = paste0(Group_Mode,"_",TarGene_name,"_",GeneExpSet.lt$GeneExpMode,"_",ExportAnno2)
+      ExportAnno = paste0(Set_GroupMode,"_",TarGene_name,"_",GeneExpSet.lt$GeneExpMode,"_",ExportAnno2)
     }
 
   }else{
-    ExportAnno = paste0(Group_Mode,"_",ExportAnno2)
+    ExportAnno = paste0(Set_GroupMode,"_",ExportAnno2)
   }
 
 
@@ -173,7 +174,7 @@
     #                                 GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
     #                                 ThrSet = DEGThr.lt,
     #                                 TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "sampleID",
-    #                                 Save.Path = Save.Path, Import_GE = Import_GE, AnnoName = "AvB")
+    #                                 Save.Path = Save.Path, SetImport_GE = SetImport_GE, AnnoName = "AvB")
     # DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
 
 
@@ -192,7 +193,7 @@
   )
 
   GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, CMGeneSet = GSEAGeneset.df,
-                                  DefaultGeneSet = "C2", Species = SpeciesSet, # Speices type can check by msigdbr_species()
+                                  DefaultGeneSet = "C2", Species = Set_Species, # Speices type can check by msigdbr_species()
                                   NumGenesetsPlt = 15,
                                   TarGeneName = TarGene_name,
                                   ThrSet = DEGThr.lt,
@@ -209,7 +210,7 @@
 #************************************************************************************************************************#
 ##### Build files for GSEA official input #####
   source("FUN_GSEA_ForOFFL.R")
-  if(Group_Mode == "GoupByGeneExp"){
+  if(Set_GroupMode == "GoupByGeneExp"){
      Group1.set <- GeneExp_high.set
      Group2.set <- GeneExp_low.set
 
@@ -222,7 +223,7 @@
 
   FUN_GSEA_ForOFFL(GeneExp.df,
                    Group1 = Group1.set, Group2 = Group2.set,
-                   GroupMode = Group_Mode,
+                   GroupMode = Set_GroupMode,
                    TarGeneName = TarGene_name, GeneExpSet = GeneExpSet.lt,
                    Save.Path = Save.Path, ExportName = ExportName,
                    AnnoName = "GSEA")
