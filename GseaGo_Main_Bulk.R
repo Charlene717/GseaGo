@@ -51,44 +51,30 @@
   GSEAGeneSet_MetaData.df <- GSEAGeneSet_MetaData.df[,c("STANDARD_NAME","SYSTEMATIC_NAME","CATEGORY_CODE","DESCRIPTION_BRIEF","DESCRIPTION_FULL")]
 
 ##### Conditions setting* #####
-
-  Set_TarGene <-  list(TarGene_name = "TP53",
-                       GeneExpMode = "Mean", # c("Mean","Mean1SD","Mean2SD","Mean3SD","Median","Quartile","Customize"))
-                       UpCutoff = 1, LowerCutoff = 1)
-
-
   Set_Species <- "Homo sapiens"
   Set_GroupMode <- "GoupByPheno"  # "GoupByPheno", "GoupByGeneExp"
 
+  TarGene_name = "TP53"
+  Set_TarGene <-  list(TarGeneName = TarGene_name,
+                       GEGroupMode = "Mean", # c("Mean","Mean1SD","Mean2SD","Mean3SD","Median","Quartile","Customize"))
+                       UpCutoff = 1, LowerCutoff = 1)
+
+
   if(Set_GroupMode == "GoupByPheno"){
-    Set_GroupCond <-  list(Type = "sample_type",
+    Set_GroupCond <-  list(GroupType = "sample_type",
                            GroupPair = c("Primary Tumor","Recurrent Tumor"))
   }else if(Set_GroupMode == "GoupByGeneExp"){
-    Set_GroupCond <- Set_TarGene
+    Set_GroupCond <- list(GroupType = TarGene_name, GroupPair = c("High","Low") )   ## DEG by GeneExp group
   }else{
     print("Please set Set_GroupMode by GoupByPheno or GoupByGeneExp")
   }
 
 
-
+  ## - [] Add Metric for ranking gene
+  ## - [] Modify DGE
   DEGThr.lt <- list(LogFC = c("logFC",1), pVal = c("PValue",0.05) )
 
-  ## GoupByGeneExp Setting
-  TarGene_name <- "TP53"
-  GeneExpSet.lt <- list(GeneExpMode = "Mean", # c("Mean","Mean1SD","Mean2SD","Mean3SD","Median","Quartile","Customize"))
-                        UpCutoff = 1, LowerCutoff = 1)
 
-  ## GoupByPheno Setting
-  GrpCompare_Pheno.lt <- list(Type = "sample_type", GroupPair = c("Primary Tumor","Recurrent Tumor"))
-
-  if(Set_GroupMode == "GoupByGeneExp"){
-    ## Group by GeneExp
-    AnnoSet.lt <- list(GroupType = TarGene_name, GroupCompare = c("High","Low") )   ## DEG by GeneExp group
-  }else{
-    ## Group by Pheno
-    AnnoSet.lt <- list(GroupType = GrpCompare_Pheno.lt[["Type"]],
-                       GroupCompare = GrpCompare_Pheno.lt[["GroupPair"]] )
-  }
 
 ##### Current path and new folder setting* #####
   ProjectName = "GSEA_TCGA"
@@ -97,11 +83,11 @@
   ExportAnno2 = "Recur2Prim"
 
   if(Set_GroupMode == "GoupByGeneExp"){
-    if(GeneExpSet.lt$GeneExpMode == "Customize"){
-      ExportAnno = paste0(Set_GroupMode,"_",TarGene_name,"_",GeneExpSet.lt$GeneExpMode,"_Up", GeneExpSet.lt$UpCutoff,
+    if(GeneExpSet.lt$GEGroupMode == "Customize"){
+      ExportAnno = paste0(Set_GroupMode,"_",TarGene_name,"_",GeneExpSet.lt$GEGroupMode,"_Up", GeneExpSet.lt$UpCutoff,
                           "_Low_" ,GeneExpSet.lt$LowerCutoff,"_",ExportAnno2)
     }else{
-      ExportAnno = paste0(Set_GroupMode,"_",TarGene_name,"_",GeneExpSet.lt$GeneExpMode,"_",ExportAnno2)
+      ExportAnno = paste0(Set_GroupMode,"_",TarGene_name,"_",GeneExpSet.lt$GEGroupMode,"_",ExportAnno2)
     }
 
   }else{
@@ -176,7 +162,7 @@
   #### Run DEG ####
   source("FUN_DEG_Analysis.R")
   DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
-                                  GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
+                                  GroupType = Set_GroupCond[["GroupType"]], GroupCompare = Set_GroupCond[["GroupPair"]],
                                   ThrSet = DEGThr.lt,
                                   TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "sampleID",
                                   Save.Path = Save.Path, ExportName = ExportName, AnnoName = "")
@@ -184,10 +170,10 @@
 
 
     # #### Test: DEG by GeneExp group ####
-    # AnnoSet.lt <- list(GroupType = TarGene_name, GroupCompare = c("High","Low") )
+    # Set_GroupCond <- list(GroupType = TarGene_name, GroupPair = c("High","Low") )
     # source("FUN_DEG_Analysis.R")
     # DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
-    #                                 GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
+    #                                 GroupType = Set_GroupCond[["GroupType"]], GroupCompare = Set_GroupCond[["GroupPair"]],
     #                                 ThrSet = DEGThr.lt,
     #                                 TarGeneName = TarGene_name, GroupMode = GeneExpSet.lt, SampleID = "sampleID",
     #                                 Save.Path = Save.Path, SetImport_GE = SetImport_GE, AnnoName = "AvB")
@@ -231,8 +217,8 @@
      Group2.set <- GeneExp_low.set
 
   }else{
-    Group1.set <- Anno.df[Anno.df[,GrpCompare_Pheno.lt[["Type"]] ]%in% GrpCompare_Pheno.lt[["GroupPair"]][1],][,1]
-    Group2.set <- Anno.df[Anno.df[,GrpCompare_Pheno.lt[["Type"]] ]%in% GrpCompare_Pheno.lt[["GroupPair"]][2],][,1]
+    Group1.set <- Anno.df[Anno.df[,Set_GroupCond[["GroupType"]] ]%in% Set_GroupCond[["GroupPair"]][1],][,1]
+    Group2.set <- Anno.df[Anno.df[,Set_GroupCond[["GroupType"]] ]%in% Set_GroupCond[["GroupPair"]][2],][,1]
 
   }
 
