@@ -52,7 +52,7 @@
 
 ##### Conditions setting* #####
   Set_Species <- "Homo sapiens"
-  Set_GroupMode <- "GoupByGeneExp"  # "GoupByPheno", "GoupByGeneExp"
+  Set_GroupMode <- "GoupByPheno"  # "GoupByPheno", "GoupByGeneExp"
 
   TarGene_name = "TP53"
   Set_TarGene <-  list(TarGeneName = TarGene_name,
@@ -77,28 +77,27 @@
 
 
 ##### Current path and new folder setting* #####
-  ProjectName = "GSEA_TCGA"
-  Sampletype = "LGG"
+  Export_ProjectName = "GSEA_TCGA"
+  Export_Sampletype = "LGG"
 
-  ExportAnno2 = "Recur2Prim"
+  Export_Anno = "Recur2Prim"
 
   if(Set_GroupMode == "GoupByGeneExp"){
     if(Set_TarGene$GEGroupMode == "Customize"){
-      ExportAnno = paste0(Set_GroupMode,"_",TarGene_name,"_",Set_TarGene$GEGroupMode,"_Up", Set_TarGene$UpCutoff,
-                          "_Low_" ,Set_TarGene$LowerCutoff,"_",ExportAnno2)
+      Export_Cond = paste0(Set_GroupMode,"_",TarGene_name,"_",Set_TarGene$GEGroupMode,"_Up", Set_TarGene$UpCutoff,
+                          "_Low_" ,Set_TarGene$LowerCutoff,"_",Export_Anno)
     }else{
-      ExportAnno = paste0(Set_GroupMode,"_",TarGene_name,"_",Set_TarGene$GEGroupMode,"_",ExportAnno2)
+      Export_Cond = paste0(Set_GroupMode,"_",TarGene_name,"_",Set_TarGene$GEGroupMode,"_",Export_Anno)
     }
 
   }else{
-    ExportAnno = paste0(Set_GroupMode,"_",ExportAnno2)
+    Export_Cond = paste0(Set_GroupMode,"_",Export_Anno)
   }
 
 
-  ExportName = paste0(ProjectName,"_",Sampletype,"_",ExportAnno)
+  Export_Name = paste0(Export_ProjectName,"_",Export_Sampletype,"_",Export_Cond)
 
-  Version = paste0(Sys.Date(),"_",ExportName)
-  Save.Path = paste0(getwd(),"/",Version)
+  Save.Path = paste0(getwd(),"/",Sys.Date(),"_",Export_Name)
   ## Create new folder
   if (!dir.exists(Save.Path)){dir.create(Save.Path)}
 
@@ -142,7 +141,7 @@
   ##### Group by gene expression 1: CutOff by total  #####
   Plot.DistrPlot <- FUN_DistrPlot(GeneExp.df,
                                   TarGeneName = TarGene_name, GroupSet = Set_TarGene,
-                                  Save.Path = Save.Path, ExportName = ExportName)
+                                  Save.Path = Save.Path, ExportName = Export_Name)
   Plot.DistrPlot_SD_Q <- Plot.DistrPlot[["TGeneDen_SD_Q.p"]]
   Plot.DistrPlot_SD_Q
 
@@ -152,7 +151,7 @@
   source("FUN_Group_GE.R")
   GeneExp_group.set <- FUN_Group_GE(GeneExp.df, Anno.df,
                                     TarGeneName = TarGene_name, GroupSet = Set_TarGene,
-                                    Save.Path = Save.Path, ExportName = ExportName)
+                                    Save.Path = Save.Path, ExportName = Export_Name)
   Anno.df <- GeneExp_group.set[["AnnoNew.df"]]
   GeneExp_high.set <- GeneExp_group.set[["GeneExp_high.set"]]
   GeneExp_low.set <- GeneExp_group.set[["GeneExp_low.set"]]
@@ -165,7 +164,7 @@
                                   GroupType = Set_GroupCond[["GroupType"]], GroupCompare = Set_GroupCond[["GroupPair"]],
                                   ThrSet = DEGThr.lt,
                                   TarGeneName = TarGene_name, GroupMode = Set_TarGene, SampleID = "sampleID",
-                                  Save.Path = Save.Path, ExportName = ExportName, AnnoName = "")
+                                  Save.Path = Save.Path, ExportName = Export_Name, AnnoName = "")
   DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
 
 
@@ -199,7 +198,7 @@
                                   NumGenesetsPlt = 15,
                                   TarGeneName = TarGene_name,
                                   ThrSet = DEGThr.lt,
-                                  Save.Path = Save.Path, ExportName = ExportName, AnnoName = "Path",
+                                  Save.Path = Save.Path, ExportName = Export_Name, AnnoName = "Path",
                                   Keyword = "HALLMARK",
                                   Int_Path =  Int_Path.set,
                                   pAdjustMethod = "BH",  # pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"
@@ -227,7 +226,7 @@
                    Group1 = Group1.set, Group2 = Group2.set,
                    GroupMode = Set_GroupMode,
                    TarGeneName = TarGene_name, GeneExpSet = Set_TarGene,
-                   Save.Path = Save.Path, ExportName = ExportName,
+                   Save.Path = Save.Path, ExportName = Export_Name,
                    AnnoName = "GSEA")
 
 
@@ -237,7 +236,7 @@
 
 
 #### Save RData ####
-  save.image(paste0(Save.Path,"/GseaGo_",ExportName,".RData"))
+  save.image(paste0(Save.Path,"/GseaGo_",Export_Name,".RData"))
 
 
 
