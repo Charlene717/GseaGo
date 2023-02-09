@@ -20,7 +20,7 @@ FUN_UpdateGene <- function(GeneName_Ori, Species = Specie, AvoidMult = TRUE) {
     GeneName <- UpdateGeneName
   }
 
-  if(AvoidMult == TRUE){
+  if(AvoidMult == TRUE){ ## Aovid one-to-many
     GeneName <- GeneName[1]
   }
   return(GeneName)
@@ -36,7 +36,7 @@ UpGeneName.df <- lapply(row.names(GeneExp_Temp.df), function(x)FUN_UpdateGene(x)
 CompareGene.df <- cbind(row.names(GeneExp_Temp.df),UpGeneName.df[,1]) %>% as.data.frame()
 
 
-## Find Duplicate name
+## Find Duplicate name Aovid many-to-one
 ## Ref: http://guangzheng.name/2017/10/07/%E5%A6%82%E4%BD%95%E6%9F%A5%E6%89%BE%E6%95%B0%E6%8D%AE%E6%A1%86%E4%B8%AD%E9%87%8D%E5%A4%8D%E7%9A%84%E6%95%B0%E6%8D%AE/
 library(dplyr)
 CompareGene.df %>% group_by(V2) %>%
@@ -60,6 +60,9 @@ UpdateGeneDUPE <- function(df,x) {
 UpGeneName2.df <- lapply(1:nrow(CompareGene.df), function(x)UpdateGeneDUPE(CompareGene.df,x))  %>% as.data.frame() %>% t
 row.names(GeneExp_Temp.df) <- UpGeneName2.df
 GeneExp.df <- GeneExp_Temp.df
+
+
+
 CompareGene.df <- cbind(CompareGene.df, UpGeneName2.df)
 colnames(CompareGene.df) <- c("Ori","UpGeneName","DUPEGene")
 row.names(CompareGene.df) <- seq(1:nrow(CompareGene.df))
