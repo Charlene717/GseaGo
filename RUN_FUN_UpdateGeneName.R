@@ -12,7 +12,7 @@ if(Set_Species == "Homo sapiens"){
   Specie = "Hs"
 }
 
-UpdateGene <- function(GeneName_Ori, Species = Specie, AvoidMult = TRUE) {
+FUN_UpdateGene <- function(GeneName_Ori, Species = Specie, AvoidMult = TRUE) {
   UpdateGeneName <- alias2Symbol(GeneName_Ori, species = Species, expand.symbols = FALSE)
   if( length(UpdateGeneName) == 0 ){
     GeneName <- GeneName_Ori
@@ -26,12 +26,12 @@ UpdateGene <- function(GeneName_Ori, Species = Specie, AvoidMult = TRUE) {
   return(GeneName)
 }
 
-# ## Test UpdateGene function
+# ## Test FUN_UpdateGene function
 # TestGene <- "SEPT1" # TestGene <- "HBII-52-46"
-# TestGene <- UpdateGene(TestGene)
+# TestGene <- FUN_UpdateGene(TestGene)
 
 GeneExp_Temp.df <- GeneExp.df
-UpGeneName.df <- lapply(row.names(GeneExp_Temp.df), function(x)UpdateGene(x))  %>% unlist() %>% as.data.frame()
+UpGeneName.df <- lapply(row.names(GeneExp_Temp.df), function(x)FUN_UpdateGene(x))  %>% unlist() %>% as.data.frame()
 
 CompareGene.df <- cbind(row.names(GeneExp_Temp.df),UpGeneName.df[,1]) %>% as.data.frame()
 
