@@ -4,31 +4,30 @@ if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 if (!requireNamespace("limma", quietly = TRUE)) BiocManager::install("limma")
 library(limma)
 
-if(SpeciesSet == "Homo sapiens"){
+if(Set_Species == "Homo sapiens"){
   Specie = "Hs"
-}else if(SpeciesSet == "Mus musculus"){
+}else if(Set_Species == "Mus musculus"){
   Specie = "Mm"
 }else{
   Specie = "Hs"
 }
 
-UpdateGene <- function(TestGeneName, Species = Specie) {
-  UpdateGeneName <- alias2Symbol(TestGeneName, species = Species, expand.symbols = FALSE)
+UpdateGene <- function(GeneName_Ori, Species = Specie, AvoidMult = TRUE) {
+  UpdateGeneName <- alias2Symbol(GeneName_Ori, species = Species, expand.symbols = FALSE)
   if( length(UpdateGeneName) == 0 ){
-    TestGeneName <- TestGeneName
+    GeneName <- GeneName_Ori
   }else{
-    TestGeneName <- UpdateGeneName
+    GeneName <- UpdateGeneName
   }
 
-  if(length(TestGeneName) > 1){
-    TestGeneName <- TestGeneName[1]
+  if(AvoidMult == TRUE){
+    GeneName <- GeneName[1]
   }
-  return(TestGeneName)
+  return(GeneName)
 }
 
 # ## Test UpdateGene function
-# TestGene <- "SEPT1"
-# TestGene <- "HBII-52-46"
+# TestGene <- "SEPT1" # TestGene <- "HBII-52-46"
 # TestGene <- UpdateGene(TestGene)
 
 GeneExp_Temp.df <- GeneExp.df
@@ -41,12 +40,12 @@ CompareGene.df <- cbind(row.names(GeneExp_Temp.df),UpGeneName.df[,1]) %>% as.dat
 ## Ref: http://guangzheng.name/2017/10/07/%E5%A6%82%E4%BD%95%E6%9F%A5%E6%89%BE%E6%95%B0%E6%8D%AE%E6%A1%86%E4%B8%AD%E9%87%8D%E5%A4%8D%E7%9A%84%E6%95%B0%E6%8D%AE/
 library(dplyr)
 CompareGene.df %>% group_by(V2) %>%
-               mutate(index = n()) %>%
-               filter(index > 1) %>%
-               select(2) %>%
-               ungroup() %>%
-               unique() %>%
-               unlist() -> Dup.set
+                   mutate(index = n()) %>%
+                   filter(index > 1) %>%
+                   select(2) %>%
+                   ungroup() %>%
+                   unique() %>%
+                   unlist() -> Dup.set
 
 ## Deal with Duplicate name (No change if encounter duplicate names)
 UpdateGeneDUPE <- function(df,x) {
