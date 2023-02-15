@@ -114,7 +114,7 @@
     if (!requireNamespace("limma", quietly = TRUE)) BiocManager::install("limma")
     library(limma)
 
-    source("RUN_FUN_UpdateGeneName.R")
+    source("RUN_UpdateGeneName.R")
   }
 
 #************************************************************************************************************************#
