@@ -71,10 +71,12 @@ GeneNameCompare.df <- cbind(GeneNameCompare.df, GeneNameDWM2O.df)
 colnames(GeneNameCompare.df) <- c("Ori","UpGeneName","DUPEGene")
 row.names(GeneNameCompare.df) <- seq(1:nrow(GeneNameCompare.df))
 
-CompareGene_Sum.df <- data.frame(
-  A = sum(GeneNameCompare.df[,1] == GeneNameCompare.df[,2]),
-  B = sum(GeneNameCompare.df[,1] != GeneNameCompare.df[,2]),
-  C = sum(GeneNameCompare.df[,2] != GeneNameCompare.df[,3])
+GeneNameCompare_Sum.df <- data.frame(
+  OriToUpdate_Same = sum(GeneNameCompare.df[,1] == GeneNameCompare.df[,2]),
+  OriToUpdate_Diff = sum(GeneNameCompare.df[,1] != GeneNameCompare.df[,2]),
+
+  DWM2OToUpdate_Same = sum(GeneNameCompare.df[,2] == GeneNameCompare.df[,3]),
+  DWM2OToUpdate_Diff = sum(GeneNameCompare.df[,2] != GeneNameCompare.df[,3])
 )
 
 
