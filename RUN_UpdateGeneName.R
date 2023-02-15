@@ -40,7 +40,7 @@ CompareGene.df <- cbind(row.names(GeneExp.df),UpGeneName.df[,1]) %>% as.data.fra
 library(dplyr)
 ## Extract duplicate name
 CompareGene.df %>% group_by(V2) %>%
-                   mutate(index = n()) %>%
+                   dplyr::mutate(index = n()) %>%
                    filter(index > 1) %>%
                    select(2) %>%
                    ungroup() %>%
