@@ -47,6 +47,11 @@ CompareGene.df %>% group_by(V2) %>%
                    unique() %>%
                    unlist() -> Dup.set
 
+## -[] How to deal with duplicate name (many-to-one)?
+# (1)Small number which can be ignored
+# (2)Find the most varied gene as the representative gene (standard deviation, quartile, range)
+# (3)The gene that shows the most difference between the two populations is used as the representative gene
+
 ## Deal with duplicate name (many-to-one)
 FUN_DWMany2One <- function(df,x) {
   if( (df[x,2] %in% Dup.set)== TRUE ){
