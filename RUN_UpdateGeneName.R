@@ -1,3 +1,6 @@
+##### To do list #####
+## -[] How to reduce computing time?
+
 ##### Update the genename ####
 ## Ref: http://web.mit.edu/~r/current/arch/i386_linux26/lib/R/library/limma/html/alias2Symbol.html
 if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
@@ -81,7 +84,6 @@ GeneNameCompare_Sum.df <- data.frame(
   DWM2OToUpdate_Diff = sum(GeneNameCompare.df[,2] != GeneNameCompare.df[,3])
 )
 
-
 rm(GeneNameUpdate.df,GeneNameDWM2O.df)
 
 #************************************************************************************************************************#
@@ -106,6 +108,7 @@ rm(GeneNameUpdate.df,GeneNameDWM2O.df)
 #
 # # ## https://rdrr.io/github/vertesy/Seurat.utils/src/Development/Functions/Seurat.update.gene.symbols.HGNC.R
 # # HGNC.EnforceUniquet("SEPT1")
+
 
 #************************************************************************************************************************#
 # #### Test2 ####
