@@ -151,20 +151,20 @@
     Plot.DistrPlot_SD_Q
 
   }else if(Set_GroupMode == "GoupByPheno"){
-    p <- ggplot(Anno.df, aes(x=as.factor(Anno.df[,Set_GroupCond$GroupType]), fill=as.factor(Anno.df[,Set_GroupCond$GroupType]))) + geom_bar()
-    # p <- ggplot(Anno.df, aes(x=as.factor(gender), fill=as.factor(gender))) + geom_bar()
+    p.Barplot <- ggplot(Anno.df, aes(x=as.factor(Anno.df[,Set_GroupCond$GroupType]), fill=as.factor(Anno.df[,Set_GroupCond$GroupType]))) + geom_bar()
+    # p.Barplot <- ggplot(Anno.df, aes(x=as.factor(gender), fill=as.factor(gender))) + geom_bar()
 
-    p + labs(fill=Set_GroupCond$GroupType, x=Set_GroupCond$GroupType, y = "count")+
+    p.Barplot + labs(fill=Set_GroupCond$GroupType, x=Set_GroupCond$GroupType, y = "count")+
         theme_classic() %>% BeautifyggPlot(AxisTitleSize=2,LegPos = c(0.75, 0.85))+
-        theme(axis.text.x = element_text(angle = 0, hjust = 0.5)) -> p1
-    p1
+        theme(axis.text.x = element_text(angle = 0, hjust = 0.5)) -> p.Barplot1
+    p.Barplot1
 
     pdf(file = paste0(Save.Path,"/BarPlot_",Export_Name,".pdf"),
         width = 10,  height = 8)
-    p1
+    p.Barplot1
 
     dev.off()
-    rm(p, p1)
+    rm(p.Barplot, p.Barplot1)
 
   }else{
     print("Please set the GroupMode as GoupByPheno or GoupByGeneExp")
