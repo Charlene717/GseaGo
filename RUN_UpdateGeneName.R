@@ -4,6 +4,7 @@ if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 if (!requireNamespace("limma", quietly = TRUE)) BiocManager::install("limma")
 library(limma)
 
+## Set Species
 if(Set_Species == "Homo sapiens"){
   Specie = "Hs"
 }else if(Set_Species == "Mus musculus"){
@@ -12,6 +13,7 @@ if(Set_Species == "Homo sapiens"){
   Specie = "Hs"
 }
 
+## Update the gene names to the latest version
 FUN_UpdateGene <- function(GeneName_Ori, Species = Specie, AvoidMult = TRUE) {
   UpdateGeneName <- alias2Symbol(GeneName_Ori, species = Species, expand.symbols = FALSE)
   if( length(UpdateGeneName) == 0 ){
