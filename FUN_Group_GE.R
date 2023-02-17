@@ -34,31 +34,31 @@ FUN_Group_GE = function(GeneExp.df, Anno.df,
 
 
   ##### Group the expression matrix according to the expression level of Target gene ####
-  if(GroupSet$GeneExpMode == "Mean"){
+  if(GroupSet$GEGroupMode == "Mean"){
     GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Mean+TarGene_SD*0]
     GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] < TarGene_Mean-TarGene_SD*0]
 
-  }else if(GroupSet$GeneExpMode == "Mean1SD"){
+  }else if(GroupSet$GEGroupMode == "Mean1SD"){
     GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Mean+TarGene_SD*1]
     GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] <= TarGene_Mean-TarGene_SD*1]
 
-  }else if(GroupSet$GeneExpMode == "Mean2SD"){
+  }else if(GroupSet$GEGroupMode == "Mean2SD"){
     GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Mean+TarGene_SD*2]
     GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] <= TarGene_Mean-TarGene_SD*2]
 
-  }else if(GroupSet$GeneExpMode == "Mean3SD"){
+  }else if(GroupSet$GEGroupMode == "Mean3SD"){
     GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Mean+TarGene_SD*3]
     GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] <= TarGene_Mean-TarGene_SD*3]
 
-  }else if(GroupSet$GeneExpMode == "Median"){
+  }else if(GroupSet$GEGroupMode == "Median"){
     GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Q[3]]
     GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] < TarGene_Q[3]]
 
-  }else if(GroupSet$GeneExpMode == "Quartile"){
+  }else if(GroupSet$GEGroupMode == "Quartile"){
     GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= TarGene_Q[4]]
     GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] <= TarGene_Q[2]]
 
-  }else if(GroupSet$GeneExpMode == "Customize"){
+  }else if(GroupSet$GEGroupMode == "Customize"){
     GeneExp_high.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] >= GroupSet$UpCutoff]
     GeneExp_low.set <- colnames(GeneExp.df)[GeneExp.df[TarGeneName,] <= GroupSet$LowerCutoff]
 
