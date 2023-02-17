@@ -66,43 +66,43 @@ FUN_DistrPlot = function(GeneExp.df,
   DistPlt_Ori(data,Line1V,Line2V,Line3V,Custom.clr)
 
   ##### Set group conditions ####
-    if(GroupSet$GeneExpMode == "Mean1SD"){
+    if(GroupSet$GEGroupMode == "Mean1SD"){
       Line1V = TarGene_Mean+TarGene_SD
       Line2V = TarGene_Mean
       Line3V = TarGene_Mean-TarGene_SD
       Text.set = c("Mean+1SD","Mean","Mean-1SD")
 
-    }else if(GroupSet$GeneExpMode == "Mean2SD"){
+    }else if(GroupSet$GEGroupMode == "Mean2SD"){
       Line1V = TarGene_Mean+2*TarGene_SD
       Line2V = TarGene_Mean
       Line3V = TarGene_Mean-2*TarGene_SD
       Text.set = c("Mean+2SD","Mean","Mean-2SD")
 
-    }else if(GroupSet$GeneExpMode == "Mean3SD"){
+    }else if(GroupSet$GEGroupMode == "Mean3SD"){
       Line1V = TarGene_Mean+3*TarGene_SD
       Line2V = TarGene_Mean
       Line3V = TarGene_Mean-3*TarGene_SD
       Text.set = c("Mean+3SD","Mean","Mean-3SD")
 
-    }else if(GroupSet$GeneExpMode == "Mean"){
+    }else if(GroupSet$GEGroupMode == "Mean"){
       Line1V = TarGene_Mean
       Line2V = TarGene_Mean
       Line3V = TarGene_Mean
       Text.set = c("Mean","Mean","Mean")
 
-    }else if(GroupSet$GeneExpMode == "Quartile"){
+    }else if(GroupSet$GEGroupMode == "Quartile"){
       Line1V = TarGene_Q[4]
       Line2V = TarGene_Q[3]
       Line3V = TarGene_Q[2]
       Text.set = c("Q3","Q2","Q1")
 
-    }else if(GroupSet$GeneExpMode == "Median"){
+    }else if(GroupSet$GEGroupMode == "Median"){
       Line1V = TarGene_Q[3]
       Line2V = TarGene_Q[3]
       Line3V = TarGene_Q[3]
       Text.set = c("Q2","Q2","Q2")
 
-    }else if(GroupSet$GeneExpMode == "Customize"){
+    }else if(GroupSet$GEGroupMode == "Customize"){
       Line1V = Line1V
       Line2V = Line2V
       Line3V = Line3V
