@@ -8,11 +8,11 @@ FUN_DistrPlot = function(GeneExp.df,
   ##### Load Packages #####
   if(!require("tidyverse")) install.packages("tidyverse")
   if(!require("patchwork")) install.packages("patchwork")
-  if(!require("eoffice")) install.packages("eoffice")
+  # if(!require("eoffice")) install.packages("eoffice")
 
   library(tidyverse)
   library(patchwork)
-  library(eoffice)
+  # library(eoffice)
 
   ##### Extract Target gene and Statistics ####
   # Extract data with TarGeneName
