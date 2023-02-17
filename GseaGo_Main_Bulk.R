@@ -136,6 +136,7 @@
   # ## Replace
   # Anno.df[,"sample_type"] <- gsub("Primary Tumor", "PrimTu", Anno.df[,"sample_type"])
 
+  ## -[] Normalization or Standardization
 
 
 #************************************************************************************************************************#
@@ -148,8 +149,17 @@
                                        Save.Path = Save.Path, ExportName = Export_Name)
     Plot.DistrPlot_SD_Q <- Plot.DistrPlot[["TGeneDen_SD_Q.p"]]
     Plot.DistrPlot_SD_Q
-  }else{
 
+  }else if(Set_GroupMode == "GoupByPheno"){
+    p <- ggplot(Anno.df, aes(x=as.factor(Anno.df[,Set_GroupCond$GroupType]), fill=as.factor(Anno.df[,Set_GroupCond$GroupType]))) + geom_bar()
+    # p <- ggplot(Anno.df, aes(x=as.factor(gender), fill=as.factor(gender))) + geom_bar()
+
+    p + labs(fill=Set_GroupCond$GroupType, x=Set_GroupCond$GroupType, y = "count")+
+        theme_classic() %>% BeautifyggPlot(AxisTitleSize=2,LegPos = c(0.75, 0.85))+
+        theme(axis.text.x = element_text(angle = 0, hjust = 0.5))
+
+  }else{
+    print("Please set the GroupMode as GoupByPheno or GoupByGeneExp")
   }
 
 
