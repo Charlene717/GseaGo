@@ -156,7 +156,15 @@
 
     p + labs(fill=Set_GroupCond$GroupType, x=Set_GroupCond$GroupType, y = "count")+
         theme_classic() %>% BeautifyggPlot(AxisTitleSize=2,LegPos = c(0.75, 0.85))+
-        theme(axis.text.x = element_text(angle = 0, hjust = 0.5))
+        theme(axis.text.x = element_text(angle = 0, hjust = 0.5)) -> p1
+    p1
+
+    pdf(file = paste0(Save.Path,"/BarPlot_",Export_Name,".pdf"),
+        width = 10,  height = 8)
+    p1
+
+    dev.off()
+    rm(p, p1)
 
   }else{
     print("Please set the GroupMode as GoupByPheno or GoupByGeneExp")
