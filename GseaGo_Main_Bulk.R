@@ -118,7 +118,7 @@
   }
 
 #************************************************************************************************************************#
-##### Data preprocess #####
+##### Data preprocess* #####
   ## Select Pheno column
   colnames(Anno.df)
 
@@ -131,7 +131,7 @@
   ## Select Pheno row
   PhenoRowKeep.set <- list(col="sample_type",row=c("Primary Tumor","Recurrent Tumor"))
   Anno.df <- Anno.df[Anno.df[,PhenoRowKeep.set[["col"]]] %in% PhenoRowKeep.set[["row"]], ]
-  GeneExp.df <- GeneExp.df[,colnames(GeneExp.df) %in% row.names(Anno.df)]
+  GeneExp.df <- GeneExp.df[,colnames(GeneExp.df) %in% Anno.df$sampleID]
 
   # ## Replace
   # Anno.df[,"sample_type"] <- gsub("Primary Tumor", "PrimTu", Anno.df[,"sample_type"])
