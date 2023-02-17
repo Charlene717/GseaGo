@@ -28,10 +28,10 @@
   ## SetImport genetic data file
   GeneExp.df <- read.table(paste0(SetImportPath_FOL,"/",SetImport_GE), header=T, row.names = 1, sep="\t")
   colnames(GeneExp.df) <-  gsub("\\.", "-", colnames(GeneExp.df))
-  GeneExp_Ori.df <- GeneExp.df
+  # GeneExp_Ori.df <- GeneExp.df
 
   Anno.df <- read.table(paste0(SetImportPath_FOL,"/",SetImport_Anno), header=T, sep="\t")
-  Anno_Ori.df <- Anno.df
+  # Anno_Ori.df <- Anno.df
   row.names(Anno.df) <- Anno.df[,1]
 
   ## Reorder the Anno.df
