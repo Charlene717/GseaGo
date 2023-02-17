@@ -141,12 +141,17 @@
 #************************************************************************************************************************#
 ##### Visualization for Exploratory Data Analysis(EDA) #####
   source("FUN_DistrPlot.R")
-  ##### Group by gene expression 1: CutOff by total  #####
-  Plot.DistrPlot <- FUN_DistrPlot_GE(GeneExp.df,
-                                     TarGeneName = TarGene_name, GroupSet = Set_TarGene,
-                                     Save.Path = Save.Path, ExportName = Export_Name)
-  Plot.DistrPlot_SD_Q <- Plot.DistrPlot[["TGeneDen_SD_Q.p"]]
-  Plot.DistrPlot_SD_Q
+
+  if(Set_GroupMode == "GoupByGeneExp"){
+    Plot.DistrPlot <- FUN_DistrPlot_GE(GeneExp.df,
+                                       TarGeneName = TarGene_name, GroupSet = Set_TarGene,
+                                       Save.Path = Save.Path, ExportName = Export_Name)
+    Plot.DistrPlot_SD_Q <- Plot.DistrPlot[["TGeneDen_SD_Q.p"]]
+    Plot.DistrPlot_SD_Q
+  }else{
+
+  }
+
 
 
 #************************************************************************************************************************#
