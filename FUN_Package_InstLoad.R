@@ -31,11 +31,11 @@ FUN_Package_InstLoad = function( Basic.set = Basic.set,
 
   #### BiocManager installation ####
   ## Check whether the installation of those packages is required from BiocManager
-  if(exists("FUN_BiocManager.set")==TRUE){
+  if(exists("BiocManager.set")==TRUE){
 
     if (!require("BiocManager", quietly = TRUE))
       install.packages("BiocManager")
-    BiocManager.set <- BiocManager.set
+
     for (i in 1:length(BiocManager.set)) {
       if (!requireNamespace(BiocManager.set[i], quietly = TRUE)){
         BiocManager::install(BiocManager.set[i])
