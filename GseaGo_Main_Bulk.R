@@ -72,7 +72,7 @@
 
   ## - [] Add Metric for ranking gene
   ## - [] Modify DGE
-  DEGThr.lt <- list(LogFC = c("logFC",1), pVal = c("PValue",0.05) )
+  Set_DEGThr.lt <- list(LogFC = c("logFC",1), pVal = c("PValue",0.05) )
 
 
 
@@ -188,7 +188,7 @@
   source("FUN_DEG_Analysis.R")
   DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
                                   GroupType = Set_GroupCond[["GroupType"]], GroupCompare = Set_GroupCond[["GroupPair"]],
-                                  ThrSet = DEGThr.lt,
+                                  ThrSet = Set_DEGThr.lt,
                                   TarGeneName = TarGene_name, GroupMode = Set_TarGene, SampleID = "sampleID",
                                   Save.Path = Save.Path, ExportName = Export_Name, AnnoName = "")
   DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
@@ -199,7 +199,7 @@
     # source("FUN_DEG_Analysis.R")
     # DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
     #                                 GroupType = Set_GroupCond[["GroupType"]], GroupCompare = Set_GroupCond[["GroupPair"]],
-    #                                 ThrSet = DEGThr.lt,
+    #                                 ThrSet = Set_DEGThr.lt,
     #                                 TarGeneName = TarGene_name, GroupMode = Set_TarGene, SampleID = "sampleID",
     #                                 Save.Path = Save.Path, SetImport_GE = SetImport_GE, AnnoName = "AvB")
     # DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
@@ -223,7 +223,7 @@
                                   DefaultGeneSet = "C2", Species = Set_Species, # Speices type can check by msigdbr_species()
                                   NumGenesetsPlt = 15,
                                   TarGeneName = TarGene_name,
-                                  ThrSet = DEGThr.lt,
+                                  ThrSet = Set_DEGThr.lt,
                                   Save.Path = Save.Path, ExportName = Export_Name, AnnoName = "Path",
                                   Keyword = "HALLMARK",
                                   Int_Path =  Int_Path.set,
@@ -235,7 +235,8 @@
   ## FUN ORA
 
 #************************************************************************************************************************#
-##### Build files for GSEA official input #####
+##### Build files for official input #####
+#### Build files for GSEA official input ####
   source("FUN_GSEA_ForOFFL.R")
   if(Set_GroupMode == "GoupByGeneExp"){
      Group1.set <- GeneExp_high.set
@@ -256,7 +257,7 @@
                    AnnoName = "GSEA")
 
 
-##### Build files for Metascape official input #####
+#### Build files for Metascape/ORA official input ####
 
 
 
