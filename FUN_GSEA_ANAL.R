@@ -31,7 +31,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
 
   ##### Load Packages  #####
     source("FUN_Package_InstLoad.R")
-    Basic.set <- c("tidyverse","ggplot2","eoffice")
+    Basic.set <- c("tidyverse","ggplot2")#,"eoffice")
     BiocManager.set <- c("clusterProfiler","enrichplot","pathview")
     FUN_Package_InstLoad(Basic.set = Basic.set, BiocManager.set = BiocManager.set)
 
