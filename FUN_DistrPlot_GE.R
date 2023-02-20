@@ -1,8 +1,8 @@
 ## Build files for GSEA official input
 
 FUN_DistrPlot_GE = function(GeneExp.df,
-                         TarGeneName = TarGene_name, GroupSet = GeneExpSet.lt,
-                         Save.Path = Save.Path, ExportName = ExportName
+                            TarGeneName = TarGene_name, GroupSet = GeneExpSet.lt,
+                            Save.Path = Save.Path, ExportName = ExportName
 ){
 
   ##### Load Packages #####
@@ -50,7 +50,7 @@ FUN_DistrPlot_GE = function(GeneExp.df,
       geom_rug() + theme_bw()
 
     ## Plot Mean and SD
-    TGeneDen_SD.p <- ggPlot_vline(TGeneDen.p,
+    TGeneDen_SD.p <- FUN_ggPlot_vline(TGeneDen.p,
                                   data,
                                   Line.clr = Custom.clr,
                                   Line1 = Line1V,
@@ -144,7 +144,7 @@ FUN_DistrPlot_GE = function(GeneExp.df,
 
 
   ## Plot Quartiles & Mean and SD
-  TGeneDen_SD_Q.p <- ggPlot_vline(TGeneDen_SD.p,data,
+  TGeneDen_SD_Q.p <- FUN_ggPlot_vline(TGeneDen_SD.p,data,
                                   Line.clr = Mean_Q.clr,
                                   Line1 = TarGene_Q[4],
                                   Line2 = TarGene_Q[3],
