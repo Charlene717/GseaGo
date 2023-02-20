@@ -155,7 +155,7 @@
     # p.Barplot <- ggplot(Anno.df, aes(x=as.factor(gender), fill=as.factor(gender))) + geom_bar()
 
     p.Barplot + labs(fill=Set_GroupCond$GroupType, x=Set_GroupCond$GroupType, y = "count")+
-        theme_classic() %>% BeautifyggPlot(AxisTitleSize=2,LegPos = c(0.75, 0.85))+
+        theme_classic() %>% FUN_BeautifyggPlot(AxisTitleSize=2,LegPos = c(0.75, 0.85))+
         theme(axis.text.x = element_text(angle = 0, hjust = 0.5)) -> p.Barplot1
     p.Barplot1
 
