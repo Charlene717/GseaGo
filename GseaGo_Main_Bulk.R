@@ -161,7 +161,7 @@
 
     pdf(file = paste0(Save.Path,"/BarPlot_",Export_Name,".pdf"),
         width = 10,  height = 8)
-    p.Barplot1
+    p.Barplot1 %>% print()
 
     dev.off()
     rm(p.Barplot, p.Barplot1)
