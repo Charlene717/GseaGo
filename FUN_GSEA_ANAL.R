@@ -70,7 +70,6 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
 
 
     #### RUN GSEA ####
-    GSEA_Result <- GSEA(geneList, TERM2GENE = LongGeneSet.df) # GSEA_Result <- GSEA(geneList, TERM2GENE = LongGeneSet.df)
     # GSEA_Result <- GSEA(geneList, TERM2GENE = LongGeneSet.df)
     GSEA_Result <- GSEA(geneList, TERM2GENE = LongGeneSet.df,
                         pAdjustMethod = pAdjustMethod,  # pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"
