@@ -98,7 +98,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
                       scale_fill_continuous(low = "#d45772", high = "#3b74bf", guide = guide_colorbar(reverse=TRUE)) +
                       theme_minimal() + ylab(NULL)
 
-    Barplot <- Barplot %>% BeautifyggPlot(LegPos = c(0.9, 0.2), AxisTitleSize=1.7, YtextSize=14,OL_Thick = 1.5)
+    Barplot <- Barplot %>% FUN_BeautifyggPlot(LegPos = c(0.9, 0.2), AxisTitleSize=1.7, YtextSize=14,OL_Thick = 1.5)
 
     ## 2.2 Dotplot
     Dotplot <- dotplot(GSEA_Result, showCategory = NumGenesetsPlt, font.size = 8,
@@ -106,7 +106,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
                        color = "p.adjust")+   # option -> c("pvalue", "p.adjust", "qvalue")
                        scale_color_gradient(low = "#d45772", high = "#3b74bf")
 
-    Dotplot <- Dotplot %>% BeautifyggPlot(LegPos = c(0.9, 0.3),AxisTitleSize=1.5,YtextSize = 15,OL_Thick = 1.5)
+    Dotplot <- Dotplot %>% FUN_BeautifyggPlot(LegPos = c(0.9, 0.3),AxisTitleSize=1.5,YtextSize = 15,OL_Thick = 1.5)
 
 
     ## 2.3 Gene-Concept Network
@@ -133,7 +133,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     ridgeplot <- ridgeplot(GSEA_Result) +
           theme(axis.text.y = element_text(size = 10)) +
           scale_fill_continuous(low = "#d45772", high = "#3b74bf")
-    ridgeplot %>% BeautifyggPlot(LegPos = c(1.05, 0.5),YtextSize = 10)
+    ridgeplot %>% FUN_BeautifyggPlot(LegPos = c(1.05, 0.5),YtextSize = 10)
 
     #### 2.8 gseaplot ####
     y2 <- arrange(GSEA_Result, desc(NES))

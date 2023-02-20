@@ -11,7 +11,7 @@
 
 ##### Function setting #####
   ## Call function
-  source("FUN_DistrPlot.R")
+  source("FUN_DistrPlot_GE.R")
   source("FUN_Beautify_ggplot.R")
   source("FUN_Find_Markers.R")
   source("FUN_VolcanoPlot.R")
@@ -141,7 +141,7 @@
 
 #************************************************************************************************************************#
 ##### Visualization for Exploratory Data Analysis(EDA) #####
-  source("FUN_DistrPlot.R")
+  source("FUN_DistrPlot_GE.R")
 
   if(Set_GroupMode == "GoupByGeneExp"){
     Plot.DistrPlot <- FUN_DistrPlot_GE(GeneExp.df,
