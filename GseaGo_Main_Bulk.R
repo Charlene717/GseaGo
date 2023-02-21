@@ -19,13 +19,13 @@
   source("FUN_GSEA_ggplot.R")
   source("FUN_ggPlot_vline.R")
 
-##### SetImport setting* #####
+##### Import setting and data loading* #####
   ## File setting*
   SetImportPath_FOL <- "Input_TCGA"  # Input Folder Name
   SetImport_GE <- "Xena_TCGA_LGG_GE"
   SetImport_Anno <- "TCGA.LGG.sampleMap_LGG_clinicalMatrix"
 
-  ## SetImport genetic data file
+  ## Set Import genetic data file
   GeneExp.df <- read.table(paste0(SetImportPath_FOL,"/",SetImport_GE), header=T, row.names = 1, sep="\t")
   colnames(GeneExp.df) <-  gsub("\\.", "-", colnames(GeneExp.df))
   # GeneExp_Ori.df <- GeneExp.df
@@ -151,20 +151,20 @@
     Plot.DistrPlot_SD_Q
 
   }else if(Set_GroupMode == "GoupByPheno"){
-    p.Barplot <- ggplot(Anno.df, aes(x=as.factor(Anno.df[,Set_GroupCond$GroupType]), fill=as.factor(Anno.df[,Set_GroupCond$GroupType]))) + geom_bar()
-    # p.Barplot <- ggplot(Anno.df, aes(x=as.factor(gender), fill=as.factor(gender))) + geom_bar()
+    Plot.Barplot <- ggplot(Anno.df, aes(x=as.factor(Anno.df[,Set_GroupCond$GroupType]), fill=as.factor(Anno.df[,Set_GroupCond$GroupType]))) + geom_bar()
+    # Plot.Barplot <- ggplot(Anno.df, aes(x=as.factor(gender), fill=as.factor(gender))) + geom_bar()
 
-    p.Barplot + labs(fill=Set_GroupCond$GroupType, x=Set_GroupCond$GroupType, y = "count")+
+    Plot.Barplot + labs(fill=Set_GroupCond$GroupType, x=Set_GroupCond$GroupType, y = "count")+
         theme_classic() %>% FUN_BeautifyggPlot(AxisTitleSize=2,LegPos = c(0.75, 0.85))+
-        theme(axis.text.x = element_text(angle = 0, hjust = 0.5)) -> p.Barplot1
-    p.Barplot1
+        theme(axis.text.x = element_text(angle = 0, hjust = 0.5)) -> Plot.Barplot1
+    Plot.Barplot1
 
     pdf(file = paste0(Save.Path,"/BarPlot_",Export_Name,".pdf"),
         width = 10,  height = 8)
-    p.Barplot1 %>% print()
+    Plot.Barplot1 %>% print()
 
     dev.off()
-    rm(p.Barplot, p.Barplot1)
+    rm(Plot.Barplot, Plot.Barplot1)
 
   }else{
     print("Please set the GroupMode as GoupByPheno or GoupByGeneExp")
