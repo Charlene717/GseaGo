@@ -136,7 +136,8 @@ FUN_Package_InstLoad(Basic.set = PKG_Basic.set, BiocManager.set = PKG_BiocManage
     file = paste0(Save.Path,"/ORA.pdf"),
     width = 10,  height = 8
   )
-    Plot.lt
+
+  try({Plot.lt})
 
   dev.off()
 
