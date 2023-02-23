@@ -98,8 +98,7 @@ FUN_Package_InstLoad(Basic.set = PKG_Basic.set, BiocManager.set = PKG_BiocManage
   Dotplot_GO
 
   ## Encrichment map:
-  emapplot(go_enrich)
-
+  try({emapplot(go_enrich)})
 
   #-----------------------------------------------------------------------------------------------#
   ## error
@@ -137,7 +136,7 @@ FUN_Package_InstLoad(Basic.set = PKG_Basic.set, BiocManager.set = PKG_BiocManage
     width = 10,  height = 8
   )
 
-  try({Plot.lt})
+  try({print(Plot.lt)})
 
   dev.off()
 
