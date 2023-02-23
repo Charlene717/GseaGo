@@ -17,6 +17,7 @@
 
 
 ## - [] ORA
+  ## - [] Mode: Use Gene List Filter by Top N genes
 
 ## - [] Add Metric for ranking gene
 
