@@ -194,17 +194,6 @@
   DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
 
 
-    # #### Test: DEG by GeneExp group ####
-    # Set_GroupCond <- list(GroupType = TarGene_name, GroupPair = c("High","Low") )
-    # source("FUN_DEG_Analysis.R")
-    # DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
-    #                                 GroupType = Set_GroupCond[["GroupType"]], GroupCompare = Set_GroupCond[["GroupPair"]],
-    #                                 ThrSet = Set_DEGThr.lt,
-    #                                 TarGeneName = TarGene_name, GroupMode = Set_TarGene, SampleID = "sampleID",
-    #                                 Save.Path = Save.Path, SetImport_GE = SetImport_GE, AnnoName = "AvB")
-    # DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
-
-
 
   #### Run GSEA ####
   source("FUN_GSEA_ANAL.R")
