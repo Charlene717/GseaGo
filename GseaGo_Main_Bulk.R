@@ -20,29 +20,35 @@
   source("FUN_ggPlot_vline.R")
 
 ##### Import setting and data loading* #####
-  ## File setting*
+  #### (Required) Set input data ####
+  ## Set Import path
   SetImportPath_FOL <- "Input_TCGA"  # Input Folder Name
   SetImport_GE <- "Xena_TCGA_LGG_GE"
   SetImport_Anno <- "TCGA.LGG.sampleMap_LGG_clinicalMatrix"
 
-  ## Set Import genetic data file
+  ## Load Gene expression file
   GeneExp.df <- read.table(paste0(SetImportPath_FOL,"/",SetImport_GE), header=T, row.names = 1, sep="\t")
   colnames(GeneExp.df) <-  gsub("\\.", "-", colnames(GeneExp.df))
-  # GeneExp_Ori.df <- GeneExp.df
-
+  ## Load Annotation file
   Anno.df <- read.table(paste0(SetImportPath_FOL,"/",SetImport_Anno), header=T, sep="\t")
-  # Anno_Ori.df <- Anno.df
   row.names(Anno.df) <- Anno.df[,1]
+
+  # ## Keep the ori dataset
+  # GeneExp_Ori.df <- GeneExp.df
+  # Anno_Ori.df <- Anno.df
 
   ## Reorder the Anno.df
   Anno.df <- left_join(data.frame("sampleID"=colnames(GeneExp.df)),
                        Anno.df)
+  row.names(Anno.df) <- Anno.df[,1]
 
-  ## SetImport GSEA gene sets
+  #### (Optional) Set GSEA genesets ####
+  ## Set Import GSEA genesets path
   SetImportPath_Genesets_FOL <- "Input_Genesets/Gsea_Genesets_Hs"
   SetImport_GSEAGeneSet <- "msigdb.v2022.1.Hs.symbols.gmt"
   SetImport_GSEAGeneSet_MetaData <- "msigdb_v2022.1.Hs.txt"
 
+  ## Load GSEA genesets file
   GSEAGeneset.df <- read.delim2(paste0(getwd(),"/",SetImportPath_Genesets_FOL,"/",SetImport_GSEAGeneSet),
                              col.names = 1:max(count.fields(paste0(getwd(),"/",SetImportPath_Genesets_FOL,"/",SetImport_GSEAGeneSet))),
                              header = F,sep = "\t")
@@ -54,32 +60,29 @@
   Set_Species <- "Homo sapiens"
   Set_GroupMode <- "GoupByPheno"  # "GoupByPheno", "GoupByGeneExp"
 
-  TarGene_name = "TP53"
-  Set_TarGene <-  list(TarGeneName = TarGene_name,
-                       GEGroupMode = "Mean", # c("Mean","Mean1SD","Mean2SD","Mean3SD","Median","Quartile","Customize"))
-                       UpCutoff = 1, LowerCutoff = 1)
-
-
   if(Set_GroupMode == "GoupByPheno"){
     Set_GroupCond <-  list(GroupType = "sample_type",
                            GroupPair = c("Primary Tumor","Recurrent Tumor"))
   }else if(Set_GroupMode == "GoupByGeneExp"){
+    TarGene_name = "TP53"
+    Set_TarGene <-  list(TarGeneName = TarGene_name,
+                         GEGroupMode = "Mean", # c("Mean","Mean1SD","Mean2SD","Mean3SD","Median","Quartile","Customize"))
+                         UpCutoff = 1, LowerCutoff = 1)
+
     Set_GroupCond <- list(GroupType = TarGene_name, GroupPair = c("High","Low") )   ## DEG by GeneExp group
   }else{
     print("Please set Set_GroupMode by GoupByPheno or GoupByGeneExp")
   }
 
-
+  ## Set DEG Analysis
+  Set_DEGThr.lt <- list(LogFC = c("logFC",1), pVal = c("PValue",0.05) )
   ## - [] Add Metric for ranking gene
   ## - [] Modify DGE
-  Set_DEGThr.lt <- list(LogFC = c("logFC",1), pVal = c("PValue",0.05) )
-
 
 
 ##### Current path and new folder setting* #####
   Export_ProjectName = "GSEA_TCGA"
   Export_Sampletype = "LGG"
-
   Export_Anno = "Recur2Prim"
 
   if(Set_GroupMode == "GoupByGeneExp"){
