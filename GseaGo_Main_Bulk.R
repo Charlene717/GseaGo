@@ -20,29 +20,35 @@
   source("FUN_ggPlot_vline.R")
 
 ##### Import setting and data loading* #####
-  ## File setting*
+  #### (Required) Set input data ####
+  ## Set Import file
   SetImportPath_FOL <- "Input_TCGA"  # Input Folder Name
   SetImport_GE <- "Xena_TCGA_LGG_GE"
   SetImport_Anno <- "TCGA.LGG.sampleMap_LGG_clinicalMatrix"
 
-  ## Set Import genetic data file
+  ## Load Gene expression file
   GeneExp.df <- read.table(paste0(SetImportPath_FOL,"/",SetImport_GE), header=T, row.names = 1, sep="\t")
   colnames(GeneExp.df) <-  gsub("\\.", "-", colnames(GeneExp.df))
-  # GeneExp_Ori.df <- GeneExp.df
-
+  ## Load Annotation file
   Anno.df <- read.table(paste0(SetImportPath_FOL,"/",SetImport_Anno), header=T, sep="\t")
-  # Anno_Ori.df <- Anno.df
   row.names(Anno.df) <- Anno.df[,1]
+
+  # ## Keep the ori dataset
+  # GeneExp_Ori.df <- GeneExp.df
+  # Anno_Ori.df <- Anno.df
 
   ## Reorder the Anno.df
   Anno.df <- left_join(data.frame("sampleID"=colnames(GeneExp.df)),
                        Anno.df)
+  row.names(Anno.df) <- Anno.df[,1]
 
-  ## SetImport GSEA gene sets
+  #### (Optional) Set GSEA genesets ####
+  ## Set Import GSEA genesets
   SetImportPath_Genesets_FOL <- "Input_Genesets/Gsea_Genesets_Hs"
   SetImport_GSEAGeneSet <- "msigdb.v2022.1.Hs.symbols.gmt"
   SetImport_GSEAGeneSet_MetaData <- "msigdb_v2022.1.Hs.txt"
 
+  ## Load GSEA genesets file
   GSEAGeneset.df <- read.delim2(paste0(getwd(),"/",SetImportPath_Genesets_FOL,"/",SetImport_GSEAGeneSet),
                              col.names = 1:max(count.fields(paste0(getwd(),"/",SetImportPath_Genesets_FOL,"/",SetImport_GSEAGeneSet))),
                              header = F,sep = "\t")
