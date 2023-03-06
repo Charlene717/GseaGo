@@ -267,6 +267,8 @@
   Rec_time_diff
   save.image(paste0(Save_Path,"/GseaGo_",Export_Name,".RData"))
 
+#### Record ####
+  ## Record time log
   Rec_end_time2 <- Sys.time()
 
   Rec_SaveTime_diff <- Rec_end_time2 - Rec_end_time
@@ -274,4 +276,6 @@
 
   write(paste(" Program running time：", as.character(Rec_time_diff), "mins\n",
               "Save RData time：", as.character(Rec_SaveTime_diff), "mins"), file = paste0(Save_Path,"/Rec_time_log.txt"))
+
+  ## Record parameter
 
