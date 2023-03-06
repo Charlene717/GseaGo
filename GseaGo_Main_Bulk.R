@@ -243,6 +243,7 @@
   FUN_GSEA_ForOFFL(GeneExp.df,
                    Group1 = Group1.set, Group2 = Group2.set,
                    GroupMode = Set_GroupMode,
+                   GroupCond = Set_GroupCond,
                    # TarGeneName = TarGene_name, GeneExpSet = Set_TarGene,
                    SavePath = Save_Path, ExportName = Export_Name,
                    AnnoName = "GSEA")
