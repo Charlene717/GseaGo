@@ -77,7 +77,7 @@
 
 
 ##### Current path and new folder setting* #####
-  Export_ProjectName = "GSEA_TCGA"
+  Export_ProjectName = "TCGA"
   Export_Sampletype = "LGG"
   Export_Anno = "Recur2Prim"
 
@@ -252,7 +252,7 @@
                    Group1 = Group1.set, Group2 = Group2.set,
                    Group1Name = Group1_Name,Group2Name = Group2_Name,
                    SavePath = Save_Path, ExportName = Export_Name,
-                   AnnoName = "GSEA")
+                   AnnoName = "") # AnnoName = "_Name"
 
 
 #### Build files for Metascape/ORA official input ####
