@@ -33,10 +33,6 @@
   Anno.df <- read.table(paste0(SetImportPath_FOL,"/",SetImport_Anno), header=T, sep="\t")
   row.names(Anno.df) <- Anno.df[,1]
 
-  # ## Keep the ori dataset
-  # GeneExp_Ori.df <- GeneExp.df
-  # Anno_Ori.df <- Anno.df
-
   ## Reorder the Anno.df
   Anno.df <- left_join(data.frame("sampleID"=colnames(GeneExp.df)),
                        Anno.df)
