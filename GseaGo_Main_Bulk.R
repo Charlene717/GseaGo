@@ -172,14 +172,16 @@
 
 
 #************************************************************************************************************************#
-##### Grouping by GeneExp #####
-  source("FUN_Group_GE.R")
-  GeneExp_group.set <- FUN_Group_GE(GeneExp.df, Anno.df,
-                                    TarGeneName = TarGene_name, GroupSet = Set_TarGene,
-                                    Save.Path = Save.Path, ExportName = Export_Name)
-  Anno.df <- GeneExp_group.set[["AnnoNew.df"]]
-  GeneExp_high.set <- GeneExp_group.set[["GeneExp_high.set"]]
-  GeneExp_low.set <- GeneExp_group.set[["GeneExp_low.set"]]
+##### (Optional) Grouping by GeneExp #####
+  if(Set_GroupMode == "GoupByGeneExp"){
+    source("FUN_Group_GE.R")
+    GeneExp_group.set <- FUN_Group_GE(GeneExp.df, Anno.df,
+                                      TarGeneName = TarGene_name, GroupSet = Set_TarGene,
+                                      Save.Path = Save.Path, ExportName = Export_Name)
+    Anno.df <- GeneExp_group.set[["AnnoNew.df"]]
+    GeneExp_high.set <- GeneExp_group.set[["GeneExp_high.set"]]
+    GeneExp_low.set <- GeneExp_group.set[["GeneExp_low.set"]]
+  }
 
 #************************************************************************************************************************#
 ##### Run Enrichment analysis in R #####
