@@ -2,6 +2,7 @@
   rm(list = ls()) # Clean variable
   memory.limit(150000)
 
+  Rec_start_time <- Sys.time()
 ##### Load Packages #####
   source("FUN_Package_InstLoad.R")
   PKG_Basic.set <- c("tidyverse","ggplot2","Seurat","SeuratData","patchwork","plyr","eoffice","DT")
@@ -261,8 +262,16 @@
 
 
 #### Save RData ####
+  Rec_end_time <- Sys.time()
+  Rec_time_diff <- Rec_end_time - Rec_start_time
+  Rec_time_diff
   save.image(paste0(Save_Path,"/GseaGo_",Export_Name,".RData"))
 
+  Rec_end_time2 <- Sys.time()
 
+  Rec_SaveTime_diff <- Rec_end_time2 - Rec_end_time
+  Rec_SaveTime_diff
 
+  write(paste(" Program running time：", as.character(Rec_time_diff), "mins\n",
+              "Save RData time：", as.character(Rec_SaveTime_diff), "mins"), file = paste0(Save_Path,"/Rec_time_log.txt"))
 
