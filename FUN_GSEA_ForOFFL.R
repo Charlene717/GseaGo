@@ -3,8 +3,8 @@
 FUN_GSEA_ForOFFL = function(GeneExp.df,
                             Group1 = Group1.set, Group2 = Group2.set,
                             GroupMode = Group_Mode,
-                            TarGeneName = TarGene_name, GeneExpSet = GeneExpSet.lt,
-                            Save.Path = Save.Path, ExportName = ExportName,
+                            GroupCond = Set_GroupCond,
+                            SavePath = SavePath, ExportName = ExportName,
                             AnnoName = "AvB"
 ){
 
@@ -29,20 +29,27 @@ FUN_GSEA_ForOFFL = function(GeneExp.df,
 
 ##### Build Group Files #####
   ## Set the group array
-  Pheno_sum.df <- c(ncol(GeneExp_GSEA.df)-2,2,1) %>% t() %>% data.frame() %>%
-    rbind.fill(c(paste0("#",TarGeneName,"_high"),paste0(TarGeneName,"_Low")) %>% t() %>% data.frame(stringsAsFactors=FALSE)) %>%
-    rbind.fill(c(rep(0,length(Group1)),rep(1,length(Group2))) %>% t() %>% data.frame())
+  if(GroupMode == "GoupByGeneExp"){
+    Pheno_sum.df <- c(ncol(GeneExp_GSEA.df)-2,2,1) %>% t() %>% data.frame() %>%
+      rbind.fill(c(paste0("#",GroupCond[1],"_high"),paste0(GroupCond[1],"_Low")) %>% t() %>% data.frame(stringsAsFactors=FALSE)) %>%
+      rbind.fill(c(rep(0,length(Group1)),rep(1,length(Group2))) %>% t() %>% data.frame())
+  }else if(Set_GroupMode == "GoupByPheno"){
+
+
+  }else{
+    print("Please Check Set_GroupMode which should be GoupByPheno or GoupByGeneExp")
+  }
 
 
 ##### Export Result #####
   write.table(
     GeneExp_GSEA.df,
-    file=paste0(Save.Path,"/OFFL_",ExportName,"_",AnnoName,"_collapsed.gct"),
+    file=paste0(SavePath,"/OFFL_",ExportName,"_",AnnoName,"_collapsed.gct"),
     quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
   )
   write.table(
     Pheno_sum.df,
-    file=paste0(Save.Path,"/OFFL_",ExportName,"_",AnnoName,".cls"),
+    file=paste0(SavePath,"/OFFL_",ExportName,"_",AnnoName,".cls"),
     quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
   )
 
