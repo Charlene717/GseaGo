@@ -232,10 +232,16 @@
   if(Set_GroupMode == "GoupByGeneExp"){
      Group1.set <- GeneExp_high.set
      Group2.set <- GeneExp_low.set
+     Group1_Name <- paste0(Set_GroupCond$GroupType,"_high")
+     Group2_Name <- paste0(Set_GroupCond$GroupType,"_low")
+
 
   }else if(Set_GroupMode == "GoupByPheno"){
     Group1.set <- Anno.df[Anno.df[,Set_GroupCond[["GroupType"]] ]%in% Set_GroupCond[["GroupPair"]][1],][,1]
     Group2.set <- Anno.df[Anno.df[,Set_GroupCond[["GroupType"]] ]%in% Set_GroupCond[["GroupPair"]][2],][,1]
+    Group1_Name <- paste0(Set_GroupCond$GroupPair[1]) %>% gsub(" ", "_", .)
+    Group2_Name <- paste0(Set_GroupCond$GroupPair[2]) %>% gsub(" ", "_", .)
+
 
   }else{
     print("Please Check Set_GroupMode which should be GoupByPheno or GoupByGeneExp")
@@ -244,9 +250,7 @@
 
   FUN_GSEA_ForOFFL(GeneExp.df,
                    Group1 = Group1.set, Group2 = Group2.set,
-                   GroupMode = Set_GroupMode,
-                   GroupCond = Set_GroupCond,
-                   # TarGeneName = TarGene_name, GeneExpSet = Set_TarGene,
+                   Group1Name = Group1_Name,Group2Name = Group2_Name,
                    SavePath = Save_Path, ExportName = Export_Name,
                    AnnoName = "GSEA")
 
