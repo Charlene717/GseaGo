@@ -36,12 +36,12 @@ FUN_GSEA_ForOFFL = function(GeneExp.df,
 ##### Export Result #####
   write.table(
     GeneExp_GSEA.df,
-    file=paste0(SavePath,"/OFFL_",ExportName,"_",AnnoName,"_collapsed.gct"),
+    file=paste0(SavePath,"/OFFL_GSEA_",ExportName,AnnoName,"_collapsed.gct"),
     quote = FALSE,row.names = FALSE,col.names = FALSE, na = "",sep = '\t'
   )
   write.table(
     Pheno_sum.df,
-    file=paste0(SavePath,"/OFFL_",ExportName,"_",AnnoName,".cls"),
+    file=paste0(SavePath,"/OFFL_GSEA_",ExportName,AnnoName,".cls"),
     quote = FALSE,row.names = FALSE, na = "",col.names = FALSE
   )
 
