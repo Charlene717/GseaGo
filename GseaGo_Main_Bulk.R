@@ -79,18 +79,18 @@
 ##### Current path and new folder setting* #####
   Export_ProjectName = "TCGA"
   Export_Sampletype = "LGG"
-  Export_Anno = "Recur2Prim"
+  Export_Anno = "_Recur2Prim" # Export_Anno = "_Name"
 
   if(Set_GroupMode == "GoupByGeneExp"){
     if(Set_TarGene$GEGroupMode == "Customize"){
       Export_Cond = paste0(Set_GroupMode,"_",TarGene_name,"_",Set_TarGene$GEGroupMode,"_Up", Set_TarGene$UpCutoff,
-                          "_Low_" ,Set_TarGene$LowerCutoff,"_",Export_Anno)
+                          "_Low_" ,Set_TarGene$LowerCutoff,Export_Anno)
     }else{
-      Export_Cond = paste0(Set_GroupMode,"_",TarGene_name,"_",Set_TarGene$GEGroupMode,"_",Export_Anno)
+      Export_Cond = paste0(Set_GroupMode,"_",TarGene_name,"_",Set_TarGene$GEGroupMode,Export_Anno)
     }
 
   }else{
-    Export_Cond = paste0(Set_GroupMode,"_",Export_Anno)
+    Export_Cond = paste0(Set_GroupMode,Export_Anno)
   }
 
 
