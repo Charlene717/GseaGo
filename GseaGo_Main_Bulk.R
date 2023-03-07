@@ -13,7 +13,6 @@
   PKG_BiocManager.set <- c("clusterProfiler","enrichplot","pathview","limma")
 
   FUN_Package_InstLoad(Basic.set = PKG_Basic.set, BiocManager.set = PKG_BiocManager.set)
-  rm(PKG_Basic.set,PKG_BiocManager.set,FUN_Package_InstLoad)
 
 ##### Function setting #####
   ## Call function
@@ -27,7 +26,7 @@
   source("FUN_GSEA_ANAL.R")
 
 ##### Import setting and data loading* #####
-  Rec_Time_Point.lt[["Input_Start_Time"]] <- Sys.time() # %>% as.character()
+Rec_Time_Point.lt[["Input_Start_Time"]] <- Sys.time() # %>% as.character()
 
   #### (Required) Set input data ####
   ## Set Import path
@@ -233,15 +232,14 @@ Rec_Time_Spend.lt[["DEG"]] <- Rec_Time_Point.lt[["DEG_End_Time"]] - Rec_Time_Poi
 Rec_Time_Point.lt[["GSEA_Start_Time"]] <- Sys.time() # %>% as.character()
   #### Run GSEA ####
   source("FUN_GSEA_ANAL.R")
-  Int_Path.set <- c(
-                    "REACTOME_ACTIVATION_OF_ATR_IN_RESPONSE_TO_REPLICATION_STRESS",
-                    #"REACTOME_SEMA4D_MEDIATED_INHIBITION_OF_CELL_ATTACHMENT_AND_MIGRATION",
-                    "REACTOME_NUCLEAR_PORE_COMPLEX_NPC_DISASSEMBLY",
-                    "HALLMARK_E2F_TARGETS",
-                    "REACTOME_DNA_REPLICATION",
-                    "REACTOME_G2_M_CHECKPOINTS",
-                    "KEGG_OLFACTORY_TRANSDUCTION",
-                    "KEGG_CALCIUM_SIGNALING_PATHWAY"
+  GSEAGeneSet_Int.set <- c("REACTOME_ACTIVATION_OF_ATR_IN_RESPONSE_TO_REPLICATION_STRESS",
+                           #"REACTOME_SEMA4D_MEDIATED_INHIBITION_OF_CELL_ATTACHMENT_AND_MIGRATION",
+                           "REACTOME_NUCLEAR_PORE_COMPLEX_NPC_DISASSEMBLY",
+                           "HALLMARK_E2F_TARGETS",
+                           "REACTOME_DNA_REPLICATION",
+                           "REACTOME_G2_M_CHECKPOINTS",
+                           "KEGG_OLFACTORY_TRANSDUCTION",
+                           "KEGG_CALCIUM_SIGNALING_PATHWAY"
   )
 
   GSEA_Result.lt <- FUN_GSEA_ANAL(DEG_Extract.df, CMGeneSet = GSEAGeneset.df,
@@ -251,10 +249,11 @@ Rec_Time_Point.lt[["GSEA_Start_Time"]] <- Sys.time() # %>% as.character()
                                   ThrSet = Set_DEGThr.lt,
                                   Save.Path = Save_Path, ExportName = SetExport_Name, AnnoName = "Path",
                                   Keyword = "HALLMARK",
-                                  Int_Path =  Int_Path.set,
+                                  Int_Path =  GSEAGeneSet_Int.set,
                                   pAdjustMethod = "BH",  # pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"
                                   nPerm = 100000,
                                   minGSSize = 15, maxGSSize = 500)
+
 
 Rec_Time_Point.lt[["GSEA_End_Time"]] <- Sys.time() # %>% as.character()
 Rec_Time_Spend.lt[["GSEA"]] <- Rec_Time_Point.lt[["GSEA_End_Time"]] - Rec_Time_Point.lt[["GSEA_Start_Time"]]
@@ -307,17 +306,17 @@ Rec_Time_Spend.lt[["OFFL_GSEA"]] <- Rec_Time_Point.lt[["OFFL_GSEA_End_Time"]] - 
 
 
 ##### Save RData #####
-  Rec_Time_Point.lt[["Save_RData_Start_Time"]] <- Sys.time() # %>% as.character()
+Rec_Time_Point.lt[["Save_RData_Start_Time"]] <- Sys.time() # %>% as.character()
 
   save.image(paste0(Save_Path,"/GseaGo_",SetExport_Name,".RData"))
 
-  Rec_Time_Point.lt[["Save_RData_End_Time"]] <- Sys.time()
-  Rec_Time_Spend.lt[["Save_RData"]] <- Rec_Time_Point.lt[["Save_RData_End_Time"]] - Rec_Time_Point.lt[["Save_RData_Start_Time"]]
+Rec_Time_Point.lt[["Save_RData_End_Time"]] <- Sys.time()
+Rec_Time_Spend.lt[["Save_RData"]] <- Rec_Time_Point.lt[["Save_RData_End_Time"]] - Rec_Time_Point.lt[["Save_RData_Start_Time"]]
 
 ##### Record #####
-  #### Record time log ####
-  Rec_Time_Point.lt[["END_Time"]] <- Sys.time() # %>% as.character()
-  Rec_Time_Spend.lt[["Total_Time"]] <- Rec_Time_Point.lt[["END_Time"]] - Rec_Time_Point.lt[["Start_Time"]]
+#### Record time log ####
+Rec_Time_Point.lt[["END_Time"]] <- Sys.time() # %>% as.character()
+Rec_Time_Spend.lt[["Total_Time"]] <- Rec_Time_Point.lt[["END_Time"]] - Rec_Time_Point.lt[["Start_Time"]]
 
 
   # ## Redundant
