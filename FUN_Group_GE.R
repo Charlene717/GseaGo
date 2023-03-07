@@ -73,7 +73,7 @@ FUN_Group_GE = function(GeneExp.df, MetaData.df,
   GeneExp_high.df <- data.frame(ID = GeneExp_high.set %>% as.data.frame(), TarGene = "High")
   GeneExp_low.df <- data.frame(ID = GeneExp_low.set %>% as.data.frame(), TarGene = "Low")
   GeneExpAnno.df <- rbind(GeneExp_high.df, GeneExp_low.df)
-  colnames(GeneExpAnno.df) <- c(colnames(MetaData.df)[1], TarGene_name)
+  colnames(GeneExpAnno.df) <- c(colnames(MetaData.df)[1], TarGeneName)
 
   AnnoNew.df <- left_join(MetaData.df, GeneExpAnno.df)
 
