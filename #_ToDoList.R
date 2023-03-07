@@ -11,6 +11,9 @@
 
 ## - [] Reduce computing time
 
+## - [v] Record computing time
+## - [] Record parameter
+
 ## - [] scRNA-seq Enrichment analysis
 
 ## - [] More EDA
