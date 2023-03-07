@@ -5,8 +5,8 @@
 FUN_DEG_Analysis = function(GeneExp.df, Anno.df,
                             GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
                             ThrSet = DEGThr.lt,
-                            TarGeneName = TarGene_name, GroupMode = Mode_Group, SampleID = "sampleID",
-                            Save.Path = Save.Path, ExportName = ExportName, AnnoName = "AvB"
+                            SampleID = "sampleID",
+                            Save.Path = Save_Path, ExportName = ExportName, AnnoName = "AvB"
 ){
 
   ##### Load Packages  #####

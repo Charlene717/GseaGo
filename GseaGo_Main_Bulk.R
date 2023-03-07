@@ -78,26 +78,26 @@
 
 
 ##### Current path and new folder setting* #####
-  Export_ProjectName = "TCGA"
-  Export_Sampletype = "LGG"
-  Export_Meta = "_Recur2Prim" # Export_Meta = "_Name"
+  SetExport_ProjectName = "TCGA"
+  SetExport_Sampletype = "LGG"
+  SetExport_Meta = "_Recur2Prim" # SetExport_Meta = "_Name"
 
   if(Set_GroupMode == "GoupByGeneExp"){
     if(Set_TarGene$GEGroupMode == "Customize"){
-      Export_Cond = paste0(Set_GroupMode,"_",TarGene_name,"_",Set_TarGene$GEGroupMode,"_Up", Set_TarGene$UpCutoff,
-                          "_Low_" ,Set_TarGene$LowerCutoff,Export_Meta)
+      SetExport_Cond = paste0(Set_GroupMode,"_",TarGene_name,"_",Set_TarGene$GEGroupMode,"_Up", Set_TarGene$UpCutoff,
+                          "_Low_" ,Set_TarGene$LowerCutoff,SetExport_Meta)
     }else{
-      Export_Cond = paste0(Set_GroupMode,"_",TarGene_name,"_",Set_TarGene$GEGroupMode,Export_Meta)
+      SetExport_Cond = paste0(Set_GroupMode,"_",TarGene_name,"_",Set_TarGene$GEGroupMode,SetExport_Meta)
     }
 
   }else{
-    Export_Cond = paste0(Set_GroupMode,Export_Meta)
+    SetExport_Cond = paste0(Set_GroupMode,SetExport_Meta)
   }
 
 
-  Export_Name = paste0(Export_ProjectName,"_",Export_Sampletype,"_",Export_Cond)
+  SetExport_Name = paste0(SetExport_ProjectName,"_",SetExport_Sampletype,"_",SetExport_Cond)
 
-  Save_Path = paste0(getwd(),"/",Sys.Date(),"_",Export_Name)
+  Save_Path = paste0(getwd(),"/",Sys.Date(),"_",SetExport_Name)
   ## Create new folder
   if (!dir.exists(Save_Path)){dir.create(Save_Path)}
 
@@ -146,7 +146,7 @@
   if(Set_GroupMode == "GoupByGeneExp"){
     Plot.DistrPlot <- FUN_DistrPlot_GE(GeneExp.df,
                                        TarGeneName = TarGene_name, GroupSet = Set_TarGene,
-                                       Save.Path = Save_Path, ExportName = Export_Name)
+                                       Save.Path = Save_Path, ExportName = SetExport_Name)
     Plot.DistrPlot_SD_Q <- Plot.DistrPlot[["TGeneDen_SD_Q.p"]]
     Plot.DistrPlot_SD_Q
 
@@ -159,7 +159,7 @@
         theme(axis.text.x = element_text(angle = 0, hjust = 0.5)) -> Plot.Barplot1
     Plot.Barplot1
 
-    pdf(file = paste0(Save_Path,"/BarPlot_",Export_Name,".pdf"),
+    pdf(file = paste0(Save_Path,"/BarPlot_",SetExport_Name,".pdf"),
         width = 10,  height = 8)
     Plot.Barplot1 %>% print()
 
@@ -178,7 +178,7 @@
     source("FUN_Group_GE.R")
     GeneExp_group.set <- FUN_Group_GE(GeneExp.df, Metadata.df,
                                       TarGeneName = TarGene_name, GroupSet = Set_TarGene,
-                                      Save.Path = Save_Path, ExportName = Export_Name)
+                                      Save.Path = Save_Path, ExportName = SetExport_Name)
     Metadata.df <- GeneExp_group.set[["AnnoNew.df"]]
     GeneExp_high.set <- GeneExp_group.set[["GeneExp_high.set"]]
     GeneExp_low.set <- GeneExp_group.set[["GeneExp_low.set"]]
@@ -192,7 +192,7 @@
                                   GroupType = Set_GroupCond[["GroupType"]], GroupCompare = Set_GroupCond[["GroupPair"]],
                                   ThrSet = Set_DEGThr.lt,
                                   TarGeneName = TarGene_name, GroupMode = Set_TarGene, SampleID = "sampleID",
-                                  Save.Path = Save_Path, ExportName = Export_Name, AnnoName = "")
+                                  Save.Path = Save_Path, ExportName = SetExport_Name, AnnoName = "")
   DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
 
 
@@ -215,7 +215,7 @@
                                   NumGenesetsPlt = 15,
                                   TarGeneName = TarGene_name,
                                   ThrSet = Set_DEGThr.lt,
-                                  Save.Path = Save_Path, ExportName = Export_Name, AnnoName = "Path",
+                                  Save.Path = Save_Path, ExportName = SetExport_Name, AnnoName = "Path",
                                   Keyword = "HALLMARK",
                                   Int_Path =  Int_Path.set,
                                   pAdjustMethod = "BH",  # pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"
@@ -252,7 +252,7 @@
   FUN_GSEA_ForOFFL(GeneExp.df,
                    Group1 = Group1.set, Group2 = Group2.set,
                    Group1Name = Group1_Name,Group2Name = Group2_Name,
-                   SavePath = Save_Path, ExportName = Export_Name,
+                   SavePath = Save_Path, ExportName = SetExport_Name,
                    AnnoName = "") # AnnoName = "_Name"
 
 
@@ -265,7 +265,7 @@
   Rec_end_time <- Sys.time()
   Rec_time_diff <- Rec_end_time - Rec_start_time
   Rec_time_diff
-  save.image(paste0(Save_Path,"/GseaGo_",Export_Name,".RData"))
+  save.image(paste0(Save_Path,"/GseaGo_",SetExport_Name,".RData"))
 
 #### Record ####
   ## Record time log
