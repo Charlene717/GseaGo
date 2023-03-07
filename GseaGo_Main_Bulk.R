@@ -126,7 +126,7 @@
   Metadata.df <- Metadata.df[,c(PhenoColKeep.set)]
   colnames(Metadata.df)
 
-  head(Metadata.df)
+  # head(Metadata.df)
 
   ## Select Pheno row
   PhenoRowKeep.set <- list(col="sample_type",row=c("Primary Tumor","Recurrent Tumor"))
@@ -193,7 +193,7 @@
   DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Metadata.df,
                                   GroupType = Set_GroupCond[["GroupType"]], GroupCompare = Set_GroupCond[["GroupPair"]],
                                   ThrSet = Set_DEGThr.lt,
-                                  TarGeneName = TarGene_name, GroupMode = Set_TarGene, SampleID = "sampleID",
+                                  SampleID = "sampleID",
                                   Save.Path = Save_Path, ExportName = SetExport_Name, AnnoName = "")
   DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
 
