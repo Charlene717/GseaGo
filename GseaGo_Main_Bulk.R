@@ -261,12 +261,17 @@ Rec_Time_Spend.lt[["GSEA"]] <- Rec_Time_Point.lt[["GSEA_End_Time"]] - Rec_Time_P
 
 
   #### Run ORA ####
+Rec_Time_Point.lt[["ORA_Start_Time"]] <- Sys.time() # %>% as.character()
   ## FUN ORA
   source("RUN_ORA.R")
+Rec_Time_Point.lt[["ORA_End_Time"]] <- Sys.time() # %>% as.character()
+Rec_Time_Spend.lt[["ORA"]] <- Rec_Time_Point.lt[["ORA_End_Time"]] - Rec_Time_Point.lt[["ORA_Start_Time"]]
 
 #************************************************************************************************************************#
 ##### Build files for official input #####
 #### Build files for GSEA official input ####
+Rec_Time_Point.lt[["OFFL_GSEA_Start_Time"]] <- Sys.time() # %>% as.character()
+
   source("FUN_GSEA_ForOFFL.R")
   if(Set_GroupMode == "GoupByGeneExp"){
      Group1.set <- GeneExp_high.set
@@ -293,6 +298,8 @@ Rec_Time_Spend.lt[["GSEA"]] <- Rec_Time_Point.lt[["GSEA_End_Time"]] - Rec_Time_P
                    SavePath = Save_Path, ExportName = SetExport_Name,
                    AnnoName = "") # AnnoName = "_Name"
 
+Rec_Time_Point.lt[["OFFL_GSEA_End_Time"]] <- Sys.time() # %>% as.character()
+Rec_Time_Spend.lt[["OFFL_GSEA"]] <- Rec_Time_Point.lt[["OFFL_GSEA_End_Time"]] - Rec_Time_Point.lt[["OFFL_GSEA_Start_Time"]]
 
 #### Build files for Metascape/ORA official input ####
 
