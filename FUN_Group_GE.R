@@ -1,6 +1,6 @@
 ## Build files for GSEA official input
 
-FUN_Group_GE = function(GeneExp.df, Anno.df,
+FUN_Group_GE = function(GeneExp.df, MetaData.df,
                         TarGeneName = TarGene_name, GroupSet = GeneExpSet.lt,
                         Save.Path = Save.Path, ExportName = ExportName
 ){
@@ -73,9 +73,9 @@ FUN_Group_GE = function(GeneExp.df, Anno.df,
   GeneExp_high.df <- data.frame(ID = GeneExp_high.set %>% as.data.frame(), TarGene = "High")
   GeneExp_low.df <- data.frame(ID = GeneExp_low.set %>% as.data.frame(), TarGene = "Low")
   GeneExpAnno.df <- rbind(GeneExp_high.df, GeneExp_low.df)
-  colnames(GeneExpAnno.df) <- c(colnames(Anno.df)[1], TarGene_name)
+  colnames(GeneExpAnno.df) <- c(colnames(MetaData.df)[1], TarGene_name)
 
-  AnnoNew.df <- left_join(Anno.df, GeneExpAnno.df)
+  AnnoNew.df <- left_join(MetaData.df, GeneExpAnno.df)
 
 
   ## Export tsv
