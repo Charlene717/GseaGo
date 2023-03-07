@@ -306,21 +306,28 @@ Rec_Time_Spend.lt[["OFFL_GSEA"]] <- Rec_Time_Point.lt[["OFFL_GSEA_End_Time"]] - 
 
 
 
-#### Save RData ####
-  Rec_Time_Point.lt[["END_Time"]] <- Sys.time() # %>% as.character()
-  Rec_time_diff <- Rec_Time_Point.lt[["END_Time"]] - Rec_Time_Point.lt[["Start_Time"]]
-  Rec_time_diff
+##### Save RData #####
+  Rec_Time_Point.lt[["Save_RData_Start_Time"]] <- Sys.time() # %>% as.character()
+
   save.image(paste0(Save_Path,"/GseaGo_",SetExport_Name,".RData"))
 
-#### Record ####
-  ## Record time log
-  Rec_Time_Point.lt[["END_Time2"]] <- Sys.time()
+  Rec_Time_Point.lt[["Save_RData_End_Time"]] <- Sys.time()
+  Rec_Time_Spend.lt[["Save_RData"]] <- Rec_Time_Point.lt[["Save_RData_End_Time"]] - Rec_Time_Point.lt[["Save_RData_Start_Time"]]
 
-  Rec_SaveTime_diff <- Rec_Time_Point.lt[["END_Time2"]] - Rec_Time_Point.lt[["END_Time"]]
-  Rec_SaveTime_diff
+##### Record #####
+  #### Record time log ####
+  Rec_Time_Point.lt[["END_Time"]] <- Sys.time() # %>% as.character()
+  Rec_Time_Spend.lt[["Total_Time"]] <- Rec_Time_Point.lt[["END_Time"]] - Rec_Time_Point.lt[["Start_Time"]]
 
-  write(paste(" Program running time：", as.character(Rec_time_diff), "mins\n",
-              "Save RData time：", as.character(Rec_SaveTime_diff), "mins"), file = paste0(Save_Path,"/Rec_time_log.txt"))
 
-  ## Record parameter
+  # ## Redundant
+  # Rec_time_diff <- Rec_Time_Point.lt[["END_Time"]] - Rec_Time_Point.lt[["Start_Time"]]
+  # Rec_SaveTime_diff <- Rec_Time_Point.lt[["Save_RData_End_Time"]] - Rec_Time_Point.lt[["Save_RData_Start_Time"]]
+  # write(paste(" Program total time：", as.character(Rec_time_diff), "mins\n",
+  #             "Save RData time：", as.character(Rec_SaveTime_diff), "mins"), file = paste0(Save_Path,"/Rec_time_log.txt"))
+
+  # # ## Bug
+  # # write(paste0(Rec_Time_Spend.lt[["Total_Time(Without save R.Data)"]]) , file = paste0(Save_Path,"/Rec_time_log.txt"))
+
+  #### Record parameter ####
 
