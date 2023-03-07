@@ -16,7 +16,7 @@
 
 #####----------------------------- Function -----------------------------#####
 
-Find_Markers <- function(PBMC.combined, ident1, ident2, CellType ,Path = getwd(),
+FUN_Find_Markers <- function(PBMC.combined, ident1, ident2, CellType ,Path = getwd(),
                          log2FC=1, Pval=0.05,ResultFolder = "FindMarkers",ProjectTitle="Tar"
                          ) {
   ## Find Cachexia marker in T Cell
