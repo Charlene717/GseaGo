@@ -27,6 +27,8 @@
   source("FUN_GSEA_ANAL.R")
 
 ##### Import setting and data loading* #####
+  Rec_Time_Point.lt[["Input_Start_Time"]] <- Sys.time() # %>% as.character()
+
   #### (Required) Set input data ####
   ## Set Import path
   SetInputPath_FOL <- "Input_TCGA"  # Input Folder Name
@@ -58,6 +60,10 @@
 
   GSEAGeneSet_MetaData.df <- read.delim2(paste0(getwd(),"/",SetInputPath_Genesets_FOL,"/",SetInput_GSEAGeneSet_MetaData),sep = "\t")
   GSEAGeneSet_MetaData.df <- GSEAGeneSet_MetaData.df[,c("STANDARD_NAME","SYSTEMATIC_NAME","CATEGORY_CODE","DESCRIPTION_BRIEF","DESCRIPTION_FULL")]
+
+Rec_Time_Point.lt[["Input_End_Time"]] <- Sys.time() # %>% as.character()
+Rec_Time_Spend.lt[["Input"]] <- Rec_Time_Point.lt[["Input_End_Time"]] - Rec_Time_Point.lt[["Input_Start_Time"]]
+
 
 ##### Conditions setting* #####
   Set_Species <- "Homo sapiens"
@@ -154,6 +160,8 @@ Rec_Time_Spend.lt[["Update_Genename"]] <- Rec_Time_Point.lt[["Update_Genename_En
 
 #************************************************************************************************************************#
 ##### Visualization for Exploratory Data Analysis(EDA) #####
+Rec_Time_Point.lt[["EDA_Start_Time"]] <- Sys.time() # %>% as.character()
+
   source("FUN_DistrPlot_GE.R")
 
   if(Set_GroupMode == "GoupByGeneExp"){
@@ -183,6 +191,8 @@ Rec_Time_Spend.lt[["Update_Genename"]] <- Rec_Time_Point.lt[["Update_Genename_En
     print("Please set the GroupMode as GoupByPheno or GoupByGeneExp")
   }
 
+Rec_Time_Point.lt[["EDA_End_Time"]] <- Sys.time() # %>% as.character()
+Rec_Time_Spend.lt[["EDA"]] <- Rec_Time_Point.lt[["EDA_End_Time"]] - Rec_Time_Point.lt[["EDA_Start_Time"]]
 
 
 #************************************************************************************************************************#
