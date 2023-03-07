@@ -198,6 +198,8 @@ Rec_Time_Spend.lt[["EDA"]] <- Rec_Time_Point.lt[["EDA_End_Time"]] - Rec_Time_Poi
 #************************************************************************************************************************#
 ##### (Optional) Grouping by GeneExp #####
   if(Set_GroupMode == "GoupByGeneExp"){
+    Rec_Time_Point.lt[["GrpGeneExp_Start_Time"]] <- Sys.time() # %>% as.character()
+
     source("FUN_Group_GE.R")
     GeneExp_group.set <- FUN_Group_GE(GeneExp.df, Metadata.df,
                                       TarGeneName = Set_TarGene_name, GroupSet = Set_TarGene,
@@ -205,10 +207,16 @@ Rec_Time_Spend.lt[["EDA"]] <- Rec_Time_Point.lt[["EDA_End_Time"]] - Rec_Time_Poi
     Metadata.df <- GeneExp_group.set[["AnnoNew.df"]]
     GeneExp_high.set <- GeneExp_group.set[["GeneExp_high.set"]]
     GeneExp_low.set <- GeneExp_group.set[["GeneExp_low.set"]]
+
+    Rec_Time_Point.lt[["GrpGeneExp_End_Time"]] <- Sys.time() # %>% as.character()
+    Rec_Time_Spend.lt[["GrpGeneExp"]] <- Rec_Time_Point.lt[["GrpGeneExp_End_Time"]] - Rec_Time_Point.lt[["GrpGeneExp_Start_Time"]]
+
   }
 
 #************************************************************************************************************************#
-##### Run Enrichment analysis in R #####
+##### Run Differential Expression Gene(DEG) analysis in R #####
+Rec_Time_Point.lt[["DEG_Start_Time"]] <- Sys.time() # %>% as.character()
+
   #### Run DEG ####
   source("FUN_DEG_Analysis.R")
   DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Metadata.df,
@@ -216,10 +224,13 @@ Rec_Time_Spend.lt[["EDA"]] <- Rec_Time_Point.lt[["EDA_End_Time"]] - Rec_Time_Poi
                                   ThrSet = Set_DEGThr.lt,
                                   SampleID = "sampleID",
                                   Save.Path = Save_Path, ExportName = SetExport_Name, AnnoName = "")
-  DE_Extract.df <- DEG_ANAL.lt[["DE_Extract.df"]]
+  DEG_Extract.df <- DEG_ANAL.lt[["DEG_Extract.df"]]
 
+Rec_Time_Point.lt[["DEG_End_Time"]] <- Sys.time() # %>% as.character()
+Rec_Time_Spend.lt[["DEG"]] <- Rec_Time_Point.lt[["DEG_End_Time"]] - Rec_Time_Point.lt[["DEG_Start_Time"]]
 
-
+##### Run Enrichment analysis in R #####
+Rec_Time_Point.lt[["GSEA_Start_Time"]] <- Sys.time() # %>% as.character()
   #### Run GSEA ####
   source("FUN_GSEA_ANAL.R")
   Int_Path.set <- c(
@@ -233,7 +244,7 @@ Rec_Time_Spend.lt[["EDA"]] <- Rec_Time_Point.lt[["EDA_End_Time"]] - Rec_Time_Poi
                     "KEGG_CALCIUM_SIGNALING_PATHWAY"
   )
 
-  GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, CMGeneSet = GSEAGeneset.df,
+  GSEA_Result.lt <- FUN_GSEA_ANAL(DEG_Extract.df, CMGeneSet = GSEAGeneset.df,
                                   DefaultGeneSet = "C2", Species = Set_Species, # Speices type can check by msigdbr_species()
                                   NumGenesetsPlt = 15,
                                   TarGeneName = Set_TarGene_name,
@@ -244,6 +255,10 @@ Rec_Time_Spend.lt[["EDA"]] <- Rec_Time_Point.lt[["EDA_End_Time"]] - Rec_Time_Poi
                                   pAdjustMethod = "BH",  # pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"
                                   nPerm = 100000,
                                   minGSSize = 15, maxGSSize = 500)
+
+Rec_Time_Point.lt[["GSEA_End_Time"]] <- Sys.time() # %>% as.character()
+Rec_Time_Spend.lt[["GSEA"]] <- Rec_Time_Point.lt[["GSEA_End_Time"]] - Rec_Time_Point.lt[["GSEA_Start_Time"]]
+
 
   #### Run ORA ####
   ## FUN ORA
