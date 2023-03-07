@@ -2,7 +2,11 @@
   rm(list = ls()) # Clean variable
   memory.limit(150000)
 
-  Rec_start_time <- Sys.time()
+  Rec_Time_Point.lt <- list()
+  Rec_Time_Spend.lt <- list()
+
+  Rec_Time_Point.lt[["Start_Time"]] <- Sys.time() # %>% as.character()
+
 ##### Load Packages #####
   source("FUN_Package_InstLoad.R")
   PKG_Basic.set <- c("tidyverse","ggplot2","Seurat","SeuratData","patchwork","plyr","eoffice","DT")
@@ -98,7 +102,7 @@
 
 
   SetExport_Name = paste0(SetExport_ProjectName,"_",SetExport_Sampletype,"_",SetExport_Cond)
-  rm(SetExport_ProjectName,SetExport_Sampletype,SetExport_Anno, SetExport_Cond)
+  # rm(SetExport_ProjectName,SetExport_Sampletype,SetExport_Anno, SetExport_Cond)
 
   Save_Path = paste0(getwd(),"/",Sys.Date(),"_",SetExport_Name)
   ## Create new folder
@@ -108,6 +112,8 @@
 
 #************************************************************************************************************************#
 ##### Update the genename ####
+Rec_Time_Point.lt[["Update_Genename_Start_Time"]] <- Sys.time() # %>% as.character()
+
   ## Ref: http://web.mit.edu/~r/current/arch/i386_linux26/lib/R/library/limma/html/alias2Symbol.html
   Set_UpdateGene <- "Yes"  # Set_UpdateGene <- c("Yes","No")
 
@@ -119,6 +125,9 @@
 
     source("RUN_UpdateGeneName.R")
   }
+
+Rec_Time_Point.lt[["Update_Genename_End_Time"]] <- Sys.time() # %>% as.character()
+Rec_Time_Spend.lt[["Update_Genename"]] <- Rec_Time_Point.lt[["Update_Genename_End_Time"]] - Rec_Time_Point.lt[["Update_Genename_Start_Time"]]
 
 #************************************************************************************************************************#
 ##### Data preprocess* #####
@@ -266,16 +275,16 @@
 
 
 #### Save RData ####
-  Rec_end_time <- Sys.time()
-  Rec_time_diff <- Rec_end_time - Rec_start_time
+  Rec_Time_Point.lt[["END_Time"]] <- Sys.time() # %>% as.character()
+  Rec_time_diff <- Rec_Time_Point.lt[["END_Time"]] - Rec_Time_Point.lt[["Start_Time"]]
   Rec_time_diff
   save.image(paste0(Save_Path,"/GseaGo_",SetExport_Name,".RData"))
 
 #### Record ####
   ## Record time log
-  Rec_end_time2 <- Sys.time()
+  Rec_Time_Point.lt[["END_Time2"]] <- Sys.time()
 
-  Rec_SaveTime_diff <- Rec_end_time2 - Rec_end_time
+  Rec_SaveTime_diff <- Rec_Time_Point.lt[["END_Time2"]] - Rec_Time_Point.lt[["END_Time"]]
   Rec_SaveTime_diff
 
   write(paste(" Program running time：", as.character(Rec_time_diff), "mins\n",
