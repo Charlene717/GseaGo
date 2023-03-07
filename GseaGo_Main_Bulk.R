@@ -23,15 +23,15 @@
 ##### Import setting and data loading* #####
   #### (Required) Set input data ####
   ## Set Import path
-  SetImportPath_FOL <- "Input_TCGA"  # Input Folder Name
-  SetImport_GE <- "Xena_TCGA_LGG_GE"
-  SetImport_Anno <- "TCGA.LGG.sampleMap_LGG_clinicalMatrix"
+  SetInputPath_FOL <- "Input_TCGA"  # Input Folder Name
+  SetInput_GE <- "Xena_TCGA_LGG_GE"
+  SetInput_Meta <- "TCGA.LGG.sampleMap_LGG_clinicalMatrix"
 
   ## Load Gene expression file
-  GeneExp.df <- read.table(paste0(SetImportPath_FOL,"/",SetImport_GE), header=T, row.names = 1, sep="\t")
+  GeneExp.df <- read.table(paste0(SetInputPath_FOL,"/",SetInput_GE), header=T, row.names = 1, sep="\t")
   colnames(GeneExp.df) <-  gsub("\\.", "-", colnames(GeneExp.df))
   ## Load Annotation file
-  Metadata.df <- read.table(paste0(SetImportPath_FOL,"/",SetImport_Anno), header=T, sep="\t")
+  Metadata.df <- read.table(paste0(SetInputPath_FOL,"/",SetInput_Meta), header=T, sep="\t")
   row.names(Metadata.df) <- Metadata.df[,1]
 
   ## Reorder the Metadata.df
@@ -41,16 +41,16 @@
 
   #### (Optional) Set GSEA genesets ####
   ## Set Import GSEA genesets path
-  SetImportPath_Genesets_FOL <- "Input_Genesets/Gsea_Genesets_Hs"
-  SetImport_GSEAGeneSet <- "msigdb.v2022.1.Hs.symbols.gmt"
-  SetImport_GSEAGeneSet_MetaData <- "msigdb_v2022.1.Hs.txt"
+  SetInputPath_Genesets_FOL <- "Input_Genesets/Gsea_Genesets_Hs"
+  SetInput_GSEAGeneSet <- "msigdb.v2022.1.Hs.symbols.gmt"
+  SetInput_GSEAGeneSet_MetaData <- "msigdb_v2022.1.Hs.txt"
 
   ## Load GSEA genesets file
-  GSEAGeneset.df <- read.delim2(paste0(getwd(),"/",SetImportPath_Genesets_FOL,"/",SetImport_GSEAGeneSet),
-                             col.names = 1:max(count.fields(paste0(getwd(),"/",SetImportPath_Genesets_FOL,"/",SetImport_GSEAGeneSet))),
+  GSEAGeneset.df <- read.delim2(paste0(getwd(),"/",SetInputPath_Genesets_FOL,"/",SetInput_GSEAGeneSet),
+                             col.names = 1:max(count.fields(paste0(getwd(),"/",SetInputPath_Genesets_FOL,"/",SetInput_GSEAGeneSet))),
                              header = F,sep = "\t")
 
-  GSEAGeneSet_MetaData.df <- read.delim2(paste0(getwd(),"/",SetImportPath_Genesets_FOL,"/",SetImport_GSEAGeneSet_MetaData),sep = "\t")
+  GSEAGeneSet_MetaData.df <- read.delim2(paste0(getwd(),"/",SetInputPath_Genesets_FOL,"/",SetInput_GSEAGeneSet_MetaData),sep = "\t")
   GSEAGeneSet_MetaData.df <- GSEAGeneSet_MetaData.df[,c("STANDARD_NAME","SYSTEMATIC_NAME","CATEGORY_CODE","DESCRIPTION_BRIEF","DESCRIPTION_FULL")]
 
 ##### Conditions setting* #####
@@ -80,18 +80,18 @@
 ##### Current path and new folder setting* #####
   Export_ProjectName = "TCGA"
   Export_Sampletype = "LGG"
-  Export_Anno = "_Recur2Prim" # Export_Anno = "_Name"
+  Export_Meta = "_Recur2Prim" # Export_Meta = "_Name"
 
   if(Set_GroupMode == "GoupByGeneExp"){
     if(Set_TarGene$GEGroupMode == "Customize"){
       Export_Cond = paste0(Set_GroupMode,"_",TarGene_name,"_",Set_TarGene$GEGroupMode,"_Up", Set_TarGene$UpCutoff,
-                          "_Low_" ,Set_TarGene$LowerCutoff,Export_Anno)
+                          "_Low_" ,Set_TarGene$LowerCutoff,Export_Meta)
     }else{
-      Export_Cond = paste0(Set_GroupMode,"_",TarGene_name,"_",Set_TarGene$GEGroupMode,Export_Anno)
+      Export_Cond = paste0(Set_GroupMode,"_",TarGene_name,"_",Set_TarGene$GEGroupMode,Export_Meta)
     }
 
   }else{
-    Export_Cond = paste0(Set_GroupMode,Export_Anno)
+    Export_Cond = paste0(Set_GroupMode,Export_Meta)
   }
 
 
