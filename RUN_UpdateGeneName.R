@@ -37,20 +37,20 @@ FUN_UpdateGene <- function(GeneName_Ori, Species = Specie, AvoidMult = TRUE) {
 
 GeneNameUpdate.df <- lapply(row.names(GeneExp.df), function(x)FUN_UpdateGene(x))  %>% unlist() %>% as.data.frame()
 
-GeneNameCompare.df <- cbind(row.names(GeneExp.df),GeneNameUpdate.df[,1]) %>% as.data.frame()
+UpdateGeneName_Compare.df <- cbind(row.names(GeneExp.df),GeneNameUpdate.df[,1]) %>% as.data.frame()
 
 
 #### Find Duplicate name Aovid many-to-one ####
 ## Ref: http://guangzheng.name/2017/10/07/%E5%A6%82%E4%BD%95%E6%9F%A5%E6%89%BE%E6%95%B0%E6%8D%AE%E6%A1%86%E4%B8%AD%E9%87%8D%E5%A4%8D%E7%9A%84%E6%95%B0%E6%8D%AE/
 library(dplyr)
 ## Extract duplicate name
-GeneNameCompare.df %>% group_by(V2) %>%
+UpdateGeneName_Compare.df %>% group_by(V2) %>%
                    dplyr::mutate(index = n()) %>%
                    filter(index > 1) %>%
-                   select(2) %>%
+                   dplyr::select(2) %>%
                    ungroup() %>%
                    unique() %>%
-                   unlist() -> Dup.set
+                   unlist() -> UpdateGeneName_Dup.Set
 
 ## -[] How to deal with duplicate name (many-to-one)?
 # (1)Small number which can be ignored
@@ -59,7 +59,7 @@ GeneNameCompare.df %>% group_by(V2) %>%
 
 ## Deal with duplicate name (many-to-one)
 FUN_DWMany2One <- function(df,x) {
-  if( (df[x,2] %in% Dup.set)== TRUE ){
+  if( (df[x,2] %in% UpdateGeneName_Dup.Set)== TRUE ){
     df[x,1] = df[x,1] # (No change if encounter duplicate names)
   }else{
     df[x,1] = df[x,2]
@@ -67,24 +67,24 @@ FUN_DWMany2One <- function(df,x) {
   return(df[x,1])
 }
 
-GeneNameDWM2O.df <- lapply(1:nrow(GeneNameCompare.df), function(x)FUN_DWMany2One(GeneNameCompare.df,x))  %>% as.data.frame() %>% t
+GeneNameDWM2O.df <- lapply(1:nrow(UpdateGeneName_Compare.df), function(x)FUN_DWMany2One(UpdateGeneName_Compare.df,x))  %>% as.data.frame() %>% t
 row.names(GeneExp.df) <- GeneNameDWM2O.df
 
 
 ## Difference before and after statistics
-GeneNameCompare.df <- cbind(GeneNameCompare.df, GeneNameDWM2O.df)
-colnames(GeneNameCompare.df) <- c("Ori","UpGeneName","DUPEGene")
-row.names(GeneNameCompare.df) <- seq(1:nrow(GeneNameCompare.df))
+UpdateGeneName_Compare.df <- cbind(UpdateGeneName_Compare.df, GeneNameDWM2O.df)
+colnames(UpdateGeneName_Compare.df) <- c("Ori","UpGeneName","DUPEGene")
+row.names(UpdateGeneName_Compare.df) <- seq(1:nrow(UpdateGeneName_Compare.df))
 
-GeneNameCompare_Sum.df <- data.frame(
-  OriToUpdate_Same = sum(GeneNameCompare.df[,1] == GeneNameCompare.df[,2]),
-  OriToUpdate_Diff = sum(GeneNameCompare.df[,1] != GeneNameCompare.df[,2]),
+UpdateGeneName_Sumdf <- data.frame(
+  OriToUpdate_Same = sum(UpdateGeneName_Compare.df[,1] == UpdateGeneName_Compare.df[,2]),
+  OriToUpdate_Diff = sum(UpdateGeneName_Compare.df[,1] != UpdateGeneName_Compare.df[,2]),
 
-  DWM2OToUpdate_Same = sum(GeneNameCompare.df[,2] == GeneNameCompare.df[,3]),
-  DWM2OToUpdate_Diff = sum(GeneNameCompare.df[,2] != GeneNameCompare.df[,3])
+  DWM2OToUpdate_Same = sum(UpdateGeneName_Compare.df[,2] == UpdateGeneName_Compare.df[,3]),
+  DWM2OToUpdate_Diff = sum(UpdateGeneName_Compare.df[,2] != UpdateGeneName_Compare.df[,3])
 )
 
-rm(GeneNameUpdate.df,GeneNameDWM2O.df)
+rm(GeneNameUpdate.df, GeneNameDWM2O.df, Specie)
 
 #************************************************************************************************************************#
 # #### Old version 1 ####
