@@ -61,12 +61,12 @@
     Set_GroupCond <-  list(GroupType = "sample_type",
                            GroupPair = c("Primary Tumor","Recurrent Tumor"))
   }else if(Set_GroupMode == "GoupByGeneExp"){
-    TarGene_name = "TP53"
-    Set_TarGene <-  list(TarGeneName = TarGene_name,
+    Set_TarGene_name = "TP53"
+    Set_TarGene <-  list(TarGeneName = Set_TarGene_name,
                          GEGroupMode = "Mean", # c("Mean","Mean1SD","Mean2SD","Mean3SD","Median","Quartile","Customize"))
                          UpCutoff = 1, LowerCutoff = 1)
 
-    Set_GroupCond <- list(GroupType = TarGene_name, GroupPair = c("High","Low") )   ## DEG by GeneExp group
+    Set_GroupCond <- list(GroupType = Set_TarGene_name, GroupPair = c("High","Low") )   ## DEG by GeneExp group
   }else{
     print("Please set Set_GroupMode by GoupByPheno or GoupByGeneExp")
   }
@@ -84,10 +84,10 @@
 
   if(Set_GroupMode == "GoupByGeneExp"){
     if(Set_TarGene$GEGroupMode == "Customize"){
-      SetExport_Cond = paste0(Set_GroupMode,"_",TarGene_name,"_",Set_TarGene$GEGroupMode,"_Up", Set_TarGene$UpCutoff,
+      SetExport_Cond = paste0(Set_GroupMode,"_",Set_TarGene_name,"_",Set_TarGene$GEGroupMode,"_Up", Set_TarGene$UpCutoff,
                           "_Low_" ,Set_TarGene$LowerCutoff,SetExport_Anno)
     }else{
-      SetExport_Cond = paste0(Set_GroupMode,"_",TarGene_name,"_",Set_TarGene$GEGroupMode,SetExport_Anno)
+      SetExport_Cond = paste0(Set_GroupMode,"_",Set_TarGene_name,"_",Set_TarGene$GEGroupMode,SetExport_Anno)
     }
 
   }else{
@@ -120,8 +120,7 @@
 #************************************************************************************************************************#
 ##### Data preprocess* #####
   ## Select Pheno column
-  colnames(Metadata.df)
-
+  # colnames(Metadata.df)
   PhenoColKeep.set <- c("sampleID","X_PATIENT","histological_type","sample_type","gender")
   Metadata.df <- Metadata.df[,c(PhenoColKeep.set)]
   colnames(Metadata.df)
@@ -147,7 +146,7 @@
 
   if(Set_GroupMode == "GoupByGeneExp"){
     Plot.DistrPlot <- FUN_DistrPlot_GE(GeneExp.df,
-                                       TarGeneName = TarGene_name, GroupSet = Set_TarGene,
+                                       TarGeneName = Set_TarGene_name, GroupSet = Set_TarGene,
                                        Save.Path = Save_Path, ExportName = SetExport_Name)
     Plot.DistrPlot_SD_Q <- Plot.DistrPlot[["TGeneDen_SD_Q.p"]]
     Plot.DistrPlot_SD_Q
@@ -179,7 +178,7 @@
   if(Set_GroupMode == "GoupByGeneExp"){
     source("FUN_Group_GE.R")
     GeneExp_group.set <- FUN_Group_GE(GeneExp.df, Metadata.df,
-                                      TarGeneName = TarGene_name, GroupSet = Set_TarGene,
+                                      TarGeneName = Set_TarGene_name, GroupSet = Set_TarGene,
                                       Save.Path = Save_Path, ExportName = SetExport_Name)
     Metadata.df <- GeneExp_group.set[["AnnoNew.df"]]
     GeneExp_high.set <- GeneExp_group.set[["GeneExp_high.set"]]
@@ -215,7 +214,7 @@
   GSEA_Result.lt <- FUN_GSEA_ANAL(DE_Extract.df, CMGeneSet = GSEAGeneset.df,
                                   DefaultGeneSet = "C2", Species = Set_Species, # Speices type can check by msigdbr_species()
                                   NumGenesetsPlt = 15,
-                                  TarGeneName = TarGene_name,
+                                  TarGeneName = Set_TarGene_name,
                                   ThrSet = Set_DEGThr.lt,
                                   Save.Path = Save_Path, ExportName = SetExport_Name, AnnoName = "Path",
                                   Keyword = "HALLMARK",
