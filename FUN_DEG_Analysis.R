@@ -32,41 +32,41 @@ FUN_DEG_Analysis = function(GeneExp.df, Anno.df,
   Anno_Ints.df <- left_join(matrix_Ints_ID.df, Anno_Ints.df)
 
   DGE_Ints.lt <- DGEList(counts=matrix_Ints.df, group=Anno_Ints.df[,GroupType], lib.size=rep(1000,ncol(matrix_Ints.df)))
-  DE_Extract.lt <- exactTest(DGE_Ints.lt,pair = GroupCompare, dispersion=0.2)
-  DE_Extract.df <- topTags(DE_Extract.lt,n = nrow(matrix_Ints.df)) %>%
+  DEG_Extract.lt <- exactTest(DGE_Ints.lt,pair = GroupCompare, dispersion=0.2)
+  DEG_Extract.df <- topTags(DEG_Extract.lt,n = nrow(matrix_Ints.df)) %>%
                            as.data.frame() %>%
                            data.frame(Gene=row.names(.),.)
 
   #### Add gene sets by threshold filtering ####
   # ThrSet = Thr.lt
   length(ThrSet)
-  DE_Extract_Flt.df <- DE_Extract.df
+  DEG_Extract_Flt.df <- DEG_Extract.df
 
-  DE_Extract_FltH.df <- filter(DE_Extract.df, DE_Extract.df[,ThrSet[["LogFC"]][1]] >= ThrSet[["LogFC"]][2] &
-                               DE_Extract.df[,ThrSet[["pVal"]][1]] < ThrSet[["pVal"]][2])
+  DEG_Extract_FltH.df <- filter(DEG_Extract.df, DEG_Extract.df[,ThrSet[["LogFC"]][1]] >= ThrSet[["LogFC"]][2] &
+                               DEG_Extract.df[,ThrSet[["pVal"]][1]] < ThrSet[["pVal"]][2])
 
-  DE_Extract_FltL.df <- filter(DE_Extract.df, DE_Extract.df[,ThrSet[["LogFC"]][1]] <= as.numeric(ThrSet[["LogFC"]][2])*(-1) &
-                               DE_Extract.df[,ThrSet[["pVal"]][1]] < ThrSet[["pVal"]][2])
-  DE_Extract_Flt.df <- rbind(DE_Extract_FltH.df,DE_Extract_FltL.df)
+  DEG_Extract_FltL.df <- filter(DEG_Extract.df, DEG_Extract.df[,ThrSet[["LogFC"]][1]] <= as.numeric(ThrSet[["LogFC"]][2])*(-1) &
+                               DEG_Extract.df[,ThrSet[["pVal"]][1]] < ThrSet[["pVal"]][2])
+  DEG_Extract_Flt.df <- rbind(DEG_Extract_FltH.df,DEG_Extract_FltL.df)
 
-  DE_Extract_Flt.set <- rownames(DE_Extract_Flt.df)
-  DE_Extract_FltH.set <- rownames(DE_Extract_FltH.df)
-  DE_Extract_FltL.set <- rownames(DE_Extract_FltL.df)
+  DEG_Extract_Flt.set <- rownames(DEG_Extract_Flt.df)
+  DEG_Extract_FltH.set <- rownames(DEG_Extract_FltH.df)
+  DEG_Extract_FltL.set <- rownames(DEG_Extract_FltL.df)
 
 
   #### Export file ####
-  write.table(DE_Extract.df, file = paste0(Save.Path,"/DEGAnalysis_",ExportName,"_",AnnoName,".tsv"),
+  write.table(DEG_Extract.df, file = paste0(Save.Path,"/DEGAnalysis_",ExportName,"_",AnnoName,".tsv"),
               sep="\t", row.names= F, quote = FALSE)
-  write.table(DE_Extract_Flt.df, file = paste0(Save.Path,"/DEGAnalysis_Flt_",ExportName,"_",AnnoName,".tsv"),
+  write.table(DEG_Extract_Flt.df, file = paste0(Save.Path,"/DEGAnalysis_Flt_",ExportName,"_",AnnoName,".tsv"),
               sep="\t", row.names= F, quote = FALSE)
 
 
   #### Output ####
   Output <- list()
-  Output[["DE_Extract.df"]] <- DE_Extract.df
-  Output[["DE_Extract_Flt.df"]] <- DE_Extract_Flt.df
-  Output[["DE_Extract_FltH.set"]] <- DE_Extract_FltH.set
-  Output[["DE_Extract_FltL.set"]] <- DE_Extract_FltL.set
+  Output[["DEG_Extract.df"]] <- DEG_Extract.df
+  Output[["DEG_Extract_Flt.df"]] <- DEG_Extract_Flt.df
+  Output[["DEG_Extract_FltH.set"]] <- DEG_Extract_FltH.set
+  Output[["DEG_Extract_FltL.set"]] <- DEG_Extract_FltL.set
   Output[["Thr.lt"]] <- ThrSet
 
   return(Output)
