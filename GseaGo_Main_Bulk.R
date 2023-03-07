@@ -9,16 +9,18 @@
   PKG_BiocManager.set <- c("clusterProfiler","enrichplot","pathview","limma")
 
   FUN_Package_InstLoad(Basic.set = PKG_Basic.set, BiocManager.set = PKG_BiocManager.set)
+  rm(PKG_Basic.set,PKG_BiocManager.set,FUN_Package_InstLoad)
 
 ##### Function setting #####
   ## Call function
   source("FUN_DistrPlot_GE.R")
   source("FUN_Beautify_ggplot.R")
-  source("FUN_Find_Markers.R")
-  source("FUN_VolcanoPlot.R")
-  source("FUN_GSEA_LargeGeneSet.R")
-  source("FUN_GSEA_ggplot.R")
+  # source("FUN_Find_Markers.R")
+  # source("FUN_VolcanoPlot.R")
+  # source("FUN_GSEA_LargeGeneSet.R")
+  # source("FUN_GSEA_ggplot.R")
   source("FUN_ggPlot_vline.R")
+  source("FUN_GSEA_ANAL.R")
 
 ##### Import setting and data loading* #####
   #### (Required) Set input data ####
@@ -96,6 +98,7 @@
 
 
   SetExport_Name = paste0(SetExport_ProjectName,"_",SetExport_Sampletype,"_",SetExport_Cond)
+  rm(SetExport_ProjectName,SetExport_Sampletype,SetExport_Anno, SetExport_Cond)
 
   Save_Path = paste0(getwd(),"/",Sys.Date(),"_",SetExport_Name)
   ## Create new folder
