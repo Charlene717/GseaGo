@@ -80,18 +80,18 @@
 ##### Current path and new folder setting* #####
   SetExport_ProjectName = "TCGA"
   SetExport_Sampletype = "LGG"
-  SetExport_Meta = "_Recur2Prim" # SetExport_Meta = "_Name"
+  SetExport_Anno = "_Recur2Prim" # SetExport_Anno = "_Name"
 
   if(Set_GroupMode == "GoupByGeneExp"){
     if(Set_TarGene$GEGroupMode == "Customize"){
       SetExport_Cond = paste0(Set_GroupMode,"_",TarGene_name,"_",Set_TarGene$GEGroupMode,"_Up", Set_TarGene$UpCutoff,
-                          "_Low_" ,Set_TarGene$LowerCutoff,SetExport_Meta)
+                          "_Low_" ,Set_TarGene$LowerCutoff,SetExport_Anno)
     }else{
-      SetExport_Cond = paste0(Set_GroupMode,"_",TarGene_name,"_",Set_TarGene$GEGroupMode,SetExport_Meta)
+      SetExport_Cond = paste0(Set_GroupMode,"_",TarGene_name,"_",Set_TarGene$GEGroupMode,SetExport_Anno)
     }
 
   }else{
-    SetExport_Cond = paste0(Set_GroupMode,SetExport_Meta)
+    SetExport_Cond = paste0(Set_GroupMode,SetExport_Anno)
   }
 
 
@@ -132,6 +132,8 @@
   PhenoRowKeep.set <- list(col="sample_type",row=c("Primary Tumor","Recurrent Tumor"))
   Metadata.df <- Metadata.df[Metadata.df[,PhenoRowKeep.set[["col"]]] %in% PhenoRowKeep.set[["row"]], ]
   GeneExp.df <- GeneExp.df[,colnames(GeneExp.df) %in% Metadata.df$sampleID]
+
+  rm(PhenoColKeep.set,PhenoRowKeep.set)
 
   # ## Replace
   # Metadata.df[,"sample_type"] <- gsub("Primary Tumor", "PrimTu", Metadata.df[,"sample_type"])
