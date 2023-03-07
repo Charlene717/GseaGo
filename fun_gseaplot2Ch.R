@@ -1,3 +1,7 @@
+## Ref: https://rdrr.io/bioc/enrichplot/man/gseaplot2.html
+## Ref: https://github.com/YuLab-SMU/enrichplot/blob/b6467013b88a96160253cacc7391ccfa7988ca78/R/gseaplot.R
+## Ch:Modify the presentation content of Fig
+
 gseaplot2Ch <- function (x, geneSetID, title = "", color = "green", base_size = 11,
                        rel_heights = c(1.5, 0.5, 1), subplots = 1:3, pvalue_table = FALSE,
                        ES_geom = "line")
@@ -49,8 +53,7 @@ gseaplot2Ch <- function (x, geneSetID, title = "", color = "green", base_size = 
     inv <- findInterval(rev(cumsum(gsdata$position)), v)
     if (min(inv) == 0)
       inv <- inv + 1
-    col <- c(rev(brewer.pal(5, "Blues")), brewer.pal(5,
-                                                     "Reds"))
+    col <- c(rev(brewer.pal(5, "Blues")), brewer.pal(5,"Reds"))
     ymin <- min(p2$data$ymin)
     yy <- max(p2$data$ymax - p2$data$ymin) * 0.3
     xmin <- which(!duplicated(inv))
