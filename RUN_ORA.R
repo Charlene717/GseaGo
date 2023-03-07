@@ -77,26 +77,26 @@ FUN_Package_InstLoad(Basic.set = PKG_Basic.set, BiocManager.set = PKG_BiocManage
 
 ##### Outcome #####
   ## Upset Plot
-  Upsetplot_GO <- upsetplot(ORA_GO_Result)
-  Upsetplot_GO
+  GO_Upsetplot <- upsetplot(ORA_GO_Result)
+  GO_Upsetplot
   # https://alanlee.fun/2022/01/08/introducing-upsetplot/
 
   ## Barplot
-  Barplot_GO <- barplot(ORA_GO_Result,
+  GO_Barplot <- barplot(ORA_GO_Result,
                         drop = TRUE,
                         showCategory = 10,
                         title = "GO Biological Pathways",
                         font.size = 8)
-  Barplot_GO
+  GO_Barplot
 
-  Barplot_GO <- Barplot_GO %>% FUN_BeautifyggPlot()
-  Barplot_GO
+  GO_Barplot <- GO_Barplot %>% FUN_BeautifyggPlot()
+  GO_Barplot
 
   ## Dotplot
-  Dotplot_GO <- dotplot(ORA_GO_Result)
-  Dotplot_GO
-  Dotplot_GO <- Dotplot_GO %>% FUN_BeautifyggPlot(LegPos = c(0.15, 0.65))
-  Dotplot_GO
+  GO_Dotplot <- dotplot(ORA_GO_Result)
+  GO_Dotplot
+  GO_Dotplot <- GO_Dotplot %>% FUN_BeautifyggPlot(LegPos = c(0.15, 0.65))
+  GO_Dotplot
 
   ## Encrichment map:
   try({emapplot(ORA_GO_Result)})
@@ -106,8 +106,8 @@ FUN_Package_InstLoad(Basic.set = PKG_Basic.set, BiocManager.set = PKG_BiocManage
   ## https://github.com/YuLab-SMU/enrichplot/issues/79
   ## Solution 1
   ORA_GO_Result <- pairwise_termsim(ORA_GO_Result)
-  Emapplot_GO <- emapplot(ORA_GO_Result)
-  Emapplot_GO
+  GO_Emapplot <- emapplot(ORA_GO_Result)
+  GO_Emapplot
 
   # ## Solution 2
   # d <- GOSemSim::godata(organism, ont = "BP")
@@ -116,24 +116,24 @@ FUN_Package_InstLoad(Basic.set = PKG_Basic.set, BiocManager.set = PKG_BiocManage
   #-----------------------------------------------------------------------------------------------#
 
   ## Enriched GO induced graph:
-  Goplot_GO <- goplot(ORA_GO_Result, showCategory = 10)
-  Goplot_GO
+  GO_Goplot <- goplot(ORA_GO_Result, showCategory = 10)
+  GO_Goplot
 
   ## Category Netplot
   # categorySize can be either 'pvalue' or 'geneNum'
-  Cnetplot_GO <- cnetplot(ORA_GO_Result, categorySize = "pvalue", foldChange = ORA_GeneDiff_All)
-  Cnetplot_GO
+  GO_Cnetplot <- cnetplot(ORA_GO_Result, categorySize = "pvalue", foldChange = ORA_GeneDiff_All)
+  GO_Cnetplot
 
 
 ##### Export #####
 
-  ORA_Plot.lt <- list(Upsetplot=Upsetplot_GO, Barplot=Barplot_GO, Dotplot=Dotplot_GO,
-                  Emapplot=Emapplot_GO, Goplot=Goplot_GO, Cnetplot=Cnetplot_GO)
+  ORA_Plot.lt <- list(Upsetplot=GO_Upsetplot, Barplot=GO_Barplot, Dotplot=GO_Dotplot,
+                  Emapplot=GO_Emapplot, Goplot=GO_Goplot, Cnetplot=GO_Cnetplot)
 
 
   ## Export PDF file
   pdf(
-    file = paste0(Save_Path,"/ORA.pdf"),
+    file = paste0(Save_Path,"/ORAResult_",SetExport_Name,".pdf"),
     width = 10,  height = 8
   )
 
@@ -144,7 +144,7 @@ FUN_Package_InstLoad(Basic.set = PKG_Basic.set, BiocManager.set = PKG_BiocManage
   ## Export TIFF file
   for (i in 1:length(ORA_Plot.lt)) {
     try({
-      tiff(file = paste0(Save_Path,"/",names(ORA_Plot.lt)[i],"_ORA.tif"),
+      tiff(file = paste0(Save_Path,"/ORAResult_",names(ORA_Plot.lt)[i],"_",SetExport_Name,".tif"),
            width = 27, height = 27, units = "cm", res = 200)
 
         print(ORA_Plot.lt[i])
@@ -156,7 +156,7 @@ FUN_Package_InstLoad(Basic.set = PKG_Basic.set, BiocManager.set = PKG_BiocManage
 
   rm(organism)
 
-  rm(Upsetplot_GO, Barplot_GO, Dotplot_GO, Emapplot_GO, Goplot_GO,Cnetplot_GO,
+  rm(GO_Upsetplot, GO_Barplot, GO_Dotplot, GO_Emapplot, GO_Goplot,GO_Cnetplot,
      Sig_GeneExp.df)
 
 # ##### Error part (to be corrected) #####
