@@ -132,7 +132,7 @@ FUN_Package_InstLoad(Basic.set = PKG_Basic.set, BiocManager.set = PKG_BiocManage
 
   ## Export PDF file
   pdf(
-    file = paste0(Save.Path,"/ORA.pdf"),
+    file = paste0(Save_Path,"/ORA.pdf"),
     width = 10,  height = 8
   )
 
@@ -143,7 +143,7 @@ FUN_Package_InstLoad(Basic.set = PKG_Basic.set, BiocManager.set = PKG_BiocManage
   ## Export TIFF file
   for (i in 1:length(Plot.lt)) {
     try({
-      tiff(file = paste0(Save.Path,"/",names(Plot.lt)[i],"_ORA.tif"),
+      tiff(file = paste0(Save_Path,"/",names(Plot.lt)[i],"_ORA.tif"),
            width = 27, height = 27, units = "cm", res = 200)
 
         print(Plot.lt[i])
