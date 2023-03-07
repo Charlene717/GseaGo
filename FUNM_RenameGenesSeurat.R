@@ -1,3 +1,7 @@
+# Based on https://github.com/satijalab/seurat/issues/1049#issuecomment-453602745
+# and on https://github.com/satijalab/seurat/issues/978#issuecomment-444526949
+# using https://waldronlab.io/HGNChelper/articles/index.html
+
 RenameGenesSeurat <- function(SeuObj = ls.Seurat[[i]], newnames = HGNC.updated[[i]]) {
   print("Run this before integration. It only changes SeuObj@assays$RNA@counts, @data and @scale.data")
   RNA <- SeuObj@assays$RNA
@@ -53,6 +57,3 @@ if (TRUE) {
 }
 
 
-# Based on https://github.com/satijalab/seurat/issues/1049#issuecomment-453602745
-# and on https://github.com/satijalab/seurat/issues/978#issuecomment-444526949
-# using https://waldronlab.io/HGNChelper/articles/index.html
