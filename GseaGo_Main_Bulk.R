@@ -31,13 +31,13 @@
   GeneExp.df <- read.table(paste0(SetImportPath_FOL,"/",SetImport_GE), header=T, row.names = 1, sep="\t")
   colnames(GeneExp.df) <-  gsub("\\.", "-", colnames(GeneExp.df))
   ## Load Annotation file
-  Anno.df <- read.table(paste0(SetImportPath_FOL,"/",SetImport_Anno), header=T, sep="\t")
-  row.names(Anno.df) <- Anno.df[,1]
+  Metadata.df <- read.table(paste0(SetImportPath_FOL,"/",SetImport_Anno), header=T, sep="\t")
+  row.names(Metadata.df) <- Metadata.df[,1]
 
-  ## Reorder the Anno.df
-  Anno.df <- left_join(data.frame("sampleID"=colnames(GeneExp.df)),
-                       Anno.df)
-  row.names(Anno.df) <- Anno.df[,1]
+  ## Reorder the Metadata.df
+  Metadata.df <- left_join(data.frame("sampleID"=colnames(GeneExp.df)),
+                           Metadata.df)
+  row.names(Metadata.df) <- Metadata.df[,1]
 
   #### (Optional) Set GSEA genesets ####
   ## Set Import GSEA genesets path
@@ -120,21 +120,21 @@
 #************************************************************************************************************************#
 ##### Data preprocess* #####
   ## Select Pheno column
-  colnames(Anno.df)
+  colnames(Metadata.df)
 
   PhenoColKeep.set <- c("sampleID","X_PATIENT","histological_type","sample_type","gender")
-  Anno.df <- Anno.df[,c(PhenoColKeep.set)]
-  colnames(Anno.df)
+  Metadata.df <- Metadata.df[,c(PhenoColKeep.set)]
+  colnames(Metadata.df)
 
-  head(Anno.df)
+  head(Metadata.df)
 
   ## Select Pheno row
   PhenoRowKeep.set <- list(col="sample_type",row=c("Primary Tumor","Recurrent Tumor"))
-  Anno.df <- Anno.df[Anno.df[,PhenoRowKeep.set[["col"]]] %in% PhenoRowKeep.set[["row"]], ]
-  GeneExp.df <- GeneExp.df[,colnames(GeneExp.df) %in% Anno.df$sampleID]
+  Metadata.df <- Metadata.df[Metadata.df[,PhenoRowKeep.set[["col"]]] %in% PhenoRowKeep.set[["row"]], ]
+  GeneExp.df <- GeneExp.df[,colnames(GeneExp.df) %in% Metadata.df$sampleID]
 
   # ## Replace
-  # Anno.df[,"sample_type"] <- gsub("Primary Tumor", "PrimTu", Anno.df[,"sample_type"])
+  # Metadata.df[,"sample_type"] <- gsub("Primary Tumor", "PrimTu", Metadata.df[,"sample_type"])
 
   ## -[] Normalization or Standardization
 
@@ -151,8 +151,8 @@
     Plot.DistrPlot_SD_Q
 
   }else if(Set_GroupMode == "GoupByPheno"){
-    Plot.Barplot <- ggplot(Anno.df, aes(x=as.factor(Anno.df[,Set_GroupCond$GroupType]), fill=as.factor(Anno.df[,Set_GroupCond$GroupType]))) + geom_bar()
-    # Plot.Barplot <- ggplot(Anno.df, aes(x=as.factor(gender), fill=as.factor(gender))) + geom_bar()
+    Plot.Barplot <- ggplot(Metadata.df, aes(x=as.factor(Metadata.df[,Set_GroupCond$GroupType]), fill=as.factor(Metadata.df[,Set_GroupCond$GroupType]))) + geom_bar()
+    # Plot.Barplot <- ggplot(Metadata.df, aes(x=as.factor(gender), fill=as.factor(gender))) + geom_bar()
 
     Plot.Barplot + labs(fill=Set_GroupCond$GroupType, x=Set_GroupCond$GroupType, y = "count")+
         theme_classic() %>% FUN_BeautifyggPlot(AxisTitleSize=2,LegPos = c(0.75, 0.85))+
@@ -176,10 +176,10 @@
 ##### (Optional) Grouping by GeneExp #####
   if(Set_GroupMode == "GoupByGeneExp"){
     source("FUN_Group_GE.R")
-    GeneExp_group.set <- FUN_Group_GE(GeneExp.df, Anno.df,
+    GeneExp_group.set <- FUN_Group_GE(GeneExp.df, Metadata.df,
                                       TarGeneName = TarGene_name, GroupSet = Set_TarGene,
                                       Save.Path = Save_Path, ExportName = Export_Name)
-    Anno.df <- GeneExp_group.set[["AnnoNew.df"]]
+    Metadata.df <- GeneExp_group.set[["AnnoNew.df"]]
     GeneExp_high.set <- GeneExp_group.set[["GeneExp_high.set"]]
     GeneExp_low.set <- GeneExp_group.set[["GeneExp_low.set"]]
   }
@@ -188,7 +188,7 @@
 ##### Run Enrichment analysis in R #####
   #### Run DEG ####
   source("FUN_DEG_Analysis.R")
-  DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Anno.df,
+  DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Metadata.df,
                                   GroupType = Set_GroupCond[["GroupType"]], GroupCompare = Set_GroupCond[["GroupPair"]],
                                   ThrSet = Set_DEGThr.lt,
                                   TarGeneName = TarGene_name, GroupMode = Set_TarGene, SampleID = "sampleID",
@@ -238,8 +238,8 @@
 
 
   }else if(Set_GroupMode == "GoupByPheno"){
-    Group1.set <- Anno.df[Anno.df[,Set_GroupCond[["GroupType"]] ]%in% Set_GroupCond[["GroupPair"]][1],][,1]
-    Group2.set <- Anno.df[Anno.df[,Set_GroupCond[["GroupType"]] ]%in% Set_GroupCond[["GroupPair"]][2],][,1]
+    Group1.set <- Metadata.df[Metadata.df[,Set_GroupCond[["GroupType"]] ]%in% Set_GroupCond[["GroupPair"]][1],][,1]
+    Group2.set <- Metadata.df[Metadata.df[,Set_GroupCond[["GroupType"]] ]%in% Set_GroupCond[["GroupPair"]][2],][,1]
     Group1_Name <- paste0(Set_GroupCond$GroupPair[1]) %>% gsub(" ", "_", .)
     Group2_Name <- paste0(Set_GroupCond$GroupPair[2]) %>% gsub(" ", "_", .)
 
