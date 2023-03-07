@@ -254,6 +254,8 @@ Rec_Time_Point.lt[["GSEA_Start_Time"]] <- Sys.time() # %>% as.character()
                                   nPerm = 100000,
                                   minGSSize = 15, maxGSSize = 500)
 
+  GSEA_Result <- GSEA_Result.lt[["GSEA_Result"]]
+  rm(GSEA_Result.lt)
 
 Rec_Time_Point.lt[["GSEA_End_Time"]] <- Sys.time() # %>% as.character()
 Rec_Time_Spend.lt[["GSEA"]] <- Rec_Time_Point.lt[["GSEA_End_Time"]] - Rec_Time_Point.lt[["GSEA_Start_Time"]]
