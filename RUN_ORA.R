@@ -3,7 +3,7 @@
 
 ##### Load Packages  #####
 source("FUN_Package_InstLoad.R")
-PKG_Basic.set <- c("tidyverse","ggplot2","Seurat","SeuratData","patchwork","DT")
+PKG_Basic.set <- c("tidyverse","ggplot2","patchwork","DT")
 PKG_BiocManager.set <- c("clusterProfiler","enrichplot","ggupset","limma")
 
 FUN_Package_InstLoad(Basic.set = PKG_Basic.set, BiocManager.set = PKG_BiocManager.set)
@@ -74,6 +74,51 @@ FUN_Package_InstLoad(Basic.set = PKG_Basic.set, BiocManager.set = PKG_BiocManage
                         ont = "BP",
                         pvalueCutoff = 0.05,
                         qvalueCutoff = 0.10)
+
+  ##### Create enrichKEGG object #####
+  ## Over-Representation Analysis with ClusterProfiler
+  #  https://learn.gencore.bio.nyu.edu/rna-seq-analysis/over-representation-analysis/
+
+  ## Error
+  ## Ref: https://www.biowolf.cn/Question/kegg_error.html
+  install.packages("R.utils")
+  R.utils::setOption("clusterProfiler.download.method","auto")
+  library("clusterProfiler")
+  kegg_organism = # "hsa","mmu"
+  ORA_KEGG_Result <- enrichKEGG(gene = ORA_GeneList_Sig,
+                   universe = names(ORA_GeneDiff_All),
+                   organism = kegg_organism,
+                   pvalueCutoff = 0.05,
+                   keyType = "ncbi-geneid")
+
+  ##### Plot Chart #####
+  ## Bar Chart
+  barplot(ORA_KEGG_Result,
+          showCategory = 10,
+          title = "Enriched Pathways",
+          font.size = 8)
+  ## Dot Chart
+  dotplot(ORA_KEGG_Result,
+          showCategory = 10,
+          title = "Enriched Pathways",
+          font.size = 8)
+  ## Category Netplot:
+  # categorySize can be either 'pvalue' or 'geneNum'
+  cnetplot(ORA_KEGG_Result, categorySize="pvalue", foldChange=ORA_GeneList_Sig)
+
+
+  library(pathview)
+
+  ## KEGG plot
+  # Produce the native KEGG plot (PNG)
+  mmu.p1 <- pathview(gene.data=ORA_GeneList_Sig, pathway.id="05235", species = kegg_organism, gene.idtype=gene.idtype.list[1])
+
+  # Produce a different plot (PDF) (not displayed here)
+  mmu.p2 <- pathview(gene.data=ORA_GeneList_Sig, pathway.id="05235", species = kegg_organism, gene.idtype=gene.idtype.list[1], kegg.native = F)
+
+  knitr::include_graphics("mmu05235.pathview.png")
+
+
 
 ##### Outcome #####
   ## Upset Plot
