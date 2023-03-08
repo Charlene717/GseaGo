@@ -17,17 +17,22 @@
 ## - [] scRNA-seq Enrichment analysis
 
 ## - [] More EDA
+## - [] EDA for GoupByPheno
+## - [] Modify DGE Method
+## - [] Volcanoplot
 
 
 ## - [] ORA
   ## - [] Mode: Use Gene List Filter by Top N genes
+  ## - [] Link to GSEAGeneSet
+
 
 ## - [] Add Metric for ranking gene
 
-## - [] Modify DGE Method
 
-## - [] Combine different GSEA packages
-  # - [] Add Permutation of PhenoType
+## - [] GSEA
+  ## - [] Combine different GSEA packages
+  ## - [] GSEA: Add Permutation of PhenoType
 
 
 ## - [] GUI
