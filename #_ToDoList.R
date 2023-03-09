@@ -1,41 +1,46 @@
 ## To do list
-## - [] Renew the Gene set data base
 
-## - [] Data Visualization
+#### Gene set ####
+## - [] Renew the Gene set data base
+## - [] Customized Gene set data base for ORA
+
+
+#### More EDA ####
+## - [v] EDA for GoupByPheno
+## - [] Modify DGE Method
+## - [] Volcanoplot
+
+#### DEG ####
+## - [] Add Metric for ranking gene
+
+
+#### ORA ####
+## - [] Mode: Use Gene List Filter by Top N genes
+## - [] Link to GSEAGeneSet
+
+
+#### GSEA ####
+## - [] Combine different GSEA packages
+## - [] GSEA: Add Permutation of PhenoType
+
+
+#### Data Visualization ####
   # - [] Heatmap for DEG
   # - [] Heatmap for Terms
   # - [] Bobble Plot
   # - [] Beautify Plot
 
 
-
-## - [] Reduce computing time
-
+#### Record ####
 ## - [v] Record computing time
 ## - [] Record parameter
 
+#### ----------------------------------------------------------- ####
+
+## - [] Reduce computing time
+
 ## - [] scRNA-seq Enrichment analysis
 
-## - [] More EDA
-## - [] EDA for GoupByPheno
-## - [] Modify DGE Method
-## - [] Volcanoplot
-
-
-## - [] ORA
-  ## - [] Mode: Use Gene List Filter by Top N genes
-  ## - [] Link to GSEAGeneSet
-
-
-## - [] Add Metric for ranking gene
-
-
-## - [] GSEA
-  ## - [] Combine different GSEA packages
-  ## - [] GSEA: Add Permutation of PhenoType
-
-
 ## - [] GUI
-
 
 ## - [] Design User friendly way of Data preprocessing
