@@ -1,4 +1,4 @@
-FUN_VolcanoPlot <- function(Marker.df, Pos.List, Neg.List,
+FUN_VolcanoPlot <- function(Marker.df, PosNum = 10, NegNum = 10,
                         color = c(red = "#ef476f",gray = "gray",blue = "#0077b6"),
                         log2FC = 1,PValue = 0.05,
                         ShowGeneNum = 5){
@@ -9,40 +9,46 @@ FUN_VolcanoPlot <- function(Marker.df, Pos.List, Neg.List,
     library(ggplot2)
     library(cowplot)
 
+    Marker.df <- Marker.df %>% arrange(desc(Marker.df[,"logFC"]))
+
+    Pos.List <- row.names(Marker.df)[1:PosNum]
+    Neg.List <- row.names(Marker.df)[(nrow(Marker.df)-NegNum+1):nrow(Marker.df)]
+
+
     ##-------------- Volcano Plot --------------##
-    Marker.df2 <- data.frame(row.names(Marker.df),Marker.df)
-    colnames(Marker.df2)[[1]] <- c("Gene")
+    Marker.df <- data.frame(row.names(Marker.df),Marker.df)
+    colnames(Marker.df)[[1]] <- c("Gene")
 
-    Marker.df2$p_val <- Marker.df2$p_val+1.0e-300
+    Marker.df$p_val <- Marker.df$p_val+1.0e-300
 
-    Marker.df2$color <- ifelse(Marker.df2$p_val< PValue & abs(Marker.df2$avg_log2FC)>= log2FC,ifelse(Marker.df2$avg_log2FC > log2FC,'red','blue'),'gray')
+    Marker.df$color <- ifelse(Marker.df$p_val< PValue & abs(Marker.df$avg_log2FC)>= log2FC,ifelse(Marker.df$avg_log2FC > log2FC,'red','blue'),'gray')
     # color <- c(red = "red",gray = "gray",blue = "blue")
     # color <- c(red = "#ef476f",gray = "gray",blue = "#0077b6")
 
     # redefine levels:
-    # Marker.df2$genelabels <- factor(Marker.df2$Gene, levels = c(Pos.List,Neg.List))
+    # Marker.df$genelabels <- factor(Marker.df$Gene, levels = c(Pos.List,Neg.List))
 
     if (length(Pos.List) >= ShowGeneNum && length(Neg.List) >= ShowGeneNum) {
-        Marker.df2$genelabels <- factor(Marker.df2$Gene,
+        Marker.df$genelabels <- factor(Marker.df$Gene,
                                         levels = c(Pos.List[1:ShowGeneNum],
                                                    Neg.List[(length(Neg.List)-(ShowGeneNum-1)):length(Neg.List)]))
       }else if(length(Pos.List) >= ShowGeneNum && length(Neg.List) < ShowGeneNum){
-        Marker.df2$genelabels <- factor(Marker.df2$Gene,
+        Marker.df$genelabels <- factor(Marker.df$Gene,
                                         levels = c(Pos.List[1:ShowGeneNum],
                                                    Neg.List[(length(Neg.List)-(length(Neg.List)-1)):length(Neg.List)]))
       }else if(length(Pos.List) < ShowGeneNum && length(Neg.List) >= ShowGeneNum){
-        Marker.df2$genelabels <- factor(Marker.df2$Gene,
+        Marker.df$genelabels <- factor(Marker.df$Gene,
                                         levels = c(Pos.List[1:length(Pos.List)],
                                                    Neg.List[(length(Neg.List)-(ShowGeneNum-1)):length(Neg.List)]))
       }else {
-        Marker.df2$genelabels <- factor(Marker.df2$Gene,
+        Marker.df$genelabels <- factor(Marker.df$Gene,
                                         levels = c(Pos.List[1:length(Pos.List)],
                                                    Neg.List[(length(Neg.List)-(length(Neg.List)-1)):length(Neg.List)]))
       }
 
 
     library(ggrepel)
-    VolcanoPlot <- ggplot(Marker.df2, aes(avg_log2FC, -log10(p_val), label = genelabels, col = color)) +
+    VolcanoPlot <- ggplot(Marker.df, aes(avg_log2FC, -log10(p_val), label = genelabels, col = color)) +
       geom_point(size = 3) +
       theme_bw() +
       scale_color_manual(values = color) +
