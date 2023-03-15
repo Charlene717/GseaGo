@@ -1,52 +1,70 @@
-FUN_VolcanoPlot <- function(Marker.df, Pos.List, Neg.List,
-                        color = c(red = "#ef476f",gray = "gray",blue = "#0077b6"),
-                        log2FC = 1,PValue = 0.05,
-                        ShowGeneNum = 5){
+FUN_VolcanoPlot <- function(Marker.df,
+                            log2FC = 1,PValue = 0.05,
+                            DiffThr = list("logFC",-2,2),
+                            StatsTestThr = list("PValue",0.05),
+                            color = c(red = "#ef476f",gray = "gray",blue = "#0077b6"),
+                            ShowGeneNumPos = 10, ShowGeneNumNeg = 10){
 
-    Xintercept = c(-log2FC, log2FC)
-    Yintercept = -log10(PValue)
+    Xintercept = c(DiffThr[[2]], DiffThr[[3]])  # Xintercept = c(-log2FC, log2FC)
+    Yintercept = -log10(StatsTestThr[[2]]) # Yintercept = -log10(PValue)
     #
     library(ggplot2)
     library(cowplot)
 
+    Marker.df <- Marker.df %>% arrange(desc(Marker.df[,DiffThr[[1]]]))
+
+    Pos.List <- Marker.df[rowSums(Marker.df[DiffThr[[1]]] > 0) > 0, ] %>% rownames() # Pos.List <- Marker.df[rowSums(Marker.df["logFC"] >= 1) > 0, ] %>% rownames()
+    Neg.List <- Marker.df[rowSums(Marker.df[DiffThr[[1]]] < 0) > 0, ] %>% rownames()
+
+    # ShowGene_Pos.List <- row.names(Marker.df)[1:ShowGeneNumPos]
+    # ShowGene_Neg.List <- row.names(Marker.df)[(nrow(Marker.df)-ShowGeneNumNeg+1):nrow(Marker.df)]
+
+
     ##-------------- Volcano Plot --------------##
-    Marker.df2 <- data.frame(row.names(Marker.df),Marker.df)
-    colnames(Marker.df2)[[1]] <- c("Gene")
 
-    Marker.df2$p_val <- Marker.df2$p_val+1.0e-300
+    if("Gene" %in% colnames(Marker.df)){
 
-    Marker.df2$color <- ifelse(Marker.df2$p_val< PValue & abs(Marker.df2$avg_log2FC)>= log2FC,ifelse(Marker.df2$avg_log2FC > log2FC,'red','blue'),'gray')
+    }else{
+      Marker.df <- data.frame(row.names(Marker.df),Marker.df)
+      colnames(Marker.df)[[1]] <- c("Gene")
+    }
+
+    Marker.df[,StatsTestThr[[1]]] <- Marker.df[,StatsTestThr[[1]]] + 1.0e-300  # Marker.df$p_val <- Marker.df$p_val+1.0e-300
+
+    Marker.df$color <- ifelse(Marker.df[,StatsTestThr[[1]]] < StatsTestThr[[2]] & abs(Marker.df[,DiffThr[[1]]])>= DiffThr[[3]],ifelse(Marker.df[,DiffThr[[1]]] > DiffThr[[3]],'red','blue'),'gray')
+    # Marker.df$color <- ifelse(Marker.df$p_val< PValue & abs(Marker.df$avg_log2FC)>= log2FC,ifelse(Marker.df$avg_log2FC > log2FC,'red','blue'),'gray')
     # color <- c(red = "red",gray = "gray",blue = "blue")
     # color <- c(red = "#ef476f",gray = "gray",blue = "#0077b6")
 
     # redefine levels:
-    # Marker.df2$genelabels <- factor(Marker.df2$Gene, levels = c(Pos.List,Neg.List))
+    # Marker.df$genelabels <- factor(Marker.df$Gene, levels = c(Pos.List,Neg.List))
 
-    if (length(Pos.List) >= ShowGeneNum && length(Neg.List) >= ShowGeneNum) {
-        Marker.df2$genelabels <- factor(Marker.df2$Gene,
-                                        levels = c(Pos.List[1:ShowGeneNum],
-                                                   Neg.List[(length(Neg.List)-(ShowGeneNum-1)):length(Neg.List)]))
-      }else if(length(Pos.List) >= ShowGeneNum && length(Neg.List) < ShowGeneNum){
-        Marker.df2$genelabels <- factor(Marker.df2$Gene,
-                                        levels = c(Pos.List[1:ShowGeneNum],
+    if (length(Pos.List) >= ShowGeneNumPos && length(Neg.List) >= ShowGeneNumNeg) {
+        Marker.df$genelabels <- factor(Marker.df$Gene,
+                                        levels = c(Pos.List[1:ShowGeneNumPos],
+                                                   Neg.List[(length(Neg.List)-(ShowGeneNumNeg-1)):length(Neg.List)]))
+      }else if(length(Pos.List) >= ShowGeneNumPos && length(Neg.List) < ShowGeneNumNeg){
+        Marker.df$genelabels <- factor(Marker.df$Gene,
+                                        levels = c(Pos.List[1:ShowGeneNumPos],
                                                    Neg.List[(length(Neg.List)-(length(Neg.List)-1)):length(Neg.List)]))
-      }else if(length(Pos.List) < ShowGeneNum && length(Neg.List) >= ShowGeneNum){
-        Marker.df2$genelabels <- factor(Marker.df2$Gene,
+      }else if(length(Pos.List) < ShowGeneNumPos && length(Neg.List) >= ShowGeneNumNeg){
+        Marker.df$genelabels <- factor(Marker.df$Gene,
                                         levels = c(Pos.List[1:length(Pos.List)],
-                                                   Neg.List[(length(Neg.List)-(ShowGeneNum-1)):length(Neg.List)]))
+                                                   Neg.List[(length(Neg.List)-(ShowGeneNumNeg-1)):length(Neg.List)]))
       }else {
-        Marker.df2$genelabels <- factor(Marker.df2$Gene,
+        Marker.df$genelabels <- factor(Marker.df$Gene,
                                         levels = c(Pos.List[1:length(Pos.List)],
                                                    Neg.List[(length(Neg.List)-(length(Neg.List)-1)):length(Neg.List)]))
       }
 
 
     library(ggrepel)
-    VolcanoPlot <- ggplot(Marker.df2, aes(avg_log2FC, -log10(p_val), label = genelabels, col = color)) +
+    VolcanoPlot <- ggplot(Marker.df, aes(Marker.df[,DiffThr[[1]]], -log10(Marker.df[,StatsTestThr[[1]]]), label = genelabels, col = color)) +
       geom_point(size = 3) +
       theme_bw() +
       scale_color_manual(values = color) +
-      labs(x="log2 (fold change)",y="-log10 (p-value)") +
+      labs(x=DiffThr[[1]], y= paste0("-log10 (",StatsTestThr[[1]],")")) +
+      # labs(x="log2 (fold change)",y="-log10 (p-value)") +
       geom_hline(yintercept = Yintercept, lty=8,col="black",lwd=0.8) +
       geom_vline(xintercept = Xintercept, lty=8,col="black",lwd=0.8) +
       theme(legend.position = "none",
@@ -59,7 +77,10 @@ FUN_VolcanoPlot <- function(Marker.df, Pos.List, Neg.List,
       #geom_label(nudge_y = 2, alpha = 0.5)+
       theme(aspect.ratio=1)
 
+    VolcanoPlot
+
     VolcanoPlot_2 <- VolcanoPlot + theme(panel.border = element_rect(fill=NA,color="black", size=2, linetype="solid"))
+    VolcanoPlot_2
     # https://www.cnblogs.com/liujiaxin2018/p/14257944.html
 
 
