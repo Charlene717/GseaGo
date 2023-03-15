@@ -1,5 +1,5 @@
 FUN_VolcanoPlot <- function(Marker.df,
-                            DiffThr = list("logFC",-2,2),
+                            DiffThr = list("log2FC",-2,2),
                             StatsTestThr = list("PValue",0.05),
                             color = c(red = "#ef476f",gray = "gray",blue = "#0077b6"),
                             ShowGeneNumPos = 10, ShowGeneNumNeg = 10){
