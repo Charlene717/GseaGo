@@ -7,6 +7,10 @@
 
 #### More EDA ####
 ## - [v] EDA for GoupByPheno
+## - [] More EDA
+
+
+#### DEG ####
 ## - [] Modify DGE Method
 ## - [] Volcanoplot
 
