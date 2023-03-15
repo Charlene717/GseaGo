@@ -1,6 +1,5 @@
 FUN_VolcanoPlot <- function(Marker.df,
-                            log2FC = 1,PValue = 0.05,
-                            DiffThr = list("logFC",-2,2),
+                            DiffThr = list("logFC",-2,1),
                             StatsTestThr = list("PValue",0.05),
                             color = c(red = "#ef476f",gray = "gray",blue = "#0077b6"),
                             ShowGeneNumPos = 10, ShowGeneNumNeg = 10){
@@ -31,7 +30,10 @@ FUN_VolcanoPlot <- function(Marker.df,
 
     Marker.df[,StatsTestThr[[1]]] <- Marker.df[,StatsTestThr[[1]]] + 1.0e-300  # Marker.df$p_val <- Marker.df$p_val+1.0e-300
 
-    Marker.df$color <- ifelse(Marker.df[,StatsTestThr[[1]]] < StatsTestThr[[2]] & abs(Marker.df[,DiffThr[[1]]])>= DiffThr[[3]],ifelse(Marker.df[,DiffThr[[1]]] > DiffThr[[3]],'red','blue'),'gray')
+    Marker.df$color <- ifelse(Marker.df[,StatsTestThr[[1]]] < StatsTestThr[[2]] & Marker.df[,DiffThr[[1]]] >= DiffThr[[3]],'red',
+                              ifelse(Marker.df[,StatsTestThr[[1]]] < StatsTestThr[[2]] & Marker.df[,DiffThr[[1]]] <= DiffThr[[2]],'blue','gray'))
+
+    # Marker.df$color <- ifelse(Marker.df[,StatsTestThr[[1]]] < StatsTestThr[[2]] & abs(Marker.df[,DiffThr[[1]]])>= DiffThr[[3]],ifelse(Marker.df[,DiffThr[[1]]] > DiffThr[[3]],'red','blue'),'gray')
     # Marker.df$color <- ifelse(Marker.df$p_val< PValue & abs(Marker.df$avg_log2FC)>= log2FC,ifelse(Marker.df$avg_log2FC > log2FC,'red','blue'),'gray')
     # color <- c(red = "red",gray = "gray",blue = "blue")
     # color <- c(red = "#ef476f",gray = "gray",blue = "#0077b6")
@@ -81,8 +83,9 @@ FUN_VolcanoPlot <- function(Marker.df,
 
     VolcanoPlot_2 <- VolcanoPlot + theme(panel.border = element_rect(fill=NA,color="black", size=2, linetype="solid"))
     VolcanoPlot_2
-    # https://www.cnblogs.com/liujiaxin2018/p/14257944.html
 
+
+    # https://www.cnblogs.com/liujiaxin2018/p/14257944.html
 
     # UMAP3 <- FeaturePlot(PBMC.combined, features = Pos.List[1], split.by = SplitBy, max.cutoff = 3,
     #                      cols = c("grey","#de3767", "red"), ncol = 2)
