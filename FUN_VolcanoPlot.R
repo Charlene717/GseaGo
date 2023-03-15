@@ -1,8 +1,8 @@
 FUN_VolcanoPlot <- function(Marker.df,
-                            DiffThr = list("logFC",-2,2),
+                            DiffThr = list("log2FC",-2,2),
                             StatsTestThr = list("PValue",0.05),
                             color = c(red = "#ef476f",gray = "gray",blue = "#0077b6"),
-                            ShowGeneNumPos = 10, ShowGeneNumNeg = 10){
+                            ShowGeneNumPos = 7, ShowGeneNumNeg = 7){
 
     Xintercept = c(DiffThr[[2]], DiffThr[[3]])  # Xintercept = c(-log2FC, log2FC)
     Yintercept = -log10(StatsTestThr[[2]]) # Yintercept = -log10(PValue)
@@ -12,8 +12,8 @@ FUN_VolcanoPlot <- function(Marker.df,
 
     Marker.df <- Marker.df %>% arrange(desc(Marker.df[,DiffThr[[1]]]))
 
-    Pos.List <- Marker.df[rowSums(Marker.df[DiffThr[[1]]] > DiffThr[[3]]) > 0, ] %>% rownames() # Pos.List <- Marker.df[rowSums(Marker.df["logFC"] >= 1) > 0, ] %>% rownames()
-    Neg.List <- Marker.df[rowSums(Marker.df[DiffThr[[1]]] < DiffThr[[2]]) > 0, ] %>% rownames()
+    Pos.List <- Marker.df[rowSums(Marker.df[DiffThr[[1]]] > DiffThr[[3]] & Marker.df[StatsTestThr[[1]]] < StatsTestThr[[2]]) > 0, ] %>% rownames() # Pos.List <- Marker.df[rowSums(Marker.df["logFC"] >= 1) > 0, ] %>% rownames()
+    Neg.List <- Marker.df[rowSums(Marker.df[DiffThr[[1]]] < DiffThr[[2]] & Marker.df[StatsTestThr[[1]]] < StatsTestThr[[2]]) > 0, ] %>% rownames()
 
     # ShowGene_Pos.List <- row.names(Marker.df)[1:ShowGeneNumPos]
     # ShowGene_Neg.List <- row.names(Marker.df)[(nrow(Marker.df)-ShowGeneNumNeg+1):nrow(Marker.df)]
@@ -75,7 +75,7 @@ FUN_VolcanoPlot <- function(Marker.df,
             axis.text = element_text(size = 14),
             text = element_text(size = 15)) +
       geom_point() +
-      geom_text_repel(col = "#14213d", na.rm = TRUE,size = 6, box.padding = unit(0.45, "lines"), hjust = 1)+
+      geom_text_repel(col = "#14213d", na.rm = TRUE,size = 5, box.padding = unit(0.45, "lines"), hjust = 1)+
       #geom_label(nudge_y = 2, alpha = 0.5)+
       theme(aspect.ratio=1)
 
