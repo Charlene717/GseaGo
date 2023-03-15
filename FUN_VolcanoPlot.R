@@ -1,7 +1,7 @@
 FUN_VolcanoPlot <- function(Marker.df,
                             DiffThr = list("log2FC",-2,2),
                             StatsTestThr = list("PValue",0.05),
-                            color = c(red = "#ef476f",gray = "gray",blue = "#0077b6"),
+                            color = c(High = "#ef476f",Mid = "gray",Low = "#0077b6"),
                             ShowGeneNumPos = 7, ShowGeneNumNeg = 7){
 
     Xintercept = c(DiffThr[[2]], DiffThr[[3]])  # Xintercept = c(-log2FC, log2FC)
@@ -30,13 +30,13 @@ FUN_VolcanoPlot <- function(Marker.df,
 
     Marker.df[,StatsTestThr[[1]]] <- Marker.df[,StatsTestThr[[1]]] + 1.0e-300  # Marker.df$p_val <- Marker.df$p_val+1.0e-300
 
-    Marker.df$color <- ifelse(Marker.df[,StatsTestThr[[1]]] < StatsTestThr[[2]] & Marker.df[,DiffThr[[1]]] >= DiffThr[[3]],'red',
-                              ifelse(Marker.df[,StatsTestThr[[1]]] < StatsTestThr[[2]] & Marker.df[,DiffThr[[1]]] <= DiffThr[[2]],'blue','gray'))
+    Marker.df$color <- ifelse(Marker.df[,StatsTestThr[[1]]] < StatsTestThr[[2]] & Marker.df[,DiffThr[[1]]] >= DiffThr[[3]],'High',
+                              ifelse(Marker.df[,StatsTestThr[[1]]] < StatsTestThr[[2]] & Marker.df[,DiffThr[[1]]] <= DiffThr[[2]],'Low','Mid'))
 
-    # Marker.df$color <- ifelse(Marker.df[,StatsTestThr[[1]]] < StatsTestThr[[2]] & abs(Marker.df[,DiffThr[[1]]])>= DiffThr[[3]],ifelse(Marker.df[,DiffThr[[1]]] > DiffThr[[3]],'red','blue'),'gray')
-    # Marker.df$color <- ifelse(Marker.df$p_val< PValue & abs(Marker.df$avg_log2FC)>= log2FC,ifelse(Marker.df$avg_log2FC > log2FC,'red','blue'),'gray')
-    # color <- c(red = "red",gray = "gray",blue = "blue")
-    # color <- c(red = "#ef476f",gray = "gray",blue = "#0077b6")
+    # Marker.df$color <- ifelse(Marker.df[,StatsTestThr[[1]]] < StatsTestThr[[2]] & abs(Marker.df[,DiffThr[[1]]])>= DiffThr[[3]],ifelse(Marker.df[,DiffThr[[1]]] > DiffThr[[3]],'High','Low'),'Mid')
+    # Marker.df$color <- ifelse(Marker.df$p_val< PValue & abs(Marker.df$avg_log2FC)>= log2FC,ifelse(Marker.df$avg_log2FC > log2FC,'High','Low'),'Mid')
+    # color <- c(High = "red",Mid = "gray",Low = "blue")
+    # color <- c(High = "#ef476f",Mid = "gray",Low = "#0077b6")
 
     # redefine levels:
     # Marker.df$genelabels <- factor(Marker.df$Gene, levels = c(Pos.List,Neg.List))
@@ -95,5 +95,8 @@ FUN_VolcanoPlot <- function(Marker.df,
 return(VolcanoPlot_2)
 }
 
+#### To-Do List
+## -[] Clean up PKG Set
+## -[] Modify word size setting
 
 
