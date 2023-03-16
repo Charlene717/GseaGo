@@ -5,11 +5,22 @@ FUN_VolcanoPlot <- function(Marker.df,
                             color = c(High = "#ef476f",Mid = "gray",Low = "#0077b6"),
                             ShowGeneNumPos = 7, ShowGeneNumNeg = 7){
 
+
+    ##### Load Packages  #####
+    if(!require("tidyverse")) install.packages("tidyverse")
+    library(tidyverse)
+    if(!require("cowplot")) install.packages("cowplot")
+    library(cowplot)
+    if(!require("ggrepel")) install.packages("ggrepel")
+    library(ggrepel)
+    # if(!require("ggplot2")) install.packages("ggplot2")
+    # library(ggplot2)
+
+
     Xintercept = c(DiffThr[[2]], DiffThr[[3]])  # Xintercept = c(-log2FC, log2FC)
     Yintercept = -log10(StatsTestThr[[2]]) # Yintercept = -log10(PValue)
     #
-    library(ggplot2)
-    library(cowplot)
+
 
     Marker.df <- Marker.df %>% arrange(desc(Marker.df[,DiffThr[[1]]]))
 
@@ -96,7 +107,7 @@ return(VolcanoPlot_2)
 }
 
 #### To-Do List
-## -[] Clean up PKG Set
+## -[V] Clean up PKG Set
 ## -[] Modify word size setting
 ## -[] Clean up the code
 ## -[] Annotation
