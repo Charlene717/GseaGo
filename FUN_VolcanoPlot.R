@@ -1,3 +1,4 @@
+## Volcano Plot
 FUN_VolcanoPlot <- function(Marker.df,
                             DiffThr = list("log2FC",-2,2),
                             StatsTestThr = list("PValue",0.05),
@@ -19,8 +20,7 @@ FUN_VolcanoPlot <- function(Marker.df,
     # ShowGene_Neg.List <- row.names(Marker.df)[(nrow(Marker.df)-ShowGeneNumNeg+1):nrow(Marker.df)]
 
 
-    ##-------------- Volcano Plot --------------##
-
+    ## Add Gene name to column
     if("Gene" %in% colnames(Marker.df)){
 
     }else{
@@ -98,5 +98,5 @@ return(VolcanoPlot_2)
 #### To-Do List
 ## -[] Clean up PKG Set
 ## -[] Modify word size setting
-
-
+## -[] Clean up the code
+## -[] Annotation
