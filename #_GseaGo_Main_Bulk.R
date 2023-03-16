@@ -19,11 +19,11 @@
   source("FUN_DistrPlot_GE.R")
   source("FUN_Beautify_ggplot.R")
   # source("FUN_Find_Markers.R")
-  # source("FUN_VolcanoPlot.R")
   # source("FUN_GSEA_LargeGeneSet.R")
   # source("FUN_GSEA_ggplot.R")
   source("FUN_ggPlot_vline.R")
   source("FUN_GSEA_ANAL.R")
+  source("FUN_VolcanoPlot.R")
 
 ##### Import setting and data loading* #####
 Rec_Time_Point.lt[["Input_Start_Time"]] <- Sys.time() # %>% as.character()
@@ -162,16 +162,20 @@ Rec_Time_Spend.lt[["Update_Genename"]] <- Rec_Time_Point.lt[["Update_Genename_En
 Rec_Time_Point.lt[["EDA_Start_Time"]] <- Sys.time() # %>% as.character()
 
   source("FUN_DistrPlot_GE.R")
+  source("FUN_VolcanoPlot.R")
 
   if(Set_GroupMode == "GoupByGeneExp"){
+    ## Distribution Plot
     Plot.DistrPlot <- FUN_DistrPlot_GE(GeneExp.df,
                                        TarGeneName = Set_TarGene_name, GroupSet = Set_TarGene,
                                        Save.Path = Save_Path, ExportName = SetExport_Name)
     Plot.DistrPlot_SD_Q <- Plot.DistrPlot[["TGeneDen_SD_Q.p"]]
     Plot.DistrPlot_SD_Q
 
+
   }else if(Set_GroupMode == "GoupByPheno"){
     Plot.Barplot <- ggplot(Metadata.df, aes(x=as.factor(Metadata.df[,Set_GroupCond$GroupType]), fill=as.factor(Metadata.df[,Set_GroupCond$GroupType]))) + geom_bar()
+    ## BarPlot
     # Plot.Barplot <- ggplot(Metadata.df, aes(x=as.factor(gender), fill=as.factor(gender))) + geom_bar()
 
     Plot.Barplot + labs(fill=Set_GroupCond$GroupType, x=Set_GroupCond$GroupType, y = "count")+
@@ -185,6 +189,9 @@ Rec_Time_Point.lt[["EDA_Start_Time"]] <- Sys.time() # %>% as.character()
 
     dev.off()
     rm(Plot.Barplot, Plot.Barplot1)
+
+
+    ## Volcano Plot
 
   }else{
     print("Please set the GroupMode as GoupByPheno or GoupByGeneExp")
@@ -225,8 +232,26 @@ Rec_Time_Point.lt[["DEG_Start_Time"]] <- Sys.time() # %>% as.character()
                                   Save.Path = Save_Path, ExportName = SetExport_Name, AnnoName = "")
   DEG_Extract.df <- DEG_ANAL.lt[["DEG_Extract.df"]]
 
+  #### Volcano Plot ####
+  source("FUN_VolcanoPlot.R")
+  Plot.Volcano <- FUN_VolcanoPlot(DEG_Extract.df,
+                                  DiffThr = list("logFC",-1,1),
+                                  color = c(High = "#ef476f",Mid = "gray",Low = "#0077b6"))
+  Plot.Volcano
+
+  pdf(file = paste0(Save_Path,"/DEG_VolcanoPlot_",SetExport_Name,".pdf"),
+      width = 8,  height = 8)
+  Plot.Volcano %>% print()
+
+  dev.off()
+
+
+
 Rec_Time_Point.lt[["DEG_End_Time"]] <- Sys.time() # %>% as.character()
 Rec_Time_Spend.lt[["DEG"]] <- Rec_Time_Point.lt[["DEG_End_Time"]] - Rec_Time_Point.lt[["DEG_Start_Time"]]
+
+
+
 
 ##### Run Enrichment analysis in R #####
 Rec_Time_Point.lt[["GSEA_Start_Time"]] <- Sys.time() # %>% as.character()
@@ -321,7 +346,7 @@ Rec_Time_Point.lt[["END_Time"]] <- Sys.time() # %>% as.character()
 Rec_Time_Spend.lt[["Total_Time"]] <- Rec_Time_Point.lt[["END_Time"]] - Rec_Time_Point.lt[["Start_Time"]]
 
 
-  # ## Redundant
+  # ## Redundant method
   # Rec_time_diff <- Rec_Time_Point.lt[["END_Time"]] - Rec_Time_Point.lt[["Start_Time"]]
   # Rec_SaveTime_diff <- Rec_Time_Point.lt[["Save_RData_End_Time"]] - Rec_Time_Point.lt[["Save_RData_Start_Time"]]
   # write(paste(" Program total time：", as.character(Rec_time_diff), "mins\n",
