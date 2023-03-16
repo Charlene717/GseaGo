@@ -3,7 +3,9 @@ FUN_VolcanoPlot <- function(Marker.df,
                             DiffThr = list("log2FC",-2,2),
                             StatsTestThr = list("PValue",0.05),
                             color = c(High = "#ef476f",Mid = "gray",Low = "#0077b6"),     # color = c(High = "red",Mid = "gray",Low = "blue")
-                            ShowGeneNumPos = 7, ShowGeneNumNeg = 7){
+                            ShowGeneNumPos = 7, ShowGeneNumNeg = 7,
+                            SizePoint = 3,  SizeAxisTitle = 16, SizeAxisText = 14, SizeLableText = 5,
+                            ThkFrameLine = 2 , ThkThrLine = 0.8){
 
 
     #### Load Packages  #####
@@ -74,25 +76,25 @@ FUN_VolcanoPlot <- function(Marker.df,
     #### Volcano Plot ####
     library(ggrepel)
     VolcanoPlot <- ggplot(Marker.df, aes(Marker.df[,DiffThr[[1]]], -log10(Marker.df[,StatsTestThr[[1]]]), label = genelabels, col = color)) +
-      geom_point(size = 3) +
-      theme_bw() +
+      theme_bw() + # Set to white background
       scale_color_manual(values = color) +
-      labs(x=DiffThr[[1]], y= paste0("-log10 (",StatsTestThr[[1]],")")) +
-      # labs(x="log2 (fold change)",y="-log10 (p-value)") +
-      geom_hline(yintercept = Yintercept, lty=8,col="black",lwd=0.8) +
-      geom_vline(xintercept = Xintercept, lty=8,col="black",lwd=0.8) +
+      geom_point(size = SizePoint) +
+      geom_hline(yintercept = Yintercept, lty=8,col="black",lwd=ThkThrLine) +
+      geom_vline(xintercept = Xintercept, lty=8,col="black",lwd=ThkThrLine) +
       theme(legend.position = "none",
             panel.grid=element_blank(),
-            axis.title = element_text(size = 16),
-            axis.text = element_text(size = 14),
-            text = element_text(size = 15)) +
-      geom_point() +
-      geom_text_repel(col = "#14213d", na.rm = TRUE,size = 5, box.padding = unit(0.45, "lines"), hjust = 1)+
+            # text = element_text(size = 15),
+            axis.title = element_text(size = SizeAxisTitle),
+            axis.text = element_text(size = SizeAxisText)
+            ) +
+      labs(x=DiffThr[[1]], y= paste0("-log10 (",StatsTestThr[[1]],")")) + # labs(x="log2 (fold change)",y="-log10 (p-value)") +
+      geom_text_repel(col = "#14213d", na.rm = TRUE,size = SizeLableText, box.padding = unit(0.45, "lines"), hjust = 1)+
       #geom_label(nudge_y = 2, alpha = 0.5)+
       theme(aspect.ratio=1) +
-      theme(panel.border = element_rect(fill=NA,color="black", size=2, linetype="solid"))  ## Ref: https://www.cnblogs.com/liujiaxin2018/p/14257944.html
+      theme(panel.border = element_rect(fill=NA,color="black", size= ThkFrameLine, linetype="solid"))  ## Ref: https://www.cnblogs.com/liujiaxin2018/p/14257944.html
 
     VolcanoPlot
+
 
 
 return(VolcanoPlot_2)
@@ -100,6 +102,6 @@ return(VolcanoPlot_2)
 
 #### To-Do List
 ## -[V] Clean up PKG Set
-## -[] Modify word size setting
+## -[V] Modify word size setting
 ## -[V] Clean up the code
 ## -[V] Annotation
