@@ -97,7 +97,7 @@ FUN_VolcanoPlot <- function(Marker.df,
 
 
 
-return(VolcanoPlot_2)
+return(VolcanoPlot)
 }
 
 #### To-Do List
