@@ -191,8 +191,6 @@ Rec_Time_Point.lt[["EDA_Start_Time"]] <- Sys.time() # %>% as.character()
     rm(Plot.Barplot, Plot.Barplot1)
 
 
-    ## Volcano Plot
-
   }else{
     print("Please set the GroupMode as GoupByPheno or GoupByGeneExp")
   }
@@ -236,7 +234,11 @@ Rec_Time_Point.lt[["DEG_Start_Time"]] <- Sys.time() # %>% as.character()
   source("FUN_VolcanoPlot.R")
   Plot.Volcano <- FUN_VolcanoPlot(DEG_Extract.df,
                                   DiffThr = list("logFC",-1,1),
-                                  color = c(High = "#ef476f",Mid = "gray",Low = "#0077b6"))
+                                  StatsTestThr = list("PValue",0.05),
+                                  color = c(High = "#ef476f",Mid = "gray",Low = "#0077b6"),
+                                  ShowGeneNumPos = 7, ShowGeneNumNeg = 7,
+                                  SizePoint = 3,  SizeAxisTitle = 16, SizeAxisText = 14, SizeLableText = 5,
+                                  ThkFrameLine = 2 , ThkThrLine = 0.8)
   Plot.Volcano
 
   pdf(file = paste0(Save_Path,"/DEG_VolcanoPlot_",SetExport_Name,".pdf"),
