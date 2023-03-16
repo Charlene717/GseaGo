@@ -6,7 +6,7 @@ FUN_VolcanoPlot <- function(Marker.df,
                             ShowGeneNumPos = 7, ShowGeneNumNeg = 7){
 
 
-    ##### Load Packages  #####
+    #### Load Packages  #####
     if(!require("tidyverse")) install.packages("tidyverse")
     library(tidyverse)
     if(!require("cowplot")) install.packages("cowplot")
@@ -16,12 +16,29 @@ FUN_VolcanoPlot <- function(Marker.df,
     # if(!require("ggplot2")) install.packages("ggplot2")
     # library(ggplot2)
 
+    #### Add Gene name to column ####
+    if("Gene" %in% colnames(Marker.df)){
 
-    Xintercept = c(DiffThr[[2]], DiffThr[[3]])  # Xintercept = c(-log2FC, log2FC)
-    Yintercept = -log10(StatsTestThr[[2]]) # Yintercept = -log10(PValue)
-    #
+    }else{
+      Marker.df <- data.frame(row.names(Marker.df),Marker.df)
+      colnames(Marker.df)[[1]] <- c("Gene")
+    }
+
+    #### Avoid 0 value in the Stats Test ####
+    Marker.df[,StatsTestThr[[1]]] <- Marker.df[,StatsTestThr[[1]]] + 1.0e-300  # Marker.df$p_val <- Marker.df$p_val+1.0e-300
+
+    #### Set color ####
+    Marker.df$color <- ifelse(Marker.df[,StatsTestThr[[1]]] < StatsTestThr[[2]] & Marker.df[,DiffThr[[1]]] >= DiffThr[[3]],'High',
+                              ifelse(Marker.df[,StatsTestThr[[1]]] < StatsTestThr[[2]] & Marker.df[,DiffThr[[1]]] <= DiffThr[[2]],'Low','Mid'))
+
+    ## Old version
+    # Marker.df$color <- ifelse(Marker.df[,StatsTestThr[[1]]] < StatsTestThr[[2]] & abs(Marker.df[,DiffThr[[1]]])>= DiffThr[[3]],ifelse(Marker.df[,DiffThr[[1]]] > DiffThr[[3]],'High','Low'),'Mid')
+    # Marker.df$color <- ifelse(Marker.df$p_val< PValue & abs(Marker.df$avg_log2FC)>= log2FC,ifelse(Marker.df$avg_log2FC > log2FC,'High','Low'),'Mid')
+    # color <- c(High = "red",Mid = "gray",Low = "blue")
+    # color <- c(High = "#ef476f",Mid = "gray",Low = "#0077b6")
 
 
+    #### Arrange and filter ####
     Marker.df <- Marker.df %>% arrange(desc(Marker.df[,DiffThr[[1]]]))
 
     Pos.List <- Marker.df[rowSums(Marker.df[DiffThr[[1]]] > DiffThr[[3]] & Marker.df[StatsTestThr[[1]]] < StatsTestThr[[2]]) > 0, ] %>% rownames() # Pos.List <- Marker.df[rowSums(Marker.df["logFC"] >= 1) > 0, ] %>% rownames()
@@ -30,27 +47,6 @@ FUN_VolcanoPlot <- function(Marker.df,
     # ShowGene_Pos.List <- row.names(Marker.df)[1:ShowGeneNumPos]
     # ShowGene_Neg.List <- row.names(Marker.df)[(nrow(Marker.df)-ShowGeneNumNeg+1):nrow(Marker.df)]
 
-
-    ## Add Gene name to column
-    if("Gene" %in% colnames(Marker.df)){
-
-    }else{
-      Marker.df <- data.frame(row.names(Marker.df),Marker.df)
-      colnames(Marker.df)[[1]] <- c("Gene")
-    }
-
-    Marker.df[,StatsTestThr[[1]]] <- Marker.df[,StatsTestThr[[1]]] + 1.0e-300  # Marker.df$p_val <- Marker.df$p_val+1.0e-300
-
-    Marker.df$color <- ifelse(Marker.df[,StatsTestThr[[1]]] < StatsTestThr[[2]] & Marker.df[,DiffThr[[1]]] >= DiffThr[[3]],'High',
-                              ifelse(Marker.df[,StatsTestThr[[1]]] < StatsTestThr[[2]] & Marker.df[,DiffThr[[1]]] <= DiffThr[[2]],'Low','Mid'))
-
-    # Marker.df$color <- ifelse(Marker.df[,StatsTestThr[[1]]] < StatsTestThr[[2]] & abs(Marker.df[,DiffThr[[1]]])>= DiffThr[[3]],ifelse(Marker.df[,DiffThr[[1]]] > DiffThr[[3]],'High','Low'),'Mid')
-    # Marker.df$color <- ifelse(Marker.df$p_val< PValue & abs(Marker.df$avg_log2FC)>= log2FC,ifelse(Marker.df$avg_log2FC > log2FC,'High','Low'),'Mid')
-    # color <- c(High = "red",Mid = "gray",Low = "blue")
-    # color <- c(High = "#ef476f",Mid = "gray",Low = "#0077b6")
-
-    # redefine levels:
-    # Marker.df$genelabels <- factor(Marker.df$Gene, levels = c(Pos.List,Neg.List))
 
     if (length(Pos.List) >= ShowGeneNumPos && length(Neg.List) >= ShowGeneNumNeg) {
         Marker.df$genelabels <- factor(Marker.df$Gene,
@@ -70,7 +66,14 @@ FUN_VolcanoPlot <- function(Marker.df,
                                                    Neg.List[(length(Neg.List)-(length(Neg.List)-1)):length(Neg.List)]))
       }
 
+    ## redefine levels:
+    # Marker.df$genelabels <- factor(Marker.df$Gene, levels = c(Pos.List,Neg.List))
 
+    #### Set Thr line ####
+    Xintercept = c(DiffThr[[2]], DiffThr[[3]])  # Xintercept = c(-log2FC, log2FC)
+    Yintercept = -log10(StatsTestThr[[2]]) # Yintercept = -log10(PValue)
+
+    #### Volcano Plot ####
     library(ggrepel)
     VolcanoPlot <- ggplot(Marker.df, aes(Marker.df[,DiffThr[[1]]], -log10(Marker.df[,StatsTestThr[[1]]]), label = genelabels, col = color)) +
       geom_point(size = 3) +
@@ -88,7 +91,7 @@ FUN_VolcanoPlot <- function(Marker.df,
       geom_point() +
       geom_text_repel(col = "#14213d", na.rm = TRUE,size = 5, box.padding = unit(0.45, "lines"), hjust = 1)+
       #geom_label(nudge_y = 2, alpha = 0.5)+
-      theme(aspect.ratio=1)
+      theme(aspect.ratio=1) + theme(panel.border = element_rect(fill=NA,color="black", size=2, linetype="solid"))
 
     VolcanoPlot
 
@@ -110,4 +113,4 @@ return(VolcanoPlot_2)
 ## -[V] Clean up PKG Set
 ## -[] Modify word size setting
 ## -[] Clean up the code
-## -[] Annotation
+## -[V] Annotation
