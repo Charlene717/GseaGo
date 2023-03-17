@@ -12,9 +12,7 @@
 
 #### DEG ####
 ## - [] Modify DGE Method
-## - [] Volcanoplot
-
-#### DEG ####
+## - [V] Volcanoplot
 ## - [] Add Metric for ranking gene
 
 
