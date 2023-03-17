@@ -2,7 +2,7 @@
 ## Ref: https://web.stanford.edu/class/bios221/labs/rnaseq/lab_4_rnaseq.html
 ## Ref: https://www.jianshu.com/p/b6912d318de5
 
-FUN_DEG_Analysis = function(GeneExp.df, Anno.df,
+FUN_DEG_Analysis = function(GeneExp.df, Metadata.df,
                             GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
                             ThrSet = DEGThr.lt,
                             SampleID = "sampleID",
@@ -20,8 +20,8 @@ FUN_DEG_Analysis = function(GeneExp.df, Anno.df,
 
   #### Differential Expression Gene Analysis ####
   library(edgeR)
-  Anno_Ints.df <- Anno.df[Anno.df[,GroupType] %in% GroupCompare,]
-  # Anno_Ints.df <- Anno.df[Anno.df$ReCluster %in% c("AD","AC"),]  # c("CoreCD00","CDOri")
+  Anno_Ints.df <- Metadata.df[Metadata.df[,GroupType] %in% GroupCompare,]
+  # Anno_Ints.df <- Metadata.df[Metadata.df$ReCluster %in% c("AD","AC"),]  # c("CoreCD00","CDOri")
   matrix_Ints.df <- GeneExp.df
   # colnames(matrix_Ints.df) <-  gsub("\\.", "-", colnames(matrix_Ints.df))
   matrix_Ints.df <- matrix_Ints.df[,colnames(matrix_Ints.df) %in% Anno_Ints.df[,SampleID]]
