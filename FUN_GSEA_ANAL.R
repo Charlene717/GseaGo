@@ -70,8 +70,8 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
 
 
     #### RUN GSEA ####
-    # GSEA_Result <- GSEA(geneList, TERM2GENE = LongGeneSet.df)
-    GSEA_Result <- GSEA(geneList, TERM2GENE = LongGeneSet.df,
+    # Result_GSEA <- GSEA(geneList, TERM2GENE = LongGeneSet.df)
+    Result_GSEA <- GSEA(geneList, TERM2GENE = LongGeneSet.df,
                         pAdjustMethod = pAdjustMethod,  # pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"
                         nPerm = nPerm,
                         minGSSize = minGSSize, maxGSSize = maxGSSize)
@@ -88,7 +88,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     library(ggplot2)
 
     ## 2.1 Barplot
-    y <- mutate(GSEA_Result, ordering = abs(NES)) %>% arrange(desc(ordering))
+    y <- mutate(Result_GSEA, ordering = abs(NES)) %>% arrange(desc(ordering))
 
     y_bar <- group_by(y, sign(NES)) %>% slice(1:NumGenesetsPlt)
 
@@ -100,7 +100,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     Barplot <- Barplot %>% FUN_BeautifyggPlot(LegPos = c(0.9, 0.2), AxisTitleSize=1.7, YtextSize=14,OL_Thick = 1.5)
 
     ## 2.2 Dotplot
-    Dotplot <- dotplot(GSEA_Result, showCategory = NumGenesetsPlt, font.size = 8,
+    Dotplot <- dotplot(Result_GSEA, showCategory = NumGenesetsPlt, font.size = 8,
                        x = "GeneRatio",   # option -> c("GeneRatio", "Count")
                        color = "p.adjust")+   # option -> c("pvalue", "p.adjust", "qvalue")
                        scale_color_gradient(low = "#d45772", high = "#3b74bf")
@@ -110,12 +110,12 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
 
     ## 2.3 Gene-Concept Network
     try({
-    cnetplot <- cnetplot(GSEA_Result, showCategory = round(NumGenesetsPlt/2), colorEdge = TRUE, node_label = "category")
+    cnetplot <- cnetplot(Result_GSEA, showCategory = round(NumGenesetsPlt/2), colorEdge = TRUE, node_label = "category")
     # cowplot::plot_grid(cnetplot, ncol=1, labels=LETTERS[1], rel_widths=c(1))
     })
 
     # ## 2.4 Heatmap-like functional classification
-    # heatplot <- heatplot(GSEA_Result,showCategory = NumGenesetsPlt*2,
+    # heatplot <- heatplot(Result_GSEA,showCategory = NumGenesetsPlt*2,
     #                      foldChange=geneList,label_format = 30) + scale_fill_continuous(low='#3b74bf', high='#d45772')
 
     ## 2.5 Enrichment Map
@@ -126,16 +126,16 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
 
     ## 2.6 UpSet Plot
     library(ggupset)
-    upsetplot <- upsetplot(GSEA_Result, n = NumGenesetsPlt)
+    upsetplot <- upsetplot(Result_GSEA, n = NumGenesetsPlt)
 
     ## 2.7 ridgeline plot for expressiong distribution
-    ridgeplot <- ridgeplot(GSEA_Result) +
+    ridgeplot <- ridgeplot(Result_GSEA) +
           theme(axis.text.y = element_text(size = 10)) +
           scale_fill_continuous(low = "#d45772", high = "#3b74bf")
     ridgeplot %>% FUN_BeautifyggPlot(LegPos = c(1.05, 0.5),YtextSize = 10)
 
     #### 2.8 gseaplot ####
-    y2 <- arrange(GSEA_Result, desc(NES))
+    y2 <- arrange(Result_GSEA, desc(NES))
 
     # Barplot <- gseaplot(y2, geneSetID = 1, title = y2$Description[1])   # max NES
     # n <- nrow(y2)
@@ -202,15 +202,15 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
     try({
       keyword <- Keyword
 
-      ind <- grep(keyword, GSEA_Result$Description, ignore.case = TRUE)
-      gseaplot2_KW <- gseaplot2(GSEA_Result, geneSetID = ind,
-                                title = GSEA_Result$Description[ind])
+      ind <- grep(keyword, Result_GSEA$Description, ignore.case = TRUE)
+      gseaplot2_KW <- gseaplot2(Result_GSEA, geneSetID = ind,
+                                title = Result_GSEA$Description[ind])
     })
 
     #### Use Int_Path.set (Overlay graphics) ####
     try({
-      gseaplot2_IntPath <- gseaplot2(GSEA_Result, geneSetID = Int_Path,
-                                     title = GSEA_Result$Description[Int_Path])
+      gseaplot2_IntPath <- gseaplot2(Result_GSEA, geneSetID = Int_Path,
+                                     title = Result_GSEA$Description[Int_Path])
     })
 
 
@@ -219,7 +219,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
 
 
     # #### 2.9 PubMed trend of enriched terms ####
-    # terms <- GSEA_Result$Description[1:NumGenesetsPlt]
+    # terms <- Result_GSEA$Description[1:NumGenesetsPlt]
     # pmcplot <- pmcplot(terms, 2020:2022, proportion=FALSE)
     # rm(terms)
     # # dev.off()
@@ -258,7 +258,7 @@ FUN_GSEA_ANAL = function(DE_Extract.df, CMGeneSet = Pathway.all,
 
   #### Output ####
     Output <- list()
-    Output[["GSEA_Result"]] <- GSEA_Result
+    Output[["Result_GSEA"]] <- Result_GSEA
     Output[["geneList_ranks"]] <- geneList
     Output[["GSEABar_Plot"]] <- Barplot
     Output[["GSEADot_Plot"]] <- Dotplot
