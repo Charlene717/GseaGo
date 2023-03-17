@@ -1,6 +1,7 @@
 #### Differential Expression Gene Analysis ####
 ## Ref: https://web.stanford.edu/class/bios221/labs/rnaseq/lab_4_rnaseq.html
 ## Ref: https://www.jianshu.com/p/b6912d318de5
+## Ref: https://www.jianshu.com/p/0e1ad0cc4ce6
 
 FUN_DEG_Analysis = function(GeneExp.df, Metadata.df,
                             GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],

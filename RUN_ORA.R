@@ -65,7 +65,7 @@ FUN_Package_InstLoad(Basic.set = PKG_Basic.set, BiocManager.set = PKG_BiocManage
 
 ##### Create enrichGO object #####
   ## Create the object
-  ORA_GO_Result <- enrichGO(gene = ORA_GeneList_Sig,
+  Result_ORA_GO <- enrichGO(gene = ORA_GeneList_Sig,
                         universe = names(ORA_GeneDiff_All),
                         OrgDb = organism,
                         keyType = "SYMBOL", #'SYMBOL', #'ENSEMBL'
@@ -122,12 +122,12 @@ FUN_Package_InstLoad(Basic.set = PKG_Basic.set, BiocManager.set = PKG_BiocManage
 
 ##### Outcome #####
   ## Upset Plot
-  GO_Upsetplot <- upsetplot(ORA_GO_Result)
+  GO_Upsetplot <- upsetplot(Result_ORA_GO)
   GO_Upsetplot
   # https://alanlee.fun/2022/01/08/introducing-upsetplot/
 
   ## Barplot
-  GO_Barplot <- barplot(ORA_GO_Result,
+  GO_Barplot <- barplot(Result_ORA_GO,
                         drop = TRUE,
                         showCategory = 10,
                         title = "GO Biological Pathways",
@@ -138,35 +138,35 @@ FUN_Package_InstLoad(Basic.set = PKG_Basic.set, BiocManager.set = PKG_BiocManage
   GO_Barplot
 
   ## Dotplot
-  GO_Dotplot <- dotplot(ORA_GO_Result)
+  GO_Dotplot <- dotplot(Result_ORA_GO)
   GO_Dotplot
   GO_Dotplot <- GO_Dotplot %>% FUN_BeautifyggPlot(LegPos = c(0.15, 0.65))
   GO_Dotplot
 
   ## Encrichment map:
-  try({emapplot(ORA_GO_Result)})
+  try({emapplot(Result_ORA_GO)})
 
   #-----------------------------------------------------------------------------------------------#
   ## error
   ## https://github.com/YuLab-SMU/enrichplot/issues/79
   ## Solution 1
-  ORA_GO_Result <- pairwise_termsim(ORA_GO_Result)
-  GO_Emapplot <- emapplot(ORA_GO_Result)
+  Result_ORA_GO <- pairwise_termsim(Result_ORA_GO)
+  GO_Emapplot <- emapplot(Result_ORA_GO)
   GO_Emapplot
 
   # ## Solution 2
   # d <- GOSemSim::godata(organism, ont = "BP")
-  # compare_cluster_GO_emap <- enrichplot::pairwise_termsim(ORA_GO_Result, semData = d,  method="Wang")
+  # compare_cluster_GO_emap <- enrichplot::pairwise_termsim(Result_ORA_GO, semData = d,  method="Wang")
   # emapplot(compare_cluster_GO_emap)
   #-----------------------------------------------------------------------------------------------#
 
   ## Enriched GO induced graph:
-  GO_Goplot <- goplot(ORA_GO_Result, showCategory = 10)
+  GO_Goplot <- goplot(Result_ORA_GO, showCategory = 10)
   GO_Goplot
 
   ## Category Netplot
   # categorySize can be either 'pvalue' or 'geneNum'
-  GO_Cnetplot <- cnetplot(ORA_GO_Result, categorySize = "pvalue", foldChange = ORA_GeneDiff_All)
+  GO_Cnetplot <- cnetplot(Result_ORA_GO, categorySize = "pvalue", foldChange = ORA_GeneDiff_All)
   GO_Cnetplot
 
 
@@ -211,8 +211,8 @@ FUN_Package_InstLoad(Basic.set = PKG_Basic.set, BiocManager.set = PKG_BiocManage
 #   library(wordcloud)
 #
 #   ## Wordcloud
-#   wcdf<-read.table(text=ORA_GO_Result$GeneRatio, sep = "/")[1]
-#   wcdf$term<-ORA_GO_Result[,2]
+#   wcdf<-read.table(text=Result_ORA_GO$GeneRatio, sep = "/")[1]
+#   wcdf$term<-Result_ORA_GO[,2]
 #   wordcloud(words = wcdf$term, freq = wcdf$V1, scale=(c(4, .1)), colors=brewer.pal(8, "Dark2"), max.words = 25)
 #
 #
