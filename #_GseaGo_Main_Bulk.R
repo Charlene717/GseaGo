@@ -28,7 +28,6 @@
 ##### Import setting and data loading* #####
 Rec_Time_Point.lt[["Input_Start_Time"]] <- Sys.time() # %>% as.character()
 
-  #### (Required) Set input data ####
   ## Set Import path
   SetInputPath_FOL <- "Input_TCGA"  # Input Folder Name
   SetInput_GE <- "Xena_TCGA_LGG_GE"
@@ -37,7 +36,7 @@ Rec_Time_Point.lt[["Input_Start_Time"]] <- Sys.time() # %>% as.character()
   ## Load Gene expression file
   GeneExp.df <- read.table(paste0(SetInputPath_FOL,"/",SetInput_GE), header=T, row.names = 1, sep="\t")
   colnames(GeneExp.df) <-  gsub("\\.", "-", colnames(GeneExp.df))
-  ## Load Annotation file
+  ## Load Metadata file
   Metadata.df <- read.table(paste0(SetInputPath_FOL,"/",SetInput_Meta), header=T, sep="\t")
   row.names(Metadata.df) <- Metadata.df[,1]
 
@@ -110,8 +109,7 @@ Rec_Time_Spend.lt[["Input"]] <- Rec_Time_Point.lt[["Input_End_Time"]] - Rec_Time
   # rm(SetExport_ProjectName,SetExport_Sampletype,SetExport_Anno, SetExport_Cond)
 
   Save_Path = paste0(getwd(),"/",Sys.Date(),"_",SetExport_Name)
-  ## Create new folder
-  if (!dir.exists(Save_Path)){dir.create(Save_Path)}
+  if (!dir.exists(Save_Path)){dir.create(Save_Path)}   ## Create new folder
 
   ## -[] Add setting record
 
@@ -162,7 +160,6 @@ Rec_Time_Spend.lt[["Update_Genename"]] <- Rec_Time_Point.lt[["Update_Genename_En
 Rec_Time_Point.lt[["EDA_Start_Time"]] <- Sys.time() # %>% as.character()
 
   source("FUN_DistrPlot_GE.R")
-  source("FUN_VolcanoPlot.R")
 
   if(Set_GroupMode == "GoupByGeneExp"){
     ## Distribution Plot
@@ -269,7 +266,7 @@ Rec_Time_Point.lt[["GSEA_Start_Time"]] <- Sys.time() # %>% as.character()
                            "KEGG_CALCIUM_SIGNALING_PATHWAY"
   )
 
-  GSEA_Result.lt <- FUN_GSEA_ANAL(DEG_Extract.df, CMGeneSet = GSEAGeneset.df,
+  Result_GSEA.lt <- FUN_GSEA_ANAL(DEG_Extract.df, CMGeneSet = GSEAGeneset.df,
                                   DefaultGeneSet = "C2", Species = Set_Species, # Speices type can check by msigdbr_species()
                                   NumGenesetsPlt = 15,
                                   TarGeneName = Set_TarGene_name,
@@ -281,8 +278,8 @@ Rec_Time_Point.lt[["GSEA_Start_Time"]] <- Sys.time() # %>% as.character()
                                   nPerm = 100000,
                                   minGSSize = 15, maxGSSize = 500)
 
-  GSEA_Result <- GSEA_Result.lt[["GSEA_Result"]]
-  rm(GSEA_Result.lt)
+  Result_GSEA <- Result_GSEA.lt[["Result_GSEA"]]
+  rm(Result_GSEA.lt)
 
 Rec_Time_Point.lt[["GSEA_End_Time"]] <- Sys.time() # %>% as.character()
 Rec_Time_Spend.lt[["GSEA"]] <- Rec_Time_Point.lt[["GSEA_End_Time"]] - Rec_Time_Point.lt[["GSEA_Start_Time"]]
