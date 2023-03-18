@@ -32,7 +32,14 @@ FUN_DEG_Analysis = function(GeneExp.df, Metadata.df,
 
   Anno_Ints.df <- left_join(matrix_Ints_ID.df, Anno_Ints.df)
 
+  ## Create a DGEList
   DGE_Ints.lt <- DGEList(counts=matrix_Ints.df, group=Anno_Ints.df[,GroupType], lib.size=rep(1000,ncol(matrix_Ints.df)))
+  ## Normalize
+  DGE_Ints.lt <- calcNormFactors(DGE_Ints.lt)
+  ## Estimation of dispersion
+  DGE_Ints.lt <- estimateDisp(DGE_Ints.lt)
+
+  # - [] Add glmQLFTest() and glmTreat()
   DEG_Extract.lt <- exactTest(DGE_Ints.lt,pair = GroupCompare, dispersion=0.2)
   DEG_Extract.df <- topTags(DEG_Extract.lt,n = nrow(matrix_Ints.df)) %>%
                            as.data.frame() %>%
