@@ -3,14 +3,19 @@
 ## Ref: https://www.jianshu.com/p/b6912d318de5
 ## Ref: https://www.jianshu.com/p/0e1ad0cc4ce6
 
-FUN_DEG_Analysis = function(GeneExp.df, Metadata.df,
-                            GroupType = AnnoSet.lt[["GroupType"]], GroupCompare = AnnoSet.lt[["GroupCompare"]],
-                            ThrSet = DEGThr.lt,
-                            SampleID = "sampleID",
-                            Save.Path = Save_Path, ExportName = ExportName, AnnoName = "AvB"
-){
+matrix_Ints.df = GeneExp.df
+Anno_Ints.df = Metadata.df
+GroupType = AnnoSet.lt[["GroupType"]]
+GroupCompare = AnnoSet.lt[["GroupCompare"]]
+ThrSet = Set_DEGThr.lt
+SampleID = "sampleID"
+Save.Path = Save_Path
+ExportName = SetExport_Name
+AnnoName = ""
 
-  ##### Load Packages  #####
+
+
+##### Load Packages  #####
   source("FUN_Package_InstLoad.R")
   Basic.set <- c("tidyverse","ggplot2")
   BiocManager.set <- c("edgeR","baySeq")
@@ -21,9 +26,9 @@ FUN_DEG_Analysis = function(GeneExp.df, Metadata.df,
 
   #### Differential Expression Gene Analysis ####
   library(edgeR)
-  Anno_Ints.df <- Metadata.df[Metadata.df[,GroupType] %in% GroupCompare,]
-  # Anno_Ints.df <- Metadata.df[Metadata.df$ReCluster %in% c("AD","AC"),]  # c("CoreCD00","CDOri")
-  matrix_Ints.df <- GeneExp.df
+  Anno_Ints.df <- Anno_Ints.df[Anno_Ints.df[,GroupType] %in% GroupCompare,]
+  # Anno_Ints.df <- Anno_Ints.df[Anno_Ints.df$ReCluster %in% c("AD","AC"),]  # c("CoreCD00","CDOri")
+
   # colnames(matrix_Ints.df) <-  gsub("\\.", "-", colnames(matrix_Ints.df))
   matrix_Ints.df <- matrix_Ints.df[,colnames(matrix_Ints.df) %in% Anno_Ints.df[,SampleID]]
 
@@ -69,14 +74,14 @@ FUN_DEG_Analysis = function(GeneExp.df, Metadata.df,
               sep="\t", row.names= F, quote = FALSE)
 
 
-  #### Output ####
-  Output <- list()
-  Output[["DEG_Extract.df"]] <- DEG_Extract.df
-  Output[["DEG_Extract_Flt.df"]] <- DEG_Extract_Flt.df
-  Output[["DEG_Extract_FltH.set"]] <- DEG_Extract_FltH.set
-  Output[["DEG_Extract_FltL.set"]] <- DEG_Extract_FltL.set
-  Output[["Thr.lt"]] <- ThrSet
+  #### Save result as list ####
+  DEG_ANAL.lt <- list()
+  DEG_ANAL.lt[["DEG_Extract.df"]] <- DEG_Extract.df
+  DEG_ANAL.lt[["DEG_Extract_Flt.df"]] <- DEG_Extract_Flt.df
+  DEG_ANAL.lt[["DEG_Extract_FltH.set"]] <- DEG_Extract_FltH.set
+  DEG_ANAL.lt[["DEG_Extract_FltL.set"]] <- DEG_Extract_FltL.set
+  DEG_ANAL.lt[["Thr.lt"]] <- ThrSet
 
-  return(Output)
+rm(GroupType, GroupCompare, ThrSet, SampleID, Save.Path,ExportName ,AnnoName,
+   matrix_Ints.df, Anno_Ints.df)
 
-}

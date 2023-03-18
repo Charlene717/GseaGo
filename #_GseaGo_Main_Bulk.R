@@ -219,12 +219,7 @@ Rec_Time_Spend.lt[["EDA"]] <- Rec_Time_Point.lt[["EDA_End_Time"]] - Rec_Time_Poi
 Rec_Time_Point.lt[["DEG_Start_Time"]] <- Sys.time() # %>% as.character()
 
   #### Run DEG ####
-  source("FUN_DEG_Analysis.R")
-  DEG_ANAL.lt <- FUN_DEG_Analysis(GeneExp.df, Metadata.df,
-                                  GroupType = Set_GroupCond[["GroupType"]], GroupCompare = Set_GroupCond[["GroupPair"]],
-                                  ThrSet = Set_DEGThr.lt,
-                                  SampleID = "sampleID",
-                                  Save.Path = Save_Path, ExportName = SetExport_Name, AnnoName = "")
+  source("RUN_DEG_Analysis.R")
   DEG_Extract.df <- DEG_ANAL.lt[["DEG_Extract.df"]]
 
   #### Volcano Plot ####
