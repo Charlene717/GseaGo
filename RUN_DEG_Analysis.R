@@ -82,6 +82,7 @@ AnnoName = ""
   DEG_ANAL.lt[["DEG_Extract_FltL.set"]] <- DEG_Extract_FltL.set
   DEG_ANAL.lt[["Thr.lt"]] <- ThrSet
 
+rm(DGE_Ints.lt, DEG_Extract.lt, DEG_Extract.df, DEG_Extract_Flt.df, DEG_Extract_FltH.set, DEG_Extract_FltL.set)
 rm(GroupType, GroupCompare, ThrSet, SampleID, Save.Path,ExportName ,AnnoName,
    matrix_Ints.df, Anno_Ints.df)
 
