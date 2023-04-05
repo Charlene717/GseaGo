@@ -5,8 +5,8 @@
 
 matrix_Ints.df = GeneExp.df
 Anno_Ints.df = Metadata.df
-GroupType = AnnoSet.lt[["GroupType"]]
-GroupCompare = AnnoSet.lt[["GroupCompare"]]
+GroupType = Set_GroupCond[["GroupType"]]
+GroupCompare = Set_GroupCond[["GroupPair"]]
 ThrSet = Set_DEGThr.lt
 SampleID = "sampleID"
 Save.Path = Save_Path
