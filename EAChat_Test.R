@@ -349,6 +349,9 @@ Rec_Time_Spend.lt[["Total_Time"]] <- Rec_Time_Point.lt[["END_Time"]] - Rec_Time_
 # # write(paste0(Rec_Time_Spend.lt[["Total_Time(Without save R.Data)"]]) , file = paste0(Save_Path,"/Rec_time_log.txt"))
 
 #### Record parameter ####
+
+
+#### ChatGPT ####
 # 載入 openai 套件
 library(openai)
 library(httr)
@@ -368,11 +371,12 @@ classify_terms <- function(terms, prompt, api_key) {
 
   response <- POST(
     "https://api.openai.com/v1/engines/davinci/completions",
+    # "https://api.openai.com/v1/engines/text-davinci-002/completions", # 更新引擎為text-davinci-002
     add_headers(
       "Authorization" = paste("Bearer", api_key),
       "Content-Type" = "application/json"
     ),
-    body = toJSON(list(prompt = input_text, max_tokens = 50)),
+    body = toJSON(list(prompt = input_text, max_tokens = 50), auto_unbox = TRUE), # 將 auto_unbox 設置為 TRUE
     encode = "json"
   )
 
@@ -382,26 +386,49 @@ classify_terms <- function(terms, prompt, api_key) {
   # }
 
   content <- fromJSON(content(response, as="text"))
-  return(content$choices[[1]]$text)
+  content[["choices"]][["text"]]
+  return(content[["choices"]][["text"]])
 }
 
 
 
 
 # 定義一個示例的提示
-prompt <- "Please classify the following Terms: " # "請將以下Terms進行分類："
+# prompt <- "Please group the following Terms into groups based on relevance (You need to show the classification and their terms together): " # "請將以下Terms進行分類："
+# prompt <- "Can you help me group the following Terms into groups based on relevance?" # "請將以下Terms進行分類："
+# prompt <- "Please group the following Terms into groups based on relevance (Please output the corresponding classification results according to the order): " # "請將以下Terms進行分類："
+prompt <- "Please add the classification label into each term based on relevance: " # "請將以下Terms進行分類："
 
 # 要分類的Terms
-# terms_to_classify <- c(
-#   "SAKAI_TUMOR_INFILTRATING_MONOCYTES_UP",
-#   "SAKAI_CHRONIC_HEPATITIS_VS_LIVER_CANCER_DN",
-#   "JEON_SMAD6_TARGETS_UP",
-#   "WANG_PROSTATE_CANCER_ANDROGEN_INDEPENDENT",
-#   "SUNG_METASTASIS_STROMA_DN",
-#   "SHIN_B_CELL_LYMPHOMA_CLUSTER_2"
-# )
+terms_to_classify <- c(
+  "HALLMARK_MITOTIC_SPINDLE",
+  "HALLMARK_DNA_REPAIR",
+  "HALLMARK_MYC_TARGETS_V1",
+  "HALLMARK_G2M_CHECKPOINT",
+  "HALLMARK_MYC_TARGETS_V2",
+  "HALLMARK_E2F_TARGETS",
+  "HALLMARK_UNFOLDED_PROTEIN_RESPONSE",
+  "HALLMARK_WNT_BETA_CATENIN_SIGNALING",
+  "HALLMARK_ANGIOGENESIS",
+  "HALLMARK_MTORC1_SIGNALING",
+  "HALLMARK_GLYCOLYSIS",
+  "HALLMARK_SPERMATOGENESIS",
+  "HALLMARK_NOTCH_SIGNALING",
+  "HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION",
+  "HALLMARK_PI3K_AKT_MTOR_SIGNALING",
+  "HALLMARK_CHOLESTEROL_HOMEOSTASIS",
+  "HALLMARK_PANCREAS_BETA_CELLS",
+  "HALLMARK_INTERFERON_ALPHA_RESPONSE",
+  "HALLMARK_APOPTOSIS",
+  "HALLMARK_INTERFERON_GAMMA_RESPONSE",
+  "HALLMARK_TGF_BETA_SIGNALING",
+  "HALLMARK_COAGULATION",
+  "HALLMARK_IL2_STAT5_SIGNALING",
+  "HALLMARK_ALLOGRAFT_REJECTION",
+  "HALLMARK_IL6_JAK_STAT3_SIGNALING"
+)
 
-terms_to_classify <- GSEAGeneSet_MetaData.df[1000:1500,]$STANDARD_NAME
+# terms_to_classify <- GSEAGeneSet_MetaData.df[1000:1500,]$STANDARD_NAME
 
 # 使用函數進行分類
 classification_result <- classify_terms(terms_to_classify, prompt, api_key)
@@ -409,3 +436,202 @@ classification_result <- classify_terms(terms_to_classify, prompt, api_key)
 # 將分類結果整合到 GSEAGeneSet_MetaData.df 中
 GSEAGeneSet_MetaData.df[1000:1500, "Classification"] <- classification_result
 
+
+
+# #################################################################################
+# # 定義一個函數來處理每個富集名詞及其富集資訊
+# classify_terms_with_info <- function(terms_with_info, prompt, api_key) {
+#   # 初始化一個向量來存儲分類結果
+#   classification_results <- character(length(terms_with_info))
+#
+#   # 使用迴圈處理每個富集名詞及其富集資訊
+#   for (i in 1:length(terms_with_info)) {
+#     term_info <- terms_with_info[i]
+#     # 構建與 ChatGPT 對話的輸入，包括富集名詞及其富集資訊
+#     input_text <- paste(prompt, term_info)
+#
+#     response <- POST(
+#       "https://api.openai.com/v1/engines/text-davinci-002/completions",
+#       add_headers(
+#         "Authorization" = paste("Bearer", api_key),
+#         "Content-Type" = "application/json"
+#       ),
+#       body = toJSON(list(prompt = input_text, max_tokens = 50), auto_unbox = TRUE),
+#       encode = "json"
+#     )
+#
+#     content <- fromJSON(content(response, as="text"))
+#     classification_results[i] <-content[["choices"]][["text"]]
+#     # classification_results[i] <- content$choices[[1]]$text
+#   }
+#
+#   return(classification_results)
+# }
+#
+# # 定義一個示例的提示
+# prompt <- "Please add the classification label into each term based on relevance: "
+#
+# # 要分類的Terms及其富集資訊
+# terms_with_info_to_classify <- c(
+#   "SAKAI_TUMOR_INFILTRATING_MONOCYTES_UP - Additional information about this term",
+#   "SAKAI_CHRONIC_HEPATITIS_VS_LIVER_CANCER_DN - Additional information about this term",
+#   "JEON_SMAD6_TARGETS_UP - Additional information about this term",
+#   "WANG_PROSTATE_CANCER_ANDROGEN_INDEPENDENT - Additional information about this term",
+#   "SUNG_METASTASIS_STROMA_DN - Additional information about this term",
+#   "SHIN_B_CELL_LYMPHOMA_CLUSTER_2 - Additional information about this term"
+# )
+#
+# # 使用函數進行分類
+# classification_results <- classify_terms_with_info(terms_with_info_to_classify, prompt, api_key)
+#
+# # 最後，你可以將每個富集名詞的分類結果與原始詞匯合成一個數據框或其他結構進行分析。
+#
+#
+#
+
+##################################################################################
+
+# # 定義一個函數來分類富集名詞
+# classify_terms_into_categories <- function(terms, api_key) {
+#   # 初始化一個命名的空數據框，用於存儲分類結果
+#   result_df <- data.frame(Term = character(0), Category = character(0))
+#
+#   # 要分類的生物學過程類別
+#   categories <- c(
+#     "Cell cycle related",
+#     "Gene regulation related",
+#     "Cellular responses and immunity related",
+#     "Metabolism related",
+#     "Other biological processes"
+#   )
+#
+#   # 使用迴圈處理每個富集名詞
+#   for (term in terms) {
+#     # 構建與 ChatGPT 對話的輸入，包括富集名詞
+#     input_text <- paste("Please classify the following biological processes：", term)
+#
+#     response <- POST(
+#       "https://api.openai.com/v1/engines/davinci/completions",
+#       add_headers(
+#         "Authorization" = paste("Bearer", api_key),
+#         "Content-Type" = "application/json"
+#       ),
+#       body = toJSON(list(prompt = input_text, max_tokens = 50), auto_unbox = TRUE),
+#       encode = "json"
+#     )
+#
+#     content <- fromJSON(content(response, as="text"))
+#     classification <- content[["choices"]][["text"]]
+#
+#     # 將富集名詞及其分類結果添加到結果數據框中
+#     result_df <- rbind(result_df, data.frame(Term = term, Category = classification))
+#   }
+#
+#   return(result_df)
+# }
+#
+# # 要分類的富集名詞
+# terms_to_classify <- c(
+#   "HALLMARK_MITOTIC_SPINDLE",
+#   "HALLMARK_G2M_CHECKPOINT",
+#   "HALLMARK_E2F_TARGETS",
+#   "HALLMARK_PI3K_AKT_MTOR_SIGNALING",
+#   "HALLMARK_TGF_BETA_SIGNALING",
+#   "HALLMARK_MYC_TARGETS_V1",
+#   "HALLMARK_MYC_TARGETS_V2",
+#   "HALLMARK_WNT_BETA_CATENIN_SIGNALING",
+#   "HALLMARK_NOTCH_SIGNALING",
+#   "HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION",
+#   "HALLMARK_INTERFERON_ALPHA_RESPONSE",
+#   "HALLMARK_INTERFERON_GAMMA_RESPONSE",
+#   "HALLMARK_APOPTOSIS",
+#   "HALLMARK_IL2_STAT5_SIGNALING",
+#   "HALLMARK_IL6_JAK_STAT3_SIGNALING",
+#   "HALLMARK_ALLOGRAFT_REJECTION",
+#   "HALLMARK_GLYCOLYSIS",
+#   "HALLMARK_CHOLESTEROL_HOMEOSTASIS",
+#   "HALLMARK_PANCREAS_BETA_CELLS",
+#   "HALLMARK_DNA_REPAIR",
+#   "HALLMARK_UNFOLDED_PROTEIN_RESPONSE",
+#   "HALLMARK_ANGIOGENESIS",
+#   "HALLMARK_MTORC1_SIGNALING",
+#   "HALLMARK_COAGULATION",
+#   "HALLMARK_SPERMATOGENESIS"
+# )
+#
+# # 使用函數進行分類
+# classification_results <- classify_terms_into_categories(terms_to_classify, api_key)
+#
+# # 最後，你可以使用 classification_results 數據框來查看每個富集名詞的分類結果。
+# classification_results %>% View()
+
+# ###############################################################################
+# # 定義一個函數來分類富集名詞並填入數據框中的相應欄位
+# classify_terms_and_fill_columns <- function(terms, prompt, api_key, df) {
+#   # 使用迴圈處理每個富集名詞
+#   for (i in 1:length(terms)) {
+#     term <- terms[i]
+#     # 構建與 ChatGPT 對話的輸入，包括富集名詞和提示
+#     input_text <- paste(prompt, term)
+#
+#     response <- POST(
+#       "https://api.openai.com/v1/engines/davinci/completions",
+#       add_headers(
+#         "Authorization" = paste("Bearer", api_key),
+#         "Content-Type" = "application/json"
+#       ),
+#       body = toJSON(list(prompt = input_text, max_tokens = 50), auto_unbox = TRUE),
+#       encode = "json"
+#     )
+#
+#     content <- fromJSON(content(response, as="text"))
+#     classification <- content[["choices"]][["text"]]
+#
+#     # 填入數據框中的相應欄位
+#     df[i, "Term"] <- term
+#     df[i, "Category"] <- classification
+#   }
+#
+#   return(df)
+# }
+#
+# # 要分類的富集名詞
+# terms_to_classify <- c(
+#   "HALLMARK_MITOTIC_SPINDLE",
+#   "HALLMARK_G2M_CHECKPOINT",
+#   "HALLMARK_E2F_TARGETS",
+#   "HALLMARK_PI3K_AKT_MTOR_SIGNALING",
+#   "HALLMARK_TGF_BETA_SIGNALING",
+#   "HALLMARK_MYC_TARGETS_V1",
+#   "HALLMARK_MYC_TARGETS_V2",
+#   "HALLMARK_WNT_BETA_CATENIN_SIGNALING",
+#   "HALLMARK_NOTCH_SIGNALING",
+#   "HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION",
+#   "HALLMARK_INTERFERON_ALPHA_RESPONSE",
+#   "HALLMARK_INTERFERON_GAMMA_RESPONSE",
+#   "HALLMARK_APOPTOSIS",
+#   "HALLMARK_IL2_STAT5_SIGNALING",
+#   "HALLMARK_IL6_JAK_STAT3_SIGNALING",
+#   "HALLMARK_ALLOGRAFT_REJECTION",
+#   "HALLMARK_GLYCOLYSIS",
+#   "HALLMARK_CHOLESTEROL_HOMEOSTASIS",
+#   "HALLMARK_PANCREAS_BETA_CELLS",
+#   "HALLMARK_DNA_REPAIR",
+#   "HALLMARK_UNFOLDED_PROTEIN_RESPONSE",
+#   "HALLMARK_ANGIOGENESIS",
+#   "HALLMARK_MTORC1_SIGNALING",
+#   "HALLMARK_COAGULATION",
+#   "HALLMARK_SPERMATOGENESIS"
+# )
+#
+# # 創建一個空數據框，用於存儲結果
+# result_df <- data.frame(Term = character(length(terms_to_classify)), Category = character(length(terms_to_classify)))
+#
+# # 定義提示
+# prompt <- "Please add the classification label into each term based on relevance: "
+#
+# # 使用函數進行分類並填入數據框
+# result_df <- classify_terms_and_fill_columns(terms_to_classify, prompt, api_key, result_df)
+#
+# # 最後，result_df 中將包含每個富集名詞及其分類結果
+# result_df %>% View()
