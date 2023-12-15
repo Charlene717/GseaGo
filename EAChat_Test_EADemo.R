@@ -11,7 +11,7 @@ Set_TarGenename <- "TOP2A"
 Save_Path <- paste0("20231213_EAChat_Test_",Set_TarGenename)
 if (!dir.exists(Save_Path)){dir.create(Save_Path)}   ## Create new folder
 
-SetExport_Name <- "20231213_3"
+SetExport_Name <- "20231213_2"
 
 ##### Load Packages #####
 source("FUN_Package_InstLoad.R")
@@ -60,7 +60,7 @@ if(Set_GroupMode == "GoupByPheno"){
 }else if(Set_GroupMode == "GoupByGeneExp"){
   Set_TarGene_name = Set_TarGenename
   Set_TarGene <-  list(TarGeneName = Set_TarGene_name,
-                       GEGroupMode = "Mean1SD", # c("Mean","Mean1SD","Mean2SD","Mean3SD","Median","Quartile","Customize"))
+                       GEGroupMode = "Mean", # c("Mean","Mean1SD","Mean2SD","Mean3SD","Median","Quartile","Customize"))
                        UpCutoff = 1, LowerCutoff = 1)
 
   Set_GroupCond <- list(GroupType = Set_TarGene_name, GroupPair = c("High","Low") )   ## DEG by GeneExp group
@@ -90,7 +90,9 @@ Set_DEGThr.lt <- list(LogFC = c("logFC",1), pVal = c("PValue",0.05) )
 #### Run DEG ####
 source("RUN_DEG_Analysis.R")
 DEG_Extract.df <- DEG_ANAL.lt[["DEG_Extract.df"]]
-DEG_Extract_S.df <- DEG_Extract.df[abs(DEG_Extract.df$logFC) > 2 & DEG_Extract.df$FDR < 0.01,]
+DEG_Extract_S.df <- DEG_Extract.df[abs(DEG_Extract.df$logFC) > 1.5 & DEG_Extract.df$FDR < 0.01,]
+write.table(DEG_Extract_S.df, file = paste0(Save_Path,"/DEG_Extract_S_",SetExport_Name,".tsv"),
+            sep="\t", row.names= F, quote = FALSE)
 
 dif_mat <- DEG_Extract_S.df
 # dif_mat <- GeneExp.df[1:1000,]
@@ -120,9 +122,9 @@ go <- enrichGO(gene = id_list, # Entrez ID list
 go.res <- data.frame(go) # Convert GO results to a data frame for subsequent analysis (optional, depends on personal preference)
 # write.csv(go.res, "Table_GO_result.csv", quote = FALSE) # Output GO enrichment analysis results
 # Create a barplot for GO enrichment analysis. By default, select the top ten terms sorted by q-value for plotting.
-goBP <- subset(go.res, subset = (ONTOLOGY == "BP"))[1:15,]
-goCC <- subset(go.res, subset = (ONTOLOGY == "CC"))[1:15,]
-goMF <- subset(go.res, subset = (ONTOLOGY == "MF"))[1:15,]
+goBP <- subset(go.res, subset = (ONTOLOGY == "BP"))[1:20,]
+goCC <- subset(go.res, subset = (ONTOLOGY == "CC"))[1:20,]
+goMF <- subset(go.res, subset = (ONTOLOGY == "MF"))[1:20,]
 go.df <- rbind(goBP, goCC, goMF)
 # Ensure that the order of GO terms in the plot matches the input
 go.df$Description <- factor(go.df$Description, levels = rev(go.df$Description))
